@@ -1,0 +1,15 @@
+Package: proDA
+Type: Package
+Title: Differential Abundance analysis of label-free mass spectrometry data
+Version: 0.1.0
+Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre")),
+             person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", role="ths"))
+Description: Accounting for missing values in label-free mass spectrometry data 
+    without imputation. The package implements a probabilistic dropout model that
+    ensures that the information from observed and missing values are properly 
+    combined. It adds empirical Bayesian priors to increase power to detect
+    differentially abundant proteins.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
