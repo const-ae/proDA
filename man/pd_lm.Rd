@@ -4,8 +4,8 @@
 \alias{pd_lm}
 \title{Fit linear probabilistic dropout model}
 \usage{
-pd_lm(formula, data, subset, weights, method = c("analytic_grad",
-  "numeric_grad"))
+pd_lm(y, X, rho, zeta, mu0, sigma20, df0, tau20, location_prior_df = 3,
+  method = c("analytic_grad", "numeric_grad"))
 }
 \description{
 Fit linear probabilistic dropout model

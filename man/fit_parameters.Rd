@@ -4,7 +4,8 @@
 \alias{fit_parameters}
 \title{Main proDA function to determine the hyper and protein parameters}
 \usage{
-fit_parameters(X, design = `???`)
+fit_parameters(data, design = ~1, col_data = NULL,
+  reference_class = NULL)
 }
 \description{
 Main proDA function to determine the hyper and protein parameters
