@@ -21,8 +21,7 @@ fit_parameters <- function(data, design=`???`,
   }else if(is.vector(design) && length(design) == n_samples){
     model_matrix <- convert_chr_vec_to_model_matrix(design, reference_class)
   }else if(inherits(design,"formula")){
-
-
+    model_matrix <- convert_formula_to_model_matrix(design, col_data, reference_class)
   }
   check_valid_model_matrix(design, data)
 
@@ -59,7 +58,16 @@ convert_chr_vec_to_model_matrix <- function(design, reference_class){
 }
 
 
-convert_formula_to_model_matrix <- function(formula, col_data){
+convert_formula_to_model_matrix <- function(formula, col_data, reference_class=NULL){
+  if(! is.null(reference_class)){
+    has_ref_level <- vapply(col_data, function(x){
+      any(x == reference_class)
+    }, FUN.VALUE = FALSE)
+    if(all(has_ref_level == FALSE)){
+      stop("None of the columns contains the specified reference_class.")
+    }
+    col_data[has_ref_level] <- lapply(col_data[has_ref_level], relevel, ref = reference_class)
+  }
   mm <- model.matrix(formula, col_data)
   colnames(mm)[colnames(mm) == "(Intercept)"] <- "Intercept"
   mm
