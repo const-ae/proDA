@@ -4,7 +4,7 @@
 #'
 #'
 #' @export
-fit_parameters <- function(data, design=`???`,
+fit_parameters <- function(data, design=~ 1,
                            col_data = NULL,
                            reference_class = NULL){
 
@@ -14,16 +14,21 @@ fit_parameters <- function(data, design=`???`,
   n_rows <- nrow(data)
 
 
-  model_matrix <- NULL
   # Handle the design parameter
   if(is.matrix(design)){
     model_matrix <- design
   }else if(is.vector(design) && length(design) == n_samples){
     model_matrix <- convert_chr_vec_to_model_matrix(design, reference_class)
   }else if(inherits(design,"formula")){
+    if(design == formula(~ 1) && is.null(col_data)){
+      col_data <- as.data.frame(matrix(numeric(0), nrow=10))
+    }
     model_matrix <- convert_formula_to_model_matrix(design, col_data, reference_class)
+  }else{
+    stop(paste0("design argment of class ", class(design), " is not supported. Please ",
+                "specify a `model_matrix`, a `character vector`, or a `formula`."))
   }
-  check_valid_model_matrix(design, data)
+  check_valid_model_matrix(model_matrix, data)
 
   stop("Not yet implemented")
 
