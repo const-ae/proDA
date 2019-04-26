@@ -11,6 +11,9 @@ test_diff <- function(parameters, contrast = `???`){
                  reference_level = reference_level(parameters),
                  direct_call = FALSE)
 
+  dm <- design(parameters)
+  num <- coefficients(parameters) %*% cntrst
+  num_var <-  c(t(cntrst) %*% solve(t(dm) %*% dm) %*% cntrst)
 
   # stop("Not yet implemented")
 

@@ -40,7 +40,7 @@ setMethod("hyper_parameters", signature = "proDAFit", function(object){
 #' @export
 setMethod("feature_parameters", signature = "proDAFit", function(object){
   rd <- rowData(object)
-  as.data.frame(rd[, which(mcols(rd)$type == "feature_parameter")])
+  as.data.frame(rd[, which(mcols(rd)$type == "feature_parameter"), drop=FALSE])
 })
 
 #' Get the coefficients as a matrix
@@ -48,7 +48,7 @@ setMethod("feature_parameters", signature = "proDAFit", function(object){
 #' @export
 setMethod("coefficients", signature = "proDAFit", function(object){
   rd <- rowData(object)
-  as.data.frame(rd[, which(mcols(rd)$type == "coefficient")])
+  as.matrix(rd[, which(mcols(rd)$type == "coefficient"), drop=FALSE])
 })
 
 #' Get a the reference class
