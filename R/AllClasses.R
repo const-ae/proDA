@@ -37,6 +37,7 @@ proDAFit <- function(data, col_data,
     }
   }else if(is.matrix(data)){
     se <- SummarizedExperiment(assays=list(abundances=data), colData = col_data, ...)
+    rownames(se) <- rownames(data)
   }else{
     stop("data must be a matrix or a SummarizedExperiment")
   }
