@@ -1,10 +1,10 @@
-context("test-fit_parameters")
+context("test-proDA")
 
-test_that("fit_parameters works", {
+test_that("proDA works", {
   set.seed(1)
   data <- matrix(rnorm(1000 * 5), nrow=1000, ncol=5)
 
-  fit <- fit_parameters(data, location_prior_df = 100, verbose=TRUE)
+  fit <- proDA(data, location_prior_df = 100, verbose=TRUE)
   fit
   test_res <- test_diff(fit, "Intercept")
   test_res

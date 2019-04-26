@@ -3,7 +3,7 @@ context("test-api")
 test_that("API of main functions feels natural", {
   skip("Only pseudo code below")
   dataset <- data("LFQ_Dataset")
-  parameters <- fit_parameters(dataset, design = ~ Timepoint + MSRun + BioReplicate)
+  parameters <- proDA(dataset, design = ~ Timepoint + MSRun + BioReplicate)
   parameters$getHyperparameters()
   parameters$getLocationPrior()
   parameters$get
