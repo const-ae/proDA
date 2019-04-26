@@ -49,6 +49,43 @@ test_that("pd_lm_unreg works without missing values", {
 
 
 
+test_that("pd_lm has the right names", {
+  col_data <- data.frame(f1 = factor(rep(LETTERS[1:5],each=2), levels = LETTERS[1:7]),
+                         f2 = factor(c("Good", "Neutral", "Neutral", "Bad", "Bad",
+                                       "Bad", "Good", "Bad", "Neutral", "Bad"),
+                                     levels = c("Bad", "Neutral", "Good"), ordered=TRUE),
+                         f3 = factor(rep(c("hello", "world"),times=5)),
+                         f4 = factor(rep(c("hello", "world", "foo", "bar", "foobar"),times=2)),
+                         c1 = sample(rep(c("ABC", "xyz"), each=5)),
+                         num = rnorm(10),
+                         num2 = rnorm(10),
+                         stringsAsFactors = FALSE)
+
+  y <- rnorm(10, mean=10)
+
+  coef(lm(y ~ f4, data=col_data))
+  dm <- model.matrix(~ f4, data=col_data)
+  fit <- pd_lm_unreg(y, dm, rho=rep(NA, 10), zeta= rep(NA, 10))
+  dm2 <- model.matrix(~ f4 - 1, data=col_data)
+  fit2 <- pd_lm_unreg(y, dm2, rho=rep(NA, 10), zeta= rep(NA, 10))
+  fit
+  fit2
+
+  beta_vars <- fit$s2 * diag(solve(t(dm) %*% dm))
+  fit$beta["f4foo"] / sqrt(beta_vars["f4foo"])
+
+  cntrst <- c(-1, 0, 1, 0, 0)
+  names(cntrst) <- colnames(dm2)
+  cntrst
+
+  fit2$beta %*% cntrst
+  t(cntrst) %*% solve(t(dm2) %*% dm2) %*% cntrst
+
+})
+
+
+
+
 
 
 
