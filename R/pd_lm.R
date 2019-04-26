@@ -135,7 +135,10 @@ pd_lm <- function(y, X, rho, zeta, mu0, sigma20, df0, tau20,
     rss_approx <- s2_approx * df_mod
   }
 
-  list(beta=fit_beta, n_approx=n_approx - df0, df=n_approx - p,
+  names(fit_beta) <- colnames(X)
+
+  list(coefficients=fit_beta,
+       n_approx=n_approx - df0, df=n_approx - p,
        s2=s2_approx, rss = rss_approx,
        n_obs = length(yo))
 }
@@ -275,9 +278,11 @@ pd_lm_unreg <- function(y, X, rho, zeta,
     n_approx <- df_mod + p
     rss_approx <- s2_approx * df_mod
   }
+  names(fit_beta) <- colnames(X)
 
-
-  list(beta=fit_beta, n_approx=n_approx, df=n_approx - p, s2=s2_approx, rss = rss_approx, n_obs = length(yo))
+  list(coefficients=fit_beta,
+       n_approx=n_approx, df=n_approx - p,
+       s2=s2_approx, rss = rss_approx, n_obs = length(yo))
 }
 
 

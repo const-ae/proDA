@@ -43,14 +43,15 @@ test_that("proDAFit object construction works", {
   rho <- rnorm(5, mean=20)
   zeta <- rnorm(5, mean=-1, sd=0.1)
 
-  feat_params <- data.frame(beta0 = rnorm(20, mean=18),
-                            beta1 = rnorm(20, mean=0),
-                            n_approx = rgamma(20, 4),
+  feat_params <- data.frame(n_approx = rgamma(20, 4),
                             df = 2,
                             s2 = rchisq(20, df=2),
                             rss = rchisq(20, df=2) * 10,
                             n_obs = rpois(20, 8)
                             )
+  coef_mat <- matrix(rnorm(40), nrow=20, ncol=2)
+  colnames(coef_mat) <- c("Intercept", "beta1")
+
 
   conv <- list(successful = TRUE, iterations = 7, error =1e-5)
 
@@ -60,6 +61,7 @@ test_that("proDAFit object construction works", {
            dropout_curve_position = rho,
            dropout_curve_scale = zeta,
            feature_parameters = feat_params,
+           coefficients = coef_mat,
            design_matrix = dm,
            design_formula = NULL,
            reference_level = NULL,
@@ -76,6 +78,7 @@ test_that("proDAFit object construction works", {
                  dropout_curve_position = rho,
                  dropout_curve_scale = zeta,
                  feature_parameters = feat_params,
+                 coefficients = coef_mat,
                  design_matrix = dm,
                  design_formula = NULL,
                  reference_level = NULL,

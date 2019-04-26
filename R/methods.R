@@ -43,6 +43,14 @@ setMethod("feature_parameters", signature = "proDAFit", function(object){
   as.data.frame(rd[, which(mcols(rd)$type == "feature_parameter")])
 })
 
+#' Get the coefficients as a matrix
+#'
+#' @export
+setMethod("coefficients", signature = "proDAFit", function(object){
+  rd <- rowData(object)
+  as.data.frame(rd[, which(mcols(rd)$type == "coefficient")])
+})
+
 #' Get a the reference class
 #'
 #' @export

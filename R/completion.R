@@ -1,7 +1,7 @@
 
 
 
-.methods_to_suggest <- c("abundances", "hyper_parameters", "feature_parameters",
+.methods_to_suggest <- c("abundances", "hyper_parameters", "feature_parameters", "coefficients",
                          "convergence", "design", "reference_level", "colData", "rowData")
 
 

@@ -11,6 +11,10 @@ setGeneric("hyper_parameters", function(object, ...) standardGeneric("hyper_para
 setGeneric("feature_parameters", function(object, ...) standardGeneric("feature_parameters"))
 
 #' @export
+setGeneric("coefficients", function(object, ...) standardGeneric("coefficients"))
+
+
+#' @export
 setGeneric("reference_level", function(object, ...) standardGeneric("reference_level"))
 
 #' @export

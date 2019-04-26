@@ -21,6 +21,7 @@
 proDAFit <- function(data, col_data,
                      dropout_curve_position, dropout_curve_scale,
                      feature_parameters,
+                     coefficients,
                      design_matrix, design_formula, reference_level,
                      location_prior_mean, location_prior_scale, location_prior_df,
                      variance_prior_scale, variance_prior_df,
@@ -61,6 +62,14 @@ proDAFit <- function(data, col_data,
   mcols(feature_params_df) <- DataFrame(type = "feature_parameter",
                                         description = "")
   rowData(se) <- cbind(rowData(se), feature_params_df)
+  if(! is.matrix(coefficients) ||
+     nrow(coefficients) != nrow(se)){
+    stop("coefficients must be a martix with as many rows as data")
+  }
+  coefficients_df <- DataFrame(coefficients)
+  mcols(coefficients_df) <- DataFrame(type = "coefficient",
+                                        description = "The MAP estimate")
+  rowData(se) <- cbind(rowData(se), coefficients_df)
 
   if(! is.matrix(design_matrix) || nrow(design_matrix) != ncol(se)){
     stop("design_matrix must be a matrix and the number of rows must match ",
