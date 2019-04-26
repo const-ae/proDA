@@ -36,10 +36,17 @@ proDAFit <- function(data, col_data,
       colData(se) <- cbind(colData(se), col_data)
     }
   }else if(is.matrix(data)){
-    se <- SummarizedExperiment(assays=list(abundances=data), colData = col_data, ...)
+    if(is.null(col_data)){
+      se <- SummarizedExperiment(assays=list(abundances=data), ...)
+    }else{
+      se <- SummarizedExperiment(assays=list(abundances=data), colData = col_data, ...)
+    }
     rownames(se) <- rownames(data)
   }else{
     stop("data must be a matrix or a SummarizedExperiment")
+  }
+  if(is.null(rownames(se))){
+    rownames(se) <- seq_len(nrow(se))
   }
 
   if(! is.numeric(dropout_curve_position) ||  length(dropout_curve_position) != ncol(se)){
@@ -48,8 +55,8 @@ proDAFit <- function(data, col_data,
   if(! is.numeric(dropout_curve_scale) ||  length(dropout_curve_scale) != ncol(se)){
     stop("dropout_curve_position must be numeric vector with one entry for each column")
   }
-  dropout_df <- DataFrame(dropout_curve_position, dropout_curve_scale)
-  mcols(dropout_df) <- DataFrame(type = "hyper_parameter", description =
+  dropout_df <- S4Vectors::DataFrame(dropout_curve_position, dropout_curve_scale)
+  mcols(dropout_df) <- S4Vectors::DataFrame(type = "hyper_parameter", description =
            c("The intensity where the chance to observe a protein is 50%",
              "How broad the sigmoidal dropout curve is."))
   colData(se) <- cbind(colData(se), dropout_df)
@@ -59,16 +66,16 @@ proDAFit <- function(data, col_data,
      nrow(feature_parameters) != nrow(se)){
     stop("feature_parameters must be a data.frame with as many rows as data and numeric columns")
   }
-  feature_params_df <- DataFrame(feature_parameters)
-  mcols(feature_params_df) <- DataFrame(type = "feature_parameter",
+  feature_params_df <- S4Vectors::DataFrame(feature_parameters)
+  mcols(feature_params_df) <- S4Vectors::DataFrame(type = "feature_parameter",
                                         description = "")
   rowData(se) <- cbind(rowData(se), feature_params_df)
   if(! is.matrix(coefficients) ||
      nrow(coefficients) != nrow(se)){
     stop("coefficients must be a martix with as many rows as data")
   }
-  coefficients_df <- DataFrame(coefficients)
-  mcols(coefficients_df) <- DataFrame(type = "coefficient",
+  coefficients_df <- S4Vectors::DataFrame(coefficients)
+  mcols(coefficients_df) <- S4Vectors::DataFrame(type = "coefficient",
                                         description = "The MAP estimate")
   rowData(se) <- cbind(rowData(se), coefficients_df)
 

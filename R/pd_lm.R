@@ -139,7 +139,7 @@ pd_lm <- function(y, X, rho, zeta, mu0, sigma20, df0, tau20,
 
   list(coefficients=fit_beta,
        n_approx=n_approx - df0, df=n_approx - p,
-       s2=s2_approx, rss = rss_approx,
+       s2=s2_approx, rss = s2_approx * (n_approx - df0 - p),
        n_obs = length(yo))
 }
 

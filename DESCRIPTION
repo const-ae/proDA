@@ -19,4 +19,5 @@ Imports:
     maxLik,
     methods,
     BiocGenerics,
-    SummarizedExperiment
+    SummarizedExperiment,
+    S4Vectors

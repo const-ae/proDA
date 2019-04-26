@@ -35,6 +35,7 @@ test_that("proDAFit object construction works", {
   data <- matrix(rnorm(100), nrow=20, ncol=5)
   data[sample(1:100, 20)] <- NA
   colnames(data) <- paste0("Sample", 1:5)
+  rownames(data) <- paste0("Protein_", 1:20)
   annot_data <- data.frame(sample = paste0("sample_", 1:5),
                            condition = c("A", "A", "B", "B", "C"))
   row_annot_data <- data.frame(name = paste0("protein_", 1:20))
