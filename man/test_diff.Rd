@@ -4,7 +4,8 @@
 \alias{test_diff}
 \title{Main proDA function to identify significant parameters}
 \usage{
-test_diff(parameters, contrast = `???`)
+test_diff(parameters, contrast, alternative = c("two.sided", "greater",
+  "less"), pval_adjust_method = "BH")
 }
 \description{
 Main proDA function to identify significant parameters
