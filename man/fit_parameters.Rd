@@ -5,7 +5,8 @@
 \title{Main proDA function to determine the hyper and protein parameters}
 \usage{
 fit_parameters(data, design = ~1, col_data = NULL,
-  reference_class = NULL)
+  reference_level = NULL, data_is_log_transformed = TRUE,
+  max_iter = 20)
 }
 \description{
 Main proDA function to determine the hyper and protein parameters

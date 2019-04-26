@@ -4,14 +4,14 @@ test_that("Character to model matrix", {
   design_vec <- rep(c("A", "B"), each = 5)
   data <- matrix(0, nrow=100, ncol=10)
 
-  mm <- convert_chr_vec_to_model_matrix(design_vec, reference_class = NULL)
+  mm <- convert_chr_vec_to_model_matrix(design_vec, reference_level = NULL)
   expect_equal(c(mm), rep(c(1,0,0,1), each=5))
   expect_equal(colnames(mm), c("A", "B"))
 
   design_vec <- rep(c("A", "B", "C"), each = 3)
   data <- matrix(0, nrow=100, ncol=9)
 
-  mm <- convert_chr_vec_to_model_matrix(design_vec, reference_class = "C")
+  mm <- convert_chr_vec_to_model_matrix(design_vec, reference_level = "C")
   expect_equal(c(mm), c(rep(1,times=9), rep(c(1,0,0), each=3), rep(c(0,1,0), each=3)))
   expect_equal(colnames(mm), c("Intercept","A_vs_C", "B_vs_C"))
 
@@ -36,7 +36,7 @@ test_that("Formula to model_matrix", {
   expect_equal(unname(colSums(mm)), c(10, 2,2,2,2,0,0))
 
 
-  mm <- convert_formula_to_model_matrix(~ f3 + f4, col_data, reference_class = "world")
+  mm <- convert_formula_to_model_matrix(~ f3 + f4, col_data, reference_level = "world")
   expect_equal(colnames(mm), c("Intercept", "f3hello", "f4bar", "f4foo", "f4foobar", "f4hello"))
 
   f3_mod <- relevel(col_data$f3, ref = "world")
