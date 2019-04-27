@@ -90,7 +90,7 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
     stop("Error the reference_level ", reference_level, " was used in the contrast argument. \n",
          "But it is already absorbed into the intercept, so it is not necessary to subtract it here.")
   }
-  res[levels]
+  res
 }
 
 

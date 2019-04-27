@@ -7,11 +7,32 @@ test_that("invprobit works", {
 })
 
 
+test_that("all observed gives equal results", {
+  X <- cbind(1,
+             rep(c(0.5, -0.5), each=3))
+  y <- c(17.6, 17.5, 18.4, 15, 17.5, 16)
 
-test_that("pd_lm works with missing values", {
+  fit <- pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA)
+  expect_equal(fit$coefficients, coef(lm(y ~ X - 1)))
+})
+
+test_that("some missing gives equal results", {
 
   X <- cbind(1,
              rep(c(0.5, -0.5), each=3))
+  y <- c(17.6, NA, NA, 15, 17.5, 16)
+
+  fit1 <- pd_lm(y ~ X - 1, dropout_curve_position = 18, dropout_curve_scale = -1, method = "analytic_hessian")
+  fit2 <- pd_lm(y ~ X - 1, dropout_curve_position = 18, dropout_curve_scale = -1, method = "analytic_grad")
+  fit3 <- pd_lm(y ~ X - 1, dropout_curve_position = 18, dropout_curve_scale = -1, method = "numeric")
+  expect_equal(fit1, fit2, tolerance = 1e-2)
+  expect_equal(fit3, fit2, tolerance = 1e-2)
+})
+
+
+test_that("pd_lm works with moderaton", {
+
+  X <- matrix(rep(c(0.5, -0.5), each=3), ncol=1)
   y <- c(17.6, 17.5, 18.4, NA, 17.5, NA)
   t_rho <- rep(18, 6)
   t_zeta <- rep(-0.8, 6)
@@ -19,33 +40,23 @@ test_that("pd_lm works with missing values", {
   t_sigma20 <- 5
   t_tau20 <- 0.04
   t_df0 <- 1.3
-  fit <- pd_lm(y, X,
-     rho = t_rho, zeta = t_zeta, mu0 = t_mu0, sigma20 = t_sigma20,
-     tau20 = t_tau20, df0 = t_df0, method="analytic")
 
-  lm(y ~ X)
-  fit
-
-})
-
-
-test_that("pd_lm_unreg works without missing values", {
-
-  X <- cbind(1,
-             rep(c(0.5, -0.5), each=3))
-  y <- c(17.6, 17.5, 18.4, 17.2, 17.5, 17.8)
-  t_rho <- rep(18, 6)
-  t_zeta <- rep(-0.8, 6)
-
-  fit <- pd_lm_unreg(y, X,
-    rho = t_rho, zeta = t_zeta,  method="analytic")
-  lin_m <- lm(y ~ X)
-  expect_equal(length(y), fit$n_approx)
-  expect_equal(summary(lin_m)$sigma, sqrt(fit$s2))
-  expect_equal(sum((y - predict(lin_m))^2), fit$rss)
+  fit1 <- pd_lm(y ~ X, dropout_curve_position = t_rho, dropout_curve_scale = t_zeta,
+                location_prior_mean = t_mu0, location_prior_scale = t_sigma20,
+                variance_prior_scale = t_tau20, variance_prior_df = t_df0,
+                method = "analytic_hessian")
+  fit2 <- pd_lm(y ~ X, dropout_curve_position = t_rho, dropout_curve_scale = t_zeta,
+                location_prior_mean = t_mu0, location_prior_scale = t_sigma20,
+                variance_prior_scale = t_tau20, variance_prior_df = t_df0,
+                method = "analytic_grad")
+  fit3 <- pd_lm(y ~ X, dropout_curve_position = t_rho, dropout_curve_scale = t_zeta,
+                location_prior_mean = t_mu0, location_prior_scale = t_sigma20,
+                variance_prior_scale = t_tau20, variance_prior_df = t_df0,
+                method = "numeric")
+  expect_equal(fit1, fit2, tolerance = 1e-2)
+  expect_equal(fit3, fit2, tolerance = 1e-1)
 
 })
-
 
 
 
@@ -62,24 +73,17 @@ test_that("pd_lm has the right names", {
                          stringsAsFactors = FALSE)
 
   y <- rnorm(10, mean=10)
+  col_data$resp <- y
+  lm_coef <- coef(lm(y ~ f4, data=col_data))
+  fit <- pd_lm(y ~ f4, data = col_data, dropout_curve_position = NA, dropout_curve_scale = NA)
+  fit1.5 <- pd_lm(resp ~ f4, data = col_data, dropout_curve_position = NA, dropout_curve_scale = NA)
+  fit2 <- pd_lm(y ~ f4 - 1, data = col_data, dropout_curve_position = NA, dropout_curve_scale = NA)
 
-  coef(lm(y ~ f4, data=col_data))
-  dm <- model.matrix(~ f4, data=col_data)
-  fit <- pd_lm_unreg(y, dm, rho=rep(NA, 10), zeta= rep(NA, 10))
-  dm2 <- model.matrix(~ f4 - 1, data=col_data)
-  fit2 <- pd_lm_unreg(y, dm2, rho=rep(NA, 10), zeta= rep(NA, 10))
-  fit
-  fit2
-
-  beta_vars <- fit$s2 * diag(solve(t(dm) %*% dm))
-  fit$beta["f4foo"] / sqrt(beta_vars["f4foo"])
-
-  cntrst <- c(-1, 0, 1, 0, 0)
-  names(cntrst) <- colnames(dm2)
-  cntrst
-
-  fit2$beta %*% cntrst
-  t(cntrst) %*% solve(t(dm2) %*% dm2) %*% cntrst
+  expect_equal(unname(lm_coef), unname(fit$coefficients))
+  expect_equal(names(fit$coefficients[-1]),
+               names(fit2$coefficients[-1]))
+  expect_equal(fit$coefficients["Intercept"] + fit$coefficients[-1],
+               fit2$coefficients[-1])
 
 })
 
@@ -87,5 +91,98 @@ test_that("pd_lm has the right names", {
 
 
 
+test_that("derivatives are correct", {
+
+  dropout_curve_position <- rep(8, times=5)
+  dropout_curve_scale <- rep(-1, times=5)
+  mu0 <- 14
+  sigma20 <- 0.3
+  df0 <- 2
+  tau20 <- 0.05
+  location_prior_df <- 4
+  moderate_location <- FALSE
+  moderate_variance <- FALSE
+
+  X <- cbind(c(1,1,0,0,0),c(0,0,1,1,1))
+  y <- c(13, 12, NA, 11, 10)
+
+  Xo <- X[!is.na(y), , drop=FALSE]
+  Xm <- X[is.na(y), , drop=FALSE]
+  yo <- y[!is.na(y)]
+  p <- ncol(X)
+  rho <- dropout_curve_position[is.na(y)]
+  zeta <- dropout_curve_scale[is.na(y)]
+
+  par <- c(4, 4, 1)
+  num_grad <- numDeriv::grad(func = function(par){
+    beta <- par[seq_len(ncol(X))]
+    sigma2 <- par[p+1]
+    if(sigma2 <= 0) return(10000)
+    zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+    objective_fnc(y, yo, X, Xm, Xo,
+                  beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                  location_prior_df, moderate_location, moderate_variance)
+  }, x = par)
+
+  num_hessian <- numDeriv::hessian(func = function(par){
+    beta <- par[seq_len(ncol(X))]
+    sigma2 <- par[p+1]
+    if(sigma2 <= 0) return(10000)
+    zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+    objective_fnc(y, yo, X, Xm, Xo,
+                  beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                  location_prior_df, moderate_location, moderate_variance)
+  }, x = par)
+
+  beta <- par[seq_len(ncol(X))]
+  sigma2 <- par[p+1]
+  zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+  grad_result <- grad_fnc(y, yo, X, Xm, Xo,
+                beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                location_prior_df, moderate_location, moderate_variance)
+  hessian_result <- hess_fnc(y, yo, X, Xm, Xo,
+                 beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                 location_prior_df, moderate_location, moderate_variance,
+                 1:2, 2)
+  expect_equal(num_grad, grad_result, tol = 1e-8)
+  expect_equal(num_hessian, hessian_result, tol = 1e-8)
+
+
+
+
+
+
+
+
+  num_grad2 <- numDeriv::grad(func = function(par){
+    beta <- par[seq_len(ncol(X))]
+    sigma2 <- par[p+1]
+    zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+    objective_fnc(y, yo, X, Xm, Xo,
+                  beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                  location_prior_df, moderate_location=TRUE, moderate_variance=TRUE)
+  }, x = par)
+
+  num_hessian2 <- numDeriv::hessian(func = function(par){
+    beta <- par[seq_len(ncol(X))]
+    sigma2 <- par[p+1]
+    zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+    objective_fnc(y, yo, X, Xm, Xo,
+                  beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                  location_prior_df, moderate_location=TRUE, moderate_variance=TRUE)
+  }, x = par)
+  grad_result2 <- grad_fnc(y, yo, X, Xm, Xo,
+                          beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                          location_prior_df, moderate_location=TRUE, moderate_variance=TRUE)
+  hessian_result2 <- hess_fnc(y, yo, X, Xm, Xo,
+                             beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20,
+                             location_prior_df, moderate_location=TRUE, moderate_variance=TRUE,
+                             1:2, 2)
+  expect_equal(num_grad2, grad_result2, tol = 1e-8)
+  expect_equal(num_hessian2, hessian_result2, tol = 1e-8)
+
+
+
+})
 
 
