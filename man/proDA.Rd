@@ -6,7 +6,8 @@
 \usage{
 proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
   data_is_log_transformed = TRUE, location_prior_df = 3,
-  max_iter = 20, epsilon = 1e-05, verbose = FALSE, ...)
+  moderate_location = TRUE, moderate_variance = TRUE, max_iter = 20,
+  epsilon = 1e-05, verbose = FALSE, ...)
 }
 \description{
 Main proDA function to determine the hyper and protein parameters

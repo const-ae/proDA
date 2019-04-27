@@ -14,9 +14,10 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Suggests: 
-    testthat
+    testthat,
+    limma,
+    numDeriv
 Imports: 
-    maxLik,
     methods,
     BiocGenerics,
     SummarizedExperiment,

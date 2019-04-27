@@ -93,19 +93,18 @@ pd_lm.fit <- function(y, X,
                       verbose = FALSE){
 
   method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
-  stopifnot(is.null(location_prior_mean) == is.null(location_prior_scale))
-  stopifnot(is.null(variance_prior_scale) == is.null(variance_prior_df))
 
-  moderate_location <- ! is.null(location_prior_mean)
-  moderate_variance <- ! is.null(variance_prior_scale)
-
-  all_observed <- all(! is.na(y))
+  moderate_location <- !missing(location_prior_mean) && ! is.null(location_prior_mean) && ! is.na(location_prior_mean)
+  moderate_variance <- !missing(variance_prior_scale) && ! is.null(variance_prior_scale)  && ! is.na(variance_prior_scale)
 
   Xo <- X[!is.na(y), , drop=FALSE]
   Xm <- X[is.na(y), , drop=FALSE]
   yo <- y[!is.na(y)]
   p <- ncol(X)
   n <- nrow(X)
+
+  all_observed <- all(! is.na(y))
+  too_many_missing <- nrow(Xo) < ncol(X) + 1  # Estimate more parameters than observations?
 
   rho <- dropout_curve_position[is.na(y)]
   zeta <- dropout_curve_scale[is.na(y)]
@@ -131,6 +130,8 @@ pd_lm.fit <- function(y, X,
     fit_beta <- coefficients(lm_res)
     fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
     fit_sigma2_var <- 2 * fit_sigma2^2 / n
+  }else if(too_many_missing && ! moderate_variance && ! moderate_location){
+    return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
   }else if(method == "numeric"){
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
       beta <- par[beta_sel]
@@ -150,7 +151,7 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- opt_res$par[beta_sel]
@@ -186,7 +187,7 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- opt_res$par[beta_sel]
@@ -232,7 +233,7 @@ pd_lm.fit <- function(y, X,
         warning(nl_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- nl_res$par[beta_sel]
@@ -253,17 +254,17 @@ pd_lm.fit <- function(y, X,
   s2_approx <- rss_approx / (n_approx - p)
 
   if(s2_approx < 0 || n_approx <= p){
-    df_mod <- 1e-3
-    s2_approx <- sqrt(fit_sigma2_var / df_mod^2 * (df_mod + 2)^2 * (df_mod + 2) / 2)
-    n_approx <- df_mod + p
-    rss_approx <- s2_approx * df_mod
+    df_approx <- 1e-3
+    s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
+    n_approx <- df_approx + p
+    rss_approx <- s2_approx * df_approx
   }else{
     if(moderate_variance){
       n_approx <- n_approx - variance_prior_df
       df_approx <- n_approx - p + variance_prior_df
       if(df_approx > 30 * n && df_approx > 100){
         df_approx <- Inf
-        s2_approx <- tau20   # Check if this is correct
+        s2_approx <- variance_prior_scale   # Check if this is correct
       }
     }else{
       df_approx <- n_approx - p

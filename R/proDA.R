@@ -34,6 +34,8 @@ proDA <- function(data, design=~ 1,
                   reference_level = NULL,
                   data_is_log_transformed = TRUE,
                   location_prior_df = 3,
+                  moderate_location = TRUE,
+                  moderate_variance = TRUE,
                   max_iter = 20,
                   epsilon = 1e-5,
                   verbose=FALSE, ...){
@@ -82,6 +84,8 @@ proDA <- function(data, design=~ 1,
 
   fit_result <- fit_parameters_loop(data_mat, model_matrix,
                                     location_prior_df = location_prior_df,
+                                    moderate_location = moderate_location,
+                                    moderate_variance = moderate_variance,
                                     max_iter = max_iter,
                                     epsilon = epsilon,
                                     verbose = verbose)
@@ -89,6 +93,7 @@ proDA <- function(data, design=~ 1,
   feat_df <- as.data.frame(mply_dbl(fit_result$feature_parameters, function(f){
     unlist(f[-1])
   }, ncol = 5))
+  feat_df$rss <- fit_result$rss
   coef_mat <- mply_dbl(fit_result$feature_parameters, function(f){
     f$coefficients
   }, ncol=ncol(model_matrix))
@@ -111,7 +116,9 @@ proDA <- function(data, design=~ 1,
 }
 
 
-fit_parameters_loop <- function(Y, model_matrix, location_prior_df, max_iter, epsilon, verbose=FALSE){
+fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
+                                moderate_location, moderate_variance,
+                                max_iter, epsilon, verbose=FALSE){
   if(verbose){
     message("Fitting the hyper-parameters for the probabilistic dropout model.")
   }
@@ -122,22 +129,34 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df, max_iter, ep
   Y_compl <- Y
   Y_compl[is.na(Y)] <- rnorm(sum(is.na(Y)), mean=quantile(Y, probs=0.1, na.rm=TRUE), sd=sd(Y,na.rm=TRUE)/5)
   res_init <- lapply(seq_len(nrow(Y)), function(i){
-    pd_lm_unreg(Y_compl[i, ], model_matrix, rho=rep(NA, n_samples), zeta=rep(NA, n_samples), method="analytic_grad")
+    pd_lm.fit(Y_compl[i, ], model_matrix,
+              dropout_curve_position = rep(NA, n_samples),
+              dropout_curve_scale =rep(NA, n_samples))
   })
   Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% t(model_matrix)
   s2_init <-  vapply(res_init, function(x) x[["s2"]], 0.0)
   df_init <- vapply(res_init, function(x) x[["df"]], 0.0)
-  lp <- location_prior(model_matrix, Pred = Pred_init, s2 = s2_init)
-  mu0 <- lp$mu0
-  sigma20 <- lp$sigma20
+  if(moderate_location){
+    lp <- location_prior(model_matrix, Pred = Pred_init, s2 = s2_init)
+    mu0 <- lp$mu0
+    sigma20 <- lp$sigma20
+  }else{
+    mu0 <- NA_real_
+    sigma20 <- NA_real_
+  }
   dc <- dropout_curves(Y, model_matrix, Pred_init, s2_init)
   rho <- dc$rho
-  zeta <- dc$zeta
-  vp <- variance_prior(s2_init, df_init)
-  tau0 <- vp$tau
-  df0 <- vp$df0
+  zetainv <- dc$zetainv
+  if(moderate_variance){
+    vp <- variance_prior(s2_init, df_init)
+    tau20 <- vp$tau20
+    df0_inv <- vp$df0_inv
+  }else{
+    tau20 <- NA_real_
+    df0_inv <- NA_real_
+  }
 
-  last_round_params <- list(mu0, sigma20, rho, zeta, tau0, df0)
+  last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
   converged <- FALSE
   iter <- 1
   while(! converged && iter <= max_iter){
@@ -146,34 +165,46 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df, max_iter, ep
     }
 
     res_unreg <- lapply(seq_len(nrow(Y)), function(i){
-      pd_lm_unreg(Y[i, ], model_matrix, rho=rho, zeta=zeta,
-                  method="analytic_grad")
+      pd_lm.fit(Y[i, ], model_matrix,
+                dropout_curve_position = rho, dropout_curve_scale = 1/zetainv)
     })
-    res_reg <- lapply(seq_len(nrow(Y)), function(i){
-      pd_lm(Y[i, ], model_matrix, rho=rho, zeta=zeta, mu0=mu0, sigma20=sigma20, tau20=tau0, df0=df0,
-            method="analytic_grad")
-    })
+    if(moderate_location || moderate_variance){
+      res_reg <- lapply(seq_len(nrow(Y)), function(i){
+        pd_lm.fit(Y[i, ], model_matrix,
+                  dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
+                  location_prior_mean = mu0, location_prior_scale = sigma20,
+                  variance_prior_scale = tau20, variance_prior_df = df0_inv,
+                  location_prior_df = location_prior_df)
+      })
+    }else{
+      res_reg <- res_unreg
+    }
 
     Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %*% t(model_matrix)
     Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %*% t(model_matrix)
     s2_unreg <-  vapply(res_unreg, function(x) x[["s2"]], 0.0)
     s2_reg <-  vapply(res_reg, function(x) x[["s2"]], 0.0)
     df_unreg <-vapply(res_unreg, function(x) x[["df"]], 0.0)
-    lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                         mu0 = mean( Pred_reg),
-                         s2 = s2_unreg)
-    mu0 <- lp$mu0
-    sigma20 <- lp$sigma20
+
+    if(moderate_location){
+      lp <- location_prior(model_matrix, Pred = Pred_unreg,
+                           mu0 = mean( Pred_reg),
+                           s2 = s2_unreg)
+      mu0 <- lp$mu0
+      sigma20 <- lp$sigma20
+    }
     dc <- dropout_curves(Y, model_matrix, Pred_reg, s2_reg)
     rho <- dc$rho
-    zeta <- dc$zeta
-    vp <- variance_prior(s2_unreg, df_unreg)
-    tau0 <- vp$tau
-    df0 <- vp$df0
+    zetainv <- dc$zetainv
+    if(moderate_variance){
+      vp <- variance_prior(s2_unreg, df_unreg)
+      tau20 <- vp$tau20
+      df0_inv <- vp$df0_inv
+    }
 
     error <- sum(mapply(function(new, old) {
       sum(new - old, na.rm=TRUE)/length(new)
-    }, list(mu0, sigma20, rho, zeta, tau0, df0), last_round_params)^2)
+    }, list(mu0, sigma20, rho, zetainv, tau20, df0_inv), last_round_params)^2)
     if (error < epsilon) {
       if(verbose){
         message("Converged!")
@@ -181,7 +212,10 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df, max_iter, ep
       converged <- TRUE
     }
 
-    last_round_params <- list(mu0, sigma20, rho, zeta, tau0, df0)
+    last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
+    if(verbose){
+      print(last_round_params)
+    }
     iter <- iter + 1
   }
 
@@ -190,10 +224,14 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df, max_iter, ep
   names(last_round_params) <- c("location_prior_mean", "location_prior_scale",
                                 "dropout_curve_position", "dropout_curve_scale",
                                 "variance_prior_scale", "variance_prior_df")
+  last_round_params[["dropout_curve_scale"]] <- 1/last_round_params[["dropout_curve_scale"]]
+  last_round_params[["variance_prior_df"]] <- 1/last_round_params[["variance_prior_df"]]
 
+  rss_unreg <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   list(hyper_parameters = last_round_params,
        convergence = convergence,
-       feature_parameters = res_reg)
+       feature_parameters = res_reg,
+       rss = rss_unreg)
 
 }
 
@@ -208,15 +246,15 @@ variance_prior <- function(s2, df){
   if(any(s2 <= 0, na.rm=TRUE)){
     stop(paste0("All s2 must be positive. ", paste0(which(s2 < 0), collapse=", "), " are not."))
   }
-  opt_res <- optim(par=c(tau=1, df=1), function(par){
+  opt_res <- optim(par=c(tau=1, dfinv=1), function(par){
     if(par[1] < 0 || par[2] < 0 ) return(Inf)
-    -sum(df(s2/par[1], df1=df, df2=par[2], log=TRUE) - log(par[1]), na.rm=TRUE)
+    -sum(df(s2/par[1], df1=df, df2=1/par[2], log=TRUE) - log(par[1]), na.rm=TRUE)
   })
   if(opt_res$convergence != 0){
     warning("Model didn't not properly converge\n")
     print(opt_res)
   }
-  list(tau0 = unname(opt_res$par[1]), df0=unname(opt_res$par[2]))
+  list(tau20 = unname(opt_res$par[1]), df0_inv=unname(opt_res$par[2]))
 }
 
 
@@ -257,19 +295,23 @@ dropout_curves <- function(Y, X, Pred, s2){
   n_samples <- nrow(X)
   Pred_var <- s2 %*% t(sapply(seq_len(nrow(X)), function(i) t(X[i,]) %*% solve(t(X) %*% X) %*% X[i,]))
 
+  mu0 <- median(Pred, na.rm=TRUE)
+  sigma20 <- median((mu0 - Pred)^2, na.rm=TRUE)
+
   rho <- rep(NA, n_samples)
-  zeta <- rep(NA, n_samples)
+  zetainv <- rep(NA, n_samples)
   for(colidx in seq_len(n_samples)){
     y <- Y[, colidx]
     yo <- y[! is.na(y)]
     predm <- Pred[is.na(y), colidx]
     pred_var_m <- Pred_var[is.na(y), colidx]
     if(any(is.na(y))){
-      opt_res <- optim(par=c(rho=20, zeta=-5), function(par){
+      opt_res <- optim(par=c(rho=0, zetainv=-1/5), function(par){
         if(par[2]  >= 0) return(Inf)
         val <- 0 +
-          sum(proDD::invprobit(yo, par[1], par[2], log=TRUE, oneminus = TRUE), na.rm=TRUE) +
-          sum(proDD::invprobit(predm, par[1], sign(par[2]) * sqrt(par[2]^2 +  pred_var_m), log=TRUE), na.rm=TRUE)
+          dnorm(par[1], mu0, sd=sqrt(sigma20), log=TRUE) +
+          sum(proDD::invprobit(yo, par[1], 1/par[2], log=TRUE, oneminus = TRUE), na.rm=TRUE) +
+          sum(proDD::invprobit(predm, par[1], sign(par[2]) * sqrt(1/par[2]^2 +  pred_var_m), log=TRUE), na.rm=TRUE)
         -val
       })
       if(opt_res$convergence != 0){
@@ -277,14 +319,14 @@ dropout_curves <- function(Y, X, Pred, s2){
         print(opt_res)
       }
       rho[colidx] <- opt_res$par[1]
-      zeta[colidx] <- opt_res$par[2]
+      zetainv[colidx] <- opt_res$par[2]
     }else{
       rho[colidx] <- NA_real_
-      zeta[colidx] <- NA_real_
+      zetainv[colidx] <- NA_real_
     }
   }
 
-  list(rho=rho, zeta=zeta)
+  list(rho=rho, zetainv=zetainv)
 }
 
 

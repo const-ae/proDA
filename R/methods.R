@@ -91,9 +91,17 @@ setMethod("show", signature = "proDAFit", function(object){
   hp <- object$hyper_parameters
   hyper_para_txt <- paste0("\nThe inferred parameters are:\n",
                            paste0(vapply(seq_along(hp), function(idx){
+                             pretty_num <- if(names(hp)[idx] == "dropout_curve_scale" ||
+                                              names(hp)[idx] == "variance_prior_df"){
+                               ifelse(abs(hp[[idx]]) < 100,
+                                      formatC(hp[[idx]][seq_len(min(length(hp[[idx]]), 4))], digits=3, width=1, format="g"),
+                                      ifelse(hp[[idx]] > 100, "> 100", "< -100"))
+                             }else{
+                               formatC(hp[[idx]][seq_len(min(length(hp[[idx]]), 4))], digits=3, width=1, format="g")
+                             }
                              paste0(names(hp)[idx], ":",
                                     paste0(rep(" ", times=24-nchar(names(hp)[idx])), collapse=""),
-                                    paste0(formatC(hp[[idx]][seq_len(min(length(hp[[idx]]), 4))], digits=3, width=1, format="g"), collapse=", "),
+                                    paste0(pretty_num, collapse=", "),
                                     (if(length(hp[[idx]]) <= 4) "" else ", ..."))
                            }, FUN.VALUE = ""), collapse = "\n"))
 
