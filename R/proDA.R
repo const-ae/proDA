@@ -188,7 +188,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     if(moderate_location){
       lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                           mu0 = mean( Pred_reg),
+                           mu0 = mean( Pred_reg, na.rm=TRUE),
                            s2 = s2_unreg)
       mu0 <- lp$mu0
       sigma20 <- lp$sigma20

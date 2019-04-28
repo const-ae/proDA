@@ -56,19 +56,31 @@ test_that("proDA works with missing values", {
   data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
   data[sample(seq_len(100 * 5), 150)] <- NA
 
-  pd_fit <- proDA(data, c("A", "A", "B", "B", "B"),
-                  moderate_location = FALSE, verbose=TRUE)
+  pd_fit1 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_location = TRUE, verbose=TRUE)
+  pd_fit2 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_location = FALSE, verbose=TRUE)
+  pd_fit3 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_variance = FALSE, verbose=TRUE)
+  pd_fit4 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_variance = FALSE, moderate_location = FALSE,
+                   verbose=TRUE)
 })
 
 test_that("proDA works with many missing values", {
-  set.seed(1)
+  set.seed(2)
   data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
-  data[sample(seq_len(100 * 5), 150)] <- NA
+  data[sample(seq_len(100 * 5), 350)] <- NA
 
-  pd_fit <- proDA(data, c("A", "A", "B", "B", "B"),
-                  moderate_location = FALSE, verbose=TRUE)
+  pd_fit1 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_location = TRUE, verbose=TRUE)
   pd_fit2 <- proDA(data, c("A", "A", "B", "B", "B"),
-                  moderate_location = TRUE, verbose=TRUE)
+                  moderate_location = FALSE, verbose=TRUE)
+  pd_fit3 <- proDA(data, c("A", "A", "B", "B", "B"),
+                  moderate_variance = FALSE, verbose=TRUE)
+  pd_fit4 <- proDA(data, c("A", "A", "B", "B", "B"),
+                   moderate_variance = FALSE, moderate_location = FALSE,
+                   verbose=TRUE)
 })
 
 

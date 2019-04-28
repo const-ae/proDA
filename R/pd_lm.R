@@ -113,14 +113,14 @@ pd_lm.fit <- function(y, X,
   rho <- dropout_curve_position[is.na(y)]
   zeta <- dropout_curve_scale[is.na(y)]
 
-  if(! is.null(location_prior_mean)){
+  if(moderate_location){
     beta_init <- c(location_prior_mean, rep(0, times=p-1))
   }else if(length(yo) == 0){
     beta_init <- rep(0, times=p)
   }else{
     beta_init <- c(mean(yo), rep(0, times=p-1))
   }
-  if(! is.null(variance_prior_scale)){
+  if(moderate_variance){
     sigma2_init <- variance_prior_df * variance_prior_scale / (variance_prior_df + 2)
   }else{
     sigma2_init <- 1
@@ -134,10 +134,8 @@ pd_lm.fit <- function(y, X,
     fit_beta <- coefficients(lm_res)
     fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
     fit_sigma2_var <- 2 * fit_sigma2^2 / n
-  }else if(all_missing && ! moderate_variance && moderate_location){
+  }else if(all_missing && ! moderate_variance){
     return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
-  }else if(all_missing && ! moderate_variance && ! moderate_location){
-    return(list(coefficients=rep(-Inf, p), n_approx=NA, df=NA, s2=Inf, rss=NA, n_obs = length(yo)))
   }else if(method == "numeric"){
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
       beta <- par[beta_sel]
@@ -254,18 +252,18 @@ pd_lm.fit <- function(y, X,
     fit_sigma2_var <- 1/hessian[p+1, p+1]
   }
 
-  # Set estimates to -Inf if no reasonable inference
+  # Set estimates to NA if no reasonable inference
   zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
   coef_should_be_inf <- vapply(seq_len(ncol(Xo)), function(colidx){
     sel <- Xm[, colidx] != 0
     any(invprobit(fit_beta[colidx], rho[sel], zetastar[sel], oneminus = TRUE) <  1e-8)
   }, FUN.VALUE = FALSE)
-  fit_beta[coef_should_be_inf] <- -Inf
+  fit_beta[coef_should_be_inf] <- NA
   if(all(coef_should_be_inf)){
     n_approx <- NA
     df_approx <- NA
     rss_approx <- NA
-    s2_approx <- Inf
+    s2_approx <- NA
   }else{
     n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
     rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
