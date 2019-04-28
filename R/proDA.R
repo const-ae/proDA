@@ -173,7 +173,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
         pd_lm.fit(Y[i, ], model_matrix,
                   dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
                   location_prior_mean = mu0, location_prior_scale = sigma20,
-                  variance_prior_scale = tau20, variance_prior_df = df0_inv,
+                  variance_prior_scale = tau20, variance_prior_df = 1/df0_inv,
                   location_prior_df = location_prior_df)
       })
     }else{
@@ -188,7 +188,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     if(moderate_location){
       lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                           mu0 = mean( Pred_reg, na.rm=TRUE),
+                           # mu0 = mean( Pred_reg, na.rm=TRUE),
                            s2 = s2_unreg)
       mu0 <- lp$mu0
       sigma20 <- lp$sigma20
@@ -267,7 +267,7 @@ location_prior <- function(X, Pred, s2,
   }
 
   pred <- c(Pred)
-  larger_than_mu0 <- pred > mu0
+  larger_than_mu0 <- which(pred > mu0)
   pred <- (pred - mu0)[larger_than_mu0]
   pred_var <- c(s2 %*% t(sapply(seq_len(nrow(X)), function(i) t(X[i,]) %*% solve(t(X) %*% X) %*% X[i,])))[larger_than_mu0]
 
