@@ -186,3 +186,98 @@ test_that("derivatives are correct", {
 })
 
 
+
+
+
+test_that("available information is correctly reflected", {
+
+  # var and loc moderation --> everything fine
+  y <- c(NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0), c(0,0,1,1))
+  fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+        location_prior_mean = 0, location_prior_scale = 1,
+        variance_prior_scale = 0.1, variance_prior_df = 2)
+  expect_true(all(! is.na(coefficients(fit_all_mis))))
+  expect_true(! is.na(fit_all_mis$s2))
+
+  # only location moderation --> At least one condition with one obs
+  # Sometimes the information is not enough than all is NA...
+  y <- c(NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0), c(0,0,1,1))
+  fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                       location_prior_mean = 0, location_prior_scale = 1,
+                       location_prior_df = 100)
+  expect_true(all(is.na(coefficients(fit_all_mis))))
+  expect_true(is.na(fit_all_mis$s2))
+
+  y <- c(5, NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
+  fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                       location_prior_mean = 0, location_prior_scale = 1)
+  expect_true(all(!is.na(coefficients(fit_all_but_on_mis))))
+  expect_true(!is.na(fit_all_but_on_mis$s2))
+
+  # var moderation --> Everything is fine
+  # but if there is no obs for a cond, than beta = -Inf
+  y <- c(NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0), c(0,0,1,1))
+  fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                       variance_prior_scale = 0.1, variance_prior_df = 2)
+  expect_true(all(is.infinite(coefficients(fit_all_mis))))
+  expect_true(is.infinite(fit_all_mis$s2))
+
+  y <- c(5, NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
+  fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                              variance_prior_scale = 0.1, variance_prior_df = 2)
+  expect_true(all(!is.na(coefficients(fit_all_but_on_mis))))
+  expect_true(all(is.infinite(coefficients(fit_all_but_on_mis)[2:3])))
+  expect_true(is.finite(fit_all_but_on_mis$s2))
+
+  # No moderation. At least one observation.
+  # but if there is no obs for a cond, than beta = -Inf
+  y <- c(NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0), c(0,0,1,1))
+  fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1)
+  expect_true(all(is.infinite(coefficients(fit_all_mis))))
+  expect_true(is.infinite(fit_all_mis$s2))
+
+  y <- c(5, NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
+  fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1)
+  expect_true(all(!is.na(coefficients(fit_all_but_on_mis))))
+  expect_true(all(is.infinite(coefficients(fit_all_but_on_mis)[2:3])))
+  expect_true(is.finite(fit_all_but_on_mis$s2))
+
+})
+
+
+
+test_that("There are more values than parameters", {
+  y <- c(12, 13)
+  X <- matrix(c(1,0, 0, 1), ncol=2, nrow=2)
+
+  expect_silent(pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA,
+                      location_prior_mean = 0, location_prior_scale = 1,
+                      variance_prior_scale = 0.1, variance_prior_df = 2))
+  expect_silent(pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA,
+                      variance_prior_scale = 0.1, variance_prior_df = 2))
+
+  expect_silent(pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA,
+                      location_prior_mean = 0, location_prior_scale = 1))
+
+  expect_error(pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA))
+
+
+})
+
+
+
+
+
+
+
+
+
+
+

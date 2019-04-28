@@ -97,6 +97,10 @@ pd_lm.fit <- function(y, X,
   moderate_location <- !missing(location_prior_mean) && ! is.null(location_prior_mean) && ! is.na(location_prior_mean)
   moderate_variance <- !missing(variance_prior_scale) && ! is.null(variance_prior_scale)  && ! is.na(variance_prior_scale)
 
+  if(! moderate_location && ! moderate_variance && nrow(X) < ncol(X) + 1){
+    stop("Underdetermined system. There are more parameters to estimate than available rows.")
+  }
+
   Xo <- X[!is.na(y), , drop=FALSE]
   Xm <- X[is.na(y), , drop=FALSE]
   yo <- y[!is.na(y)]
@@ -104,13 +108,13 @@ pd_lm.fit <- function(y, X,
   n <- nrow(X)
 
   all_observed <- all(! is.na(y))
-  too_many_missing <- nrow(Xo) < ncol(X) + 1  # Estimate more parameters than observations?
+  all_missing <- all(is.na(y))
 
   rho <- dropout_curve_position[is.na(y)]
   zeta <- dropout_curve_scale[is.na(y)]
 
   if(! is.null(location_prior_mean)){
-    beta_init <- c(3, rep(0, times=p-1))
+    beta_init <- c(location_prior_mean, rep(0, times=p-1))
   }else if(length(yo) == 0){
     beta_init <- rep(0, times=p)
   }else{
@@ -130,8 +134,10 @@ pd_lm.fit <- function(y, X,
     fit_beta <- coefficients(lm_res)
     fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
     fit_sigma2_var <- 2 * fit_sigma2^2 / n
-  }else if(too_many_missing && ! moderate_variance && ! moderate_location){
+  }else if(all_missing && ! moderate_variance && moderate_location){
     return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
+  }else if(all_missing && ! moderate_variance && ! moderate_location){
+    return(list(coefficients=rep(-Inf, p), n_approx=NA, df=NA, s2=Inf, rss=NA, n_obs = length(yo)))
   }else if(method == "numeric"){
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
       beta <- par[beta_sel]
@@ -248,26 +254,39 @@ pd_lm.fit <- function(y, X,
     fit_sigma2_var <- 1/hessian[p+1, p+1]
   }
 
-
-  n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
-  rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
-  s2_approx <- rss_approx / (n_approx - p)
-
-  if(s2_approx < 0 || n_approx <= p){
-    df_approx <- 1e-3
-    s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
-    n_approx <- df_approx + p
-    rss_approx <- s2_approx * df_approx
+  # Set estimates to -Inf if no reasonable inference
+  zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
+  coef_should_be_inf <- vapply(seq_len(ncol(Xo)), function(colidx){
+    sel <- Xm[, colidx] != 0
+    any(invprobit(fit_beta[colidx], rho[sel], zetastar[sel], oneminus = TRUE) <  1e-8)
+  }, FUN.VALUE = FALSE)
+  fit_beta[coef_should_be_inf] <- -Inf
+  if(all(coef_should_be_inf)){
+    n_approx <- NA
+    df_approx <- NA
+    rss_approx <- NA
+    s2_approx <- Inf
   }else{
-    if(moderate_variance){
-      n_approx <- n_approx - variance_prior_df
-      df_approx <- n_approx - p + variance_prior_df
-      if(df_approx > 30 * n && df_approx > 100){
-        df_approx <- Inf
-        s2_approx <- variance_prior_scale   # Check if this is correct
-      }
+    n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
+    rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
+    s2_approx <- rss_approx / (n_approx - p)
+
+    if(s2_approx < 0 || n_approx <= p){
+      df_approx <- 1e-3
+      s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
+      n_approx <- df_approx + p
+      rss_approx <- s2_approx * df_approx
     }else{
-      df_approx <- n_approx - p
+      if(moderate_variance){
+        n_approx <- n_approx - variance_prior_df
+        df_approx <- n_approx - p + variance_prior_df
+        if(df_approx > 30 * n && df_approx > 100){
+          df_approx <- Inf
+          s2_approx <- variance_prior_scale   # Check if this is correct
+        }
+      }else{
+        df_approx <- n_approx - p
+      }
     }
   }
 
