@@ -84,7 +84,7 @@ setMethod("show", signature = "proDAFit", function(object){
     converged_txt <- "The model has successfully converged."
   }else{
     converged_txt <- paste0("Attention: the model has not converged.\n",
-                            "The error in the last iteration (", convergence(object)$iteration, ") was ", convergence(object)$error, "\n",
+                            "The error in the last iteration (", convergence(object)$iteration, ") was ", sprintf("%.2g",convergence(object)$error), "\n",
                             "Please re-run the model with increased number of max_iter.")
   }
 

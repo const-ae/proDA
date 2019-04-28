@@ -81,6 +81,10 @@ test_that("proDA works with many missing values", {
   pd_fit4 <- proDA(data, c("A", "A", "B", "B", "B"),
                    moderate_variance = FALSE, moderate_location = FALSE,
                    verbose=TRUE)
+
+
+  head(test_diff(pd_fit1, A - B), n=5)
+  head(test_diff(pd_fit4, A - B), n=5)
 })
 
 

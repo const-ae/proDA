@@ -37,7 +37,7 @@ proDA <- function(data, design=~ 1,
                   moderate_location = TRUE,
                   moderate_variance = TRUE,
                   max_iter = 20,
-                  epsilon = 1e-5,
+                  epsilon = 1e-3,
                   verbose=FALSE, ...){
 
   # Validate Data
@@ -50,7 +50,7 @@ proDA <- function(data, design=~ 1,
   if(is.matrix(design)){
     model_matrix <- design
     design_formula <- NULL
-  }else if(is.vector(design) && length(design) == n_samples){
+  }else if((is.vector(design) || is.factor(design)) && length(design) == n_samples){
     model_matrix <- convert_chr_vec_to_model_matrix(design, reference_level)
     design_formula <- NULL
   }else if(inherits(design,"formula")){
@@ -215,6 +215,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
     last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
     if(verbose){
       print(last_round_params)
+      print(paste0("Error: ", sprintf("%.2g", error)))
     }
     iter <- iter + 1
   }
@@ -316,7 +317,6 @@ dropout_curves <- function(Y, X, Pred, s2){
       })
       if(opt_res$convergence != 0){
         warning("Dropout curve estimation did not properly converge")
-        print(opt_res)
       }
       rho[colidx] <- opt_res$par[1]
       zetainv[colidx] <- opt_res$par[2]
