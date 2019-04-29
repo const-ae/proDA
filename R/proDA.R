@@ -41,7 +41,7 @@ proDA <- function(data, design=~ 1,
                   verbose=FALSE, ...){
 
   # Validate Data
-  stopifnot(is.matrix(data))
+  stopifnot(is.matrix(data) || is(data, "SummarizedExperiment"))
   n_samples <- ncol(data)
   n_rows <- nrow(data)
 
@@ -57,7 +57,13 @@ proDA <- function(data, design=~ 1,
     if(design == formula(~ 1) && is.null(col_data)){
       col_data <- as.data.frame(matrix(numeric(0), nrow=n_samples))
     }
-    model_matrix <- convert_formula_to_model_matrix(design, col_data, reference_level)
+    compl_col_data <- if(is(data, "SummarizedExperiment")){
+      if(is.null(col_data)) colData(data)
+      else cbind(col_data, colData(data))
+    }else{
+      col_data
+    }
+    model_matrix <- convert_formula_to_model_matrix(design, compl_col_data, reference_level)
     design_formula <- design
   }else{
     stop(paste0("design argment of class ", class(design), " is not supported. Please ",
