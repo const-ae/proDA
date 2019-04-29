@@ -97,8 +97,8 @@ proDA <- function(data, design=~ 1,
   coef_mat <- mply_dbl(fit_result$feature_parameters, function(f){
     f$coefficients
   }, ncol=ncol(model_matrix))
+  colnames(coef_mat) <- names(fit_result$feature_parameters[[1]]$coefficients)
 
-  # browser()
   proDAFit(data, col_data,
            dropout_curve_position = fit_result$hyper_parameters$dropout_curve_position,
            dropout_curve_scale = fit_result$hyper_parameters$dropout_curve_scale,
@@ -114,6 +114,10 @@ proDA <- function(data, design=~ 1,
            variance_prior_df = fit_result$hyper_parameters$variance_prior_df,
            convergence = fit_result$convergence, ...)
 }
+
+
+
+
 
 
 fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
