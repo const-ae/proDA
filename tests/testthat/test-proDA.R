@@ -89,6 +89,28 @@ test_that("proDA works with many missing values", {
 
 
 
+test_that("predict works", {
+  set.seed(1)
+  data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
+  colnames(data) <- paste0("sample_", 1:5)
+  rownames(data) <- paste0("protein_", 1:100)
 
+  fit <- proDA(data, moderate_location = FALSE, verbose=TRUE)
+  test_res <- test_diff(fit, "Intercept")
+
+  expect_equal(rowMeans(data), test_res$avg_abundance)
+
+  Pred <- predict(fit, type="response")
+  predict(fit, type="feature_parameters")
+  newdata <-  matrix(rnorm(100 * 5), nrow=100, ncol=5)
+  colnames(newdata) <- paste0("sample_", 1:5)
+  rownames(newdata) <- paste0("protein_", 1:100)
+
+  newfit <- predict(fit, newdata, type="feature_parameters")
+  combfit <- rbind(fit, newfit)
+
+  combfit[c(1,101), ]$abundances
+  predict(fit, newdata)
+})
 
 

@@ -63,6 +63,7 @@ proDA <- function(data, design=~ 1,
     stop(paste0("design argment of class ", class(design), " is not supported. Please ",
                 "specify a `model_matrix`, a `character vector`, or a `formula`."))
   }
+  rownames(model_matrix) <- colnames(data)
   check_valid_model_matrix(model_matrix, data)
 
 

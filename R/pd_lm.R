@@ -127,6 +127,8 @@ pd_lm.fit <- function(y, X,
   }
   beta_sel <- seq_len(p)
 
+  fit_beta <- rep(NA, p)
+  names(fit_beta) <- colnames(X)
 
   if(all_observed && ! moderate_variance && ! moderate_location){
     # Run lm
@@ -135,7 +137,7 @@ pd_lm.fit <- function(y, X,
     fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
     fit_sigma2_var <- 2 * fit_sigma2^2 / n
   }else if(all_missing && ! moderate_variance){
-    return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
+    return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
   }else if(method == "numeric"){
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
       beta <- par[beta_sel]
@@ -155,7 +157,7 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
+      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- opt_res$par[beta_sel]
@@ -191,7 +193,7 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
+      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- opt_res$par[beta_sel]
@@ -237,7 +239,7 @@ pd_lm.fit <- function(y, X,
         warning(nl_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=rep(NA, p), n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
+      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, rss=NA, n_obs = length(yo)))
     }
 
     fit_beta <- nl_res$par[beta_sel]
