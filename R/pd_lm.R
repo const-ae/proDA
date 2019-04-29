@@ -255,18 +255,18 @@ pd_lm.fit <- function(y, X,
   }
 
   # Set estimates to NA if no reasonable inference
-  zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
-  coef_should_be_inf <- vapply(seq_len(ncol(Xo)), function(colidx){
-    sel <- Xm[, colidx] != 0
-    any(invprobit(fit_beta[colidx], rho[sel], zetastar[sel], oneminus = TRUE) <  1e-8)
-  }, FUN.VALUE = FALSE)
-  fit_beta[coef_should_be_inf] <- NA
-  if(all(coef_should_be_inf)){
-    n_approx <- NA
-    df_approx <- NA
-    rss_approx <- NA
-    s2_approx <- NA
-  }else{
+  # zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
+  # coef_should_be_inf <- vapply(seq_len(ncol(Xo)), function(colidx){
+  #   sel <- Xm[, colidx] != 0
+  #   any(invprobit(fit_beta[colidx], rho[sel], zetastar[sel], oneminus = TRUE) <  1e-8)
+  # }, FUN.VALUE = FALSE)
+  # fit_beta[coef_should_be_inf] <- NA
+  # if(all(coef_should_be_inf)){
+  #   n_approx <- NA
+  #   df_approx <- NA
+  #   rss_approx <- NA
+  #   s2_approx <- NA
+  # }else{
     n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
     rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
     s2_approx <- rss_approx / (n_approx - p)
@@ -288,7 +288,7 @@ pd_lm.fit <- function(y, X,
         df_approx <- n_approx - p
       }
     }
-  }
+  # }
 
   if(moderate_variance){
     rss_approx <- NA
