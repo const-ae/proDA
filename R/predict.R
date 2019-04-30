@@ -1,6 +1,12 @@
 
-
-setMethod("predict", signature = "proDAFit", function(object, newdata, type=c("response", "feature_parameters"), ...){
+#' Predict the parameters or values of additional proteins
+#'
+#'
+#'
+#'
+#' @export
+setMethod("predict", signature = "proDAFit", function(object, newdata,
+                                                      type=c("response", "feature_parameters"), ...){
   type <- match.arg(type, c("response", "feature_parameters"))
 
   if(type == "response" && (missing(newdata) || is.null(newdata))){
