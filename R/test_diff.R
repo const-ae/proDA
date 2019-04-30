@@ -6,14 +6,29 @@
 #'
 #' @export
 test_diff <- function(parameters, contrast,
+                      reduced_model = ~ 1,
                       alternative = c("two.sided", "greater", "less"),
-                      pval_adjust_method = "BH"){
+                      pval_adjust_method = "BH",
+                      sort_by = NULL,
+                      decreasing = FALSE,
+                      n_max = Inf,
+                      verbose = FALSE){
 
   alternative <- match.arg(alternative, c("two.sided", "greater", "less"))
 
+  if(missing(contrast)){
+    # Do F test against reduced model
+    message("F-test, comparing full vs reduced model")
+
+  }else{
+
+
+
+  }
   cntrst <- parse_contrast(contrast, levels =  colnames(design(parameters)),
                  reference_level = reference_level(parameters),
                  direct_call = FALSE)
+  message("Wald test: comparing ", cntrst, " with zero.")
 
   dm <- design(parameters)
   diff <- coefficients(parameters) %*% cntrst
@@ -28,9 +43,9 @@ test_diff <- function(parameters, contrast,
     pval <- 1 - pval
   }
 
-  avg_abundance <- rowMeans(coefficients(parameters) %*% t(design(parameters)))
+  avg_abundance <- rowMeans(predict(parameters, type="response"))
 
-  data.frame(name = rownames(parameters),
+  res <- data.frame(name = rownames(parameters),
              pval = pval,
              adj_pval = p.adjust(pval, method = pval_adjust_method),
              diff = diff,
@@ -41,7 +56,14 @@ test_diff <- function(parameters, contrast,
              n_approx = feature_parameters(parameters)$n_approx,
              n_obs = feature_parameters(parameters)$n_obs,
              stringsAsFactors = FALSE)
+  rownames(res) <- NULL
 
+  res <- if(is.null(sort_by)){
+    res
+  }else{
+    res[order(res[[sort_by]], decreasing = decreasing), ]
+  }
+  res[seq_len(min(nrow(res), n_max)), ]
 }
 
 
@@ -54,6 +76,10 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
     parent.frame()
   }
 
+  if(missing(contrast)){
+    stop("No contrast argument was provided! The option is any linear combination of:\n",
+         paste0(levels, collapse = ", "))
+  }
   cnt_capture <- substitute(contrast, env = env)
 
 
