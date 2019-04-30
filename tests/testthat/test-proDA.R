@@ -114,3 +114,46 @@ test_that("predict works", {
 })
 
 
+
+test_that("fit works with SummarizedExperiment object", {
+
+  data <- matrix(rnorm(22 * 50, mean=20), ncol=22, nrow=50)
+  data[invprobit(data, 18, -1) > runif(22 * 50)] <- NA
+  colnames(data) <- paste0("sample_", LETTERS[seq_len(ncol(data))])
+  rownames(data) <- paste0("protein", 1:50)
+  annot_df <- data.frame(Name = paste0("sample_", LETTERS[seq_len(ncol(data))]),
+                         cond = c(rep(c("A", "B", "C"), times=7), "D"),
+                         num = runif(ncol(data)))
+  se <- SummarizedExperiment(data, colData = annot_df)
+
+  fit <- proDA(se, ~ cond + num, verbose=TRUE)
+  fit$design
+  test_diff(fit, num)
+
+
+})
+
+
+y <- rnorm(10, mean=20)
+df <- data.frame(cond = rep(c("A", "A", "A", "A", "B"), each=2))
+lin_m <- lm(y ~ cond, data=df)
+summary(lin_m)$coef[2,4]
+anova(lin_m,  lm(y ~ 1, data=df))[2,6]
+
+
+test_that("t-test works", {
+  set.seed(1)
+  data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
+  data[sample(seq_len(100 * 5), 150)] <- NA
+  colnames(data) <- paste0("sample_", 1:5)
+  rownames(data) <- paste0("protein_", 1:100)
+
+
+  pd_row_t_test(X = data[,1:2], Y=data[,3:5])
+
+})
+
+
+
+
+
