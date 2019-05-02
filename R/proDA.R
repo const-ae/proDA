@@ -322,8 +322,8 @@ dropout_curves <- function(Y, X, Pred, s2){
         if(par[2]  >= 0) return(Inf)
         val <- 0 +
           dnorm(par[1], mu0, sd=sqrt(sigma20), log=TRUE) +
-          sum(proDD::invprobit(yo, par[1], 1/par[2], log=TRUE, oneminus = TRUE), na.rm=TRUE) +
-          sum(proDD::invprobit(predm, par[1], sign(par[2]) * sqrt(1/par[2]^2 +  pred_var_m), log=TRUE), na.rm=TRUE)
+          sum(invprobit(yo, par[1], 1/par[2], log=TRUE, oneminus = TRUE), na.rm=TRUE) +
+          sum(invprobit(predm, par[1], sign(par[2]) * sqrt(1/par[2]^2 +  pred_var_m), log=TRUE), na.rm=TRUE)
         -val
       })
       if(opt_res$convergence != 0){
