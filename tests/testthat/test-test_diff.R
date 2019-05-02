@@ -68,3 +68,45 @@ test_that("F test works with missing data", {
 
 
 
+
+test_that("pd_row_f_test works", {
+
+  set.seed(2)
+  n_proteins <- 100
+  data <- matrix(rnorm(n_proteins * 6, mean=20), ncol=6, nrow=n_proteins)
+  data[invprobit(data, 19, -1) > runif(prod(dim(data)))] <- NA
+  colnames(data) <- paste0("sample_", LETTERS[seq_len(ncol(data))])
+  rownames(data) <- paste0("protein", seq_len(nrow(data)))
+  annot_df <- data.frame(Name = paste0("sample_", LETTERS[seq_len(ncol(data))]),
+                         cond = c(rep(c("A", "B", "C"), each=2)),
+                         num = runif(ncol(data)))
+  se <- SummarizedExperiment(data, colData = annot_df)
+
+  set.seed(1)
+  fit <- proDA(se, ~ cond + 1, max_iter = 10,
+               verbose = TRUE)
+  std_test_res <- test_diff(fit, reduced_model = ~1)
+
+  set.seed(1)
+  f_test_res <- pd_row_f_test(data[ ,1:2,drop=FALSE],
+                              data[ ,3:4,drop=FALSE],
+                              data[ ,5:6,drop=FALSE],
+                              max_iter = 10,
+                              return_fit = TRUE, verbose=TRUE)
+
+  expect_equal(unlist(fit$hyper_parameters), unlist(f_test_res$fit$hyper_parameters))
+  # ggplot2::qplot(std_test_res$pval, f_test_res$test_results$pval,
+  #                color= as.factor(f_test_res$test_results$n_obs))
+  expect_gt(cor(std_test_res$pval, f_test_res$test_results$pval, use = "complete.obs"), 0.9999)
+
+})
+
+
+
+
+
+
+
+
+
+

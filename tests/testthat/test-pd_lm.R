@@ -277,6 +277,28 @@ test_that("There are more values than parameters", {
 
 
 
+test_that("parametrization does not influence result", {
+
+  y <- c(23,24.1, 25.5, NA, NA, NA)
+  X1 <- matrix(c(1,1,1,1,1,1,   0,0,0,1,1,1), ncol=2)
+  X2 <- matrix(c(1,1,1,0,0,0,   0,0,0,1,1,1), ncol=2)
+
+  rho <- 22.2
+  zeta <- -0.3
+
+  f1 <- pd_lm(y ~ X1 - 1, dropout_curve_position = rho, dropout_curve_scale = zeta)
+  f2 <- pd_lm(y ~ X2 - 1, dropout_curve_position = rho, dropout_curve_scale = zeta)
+  f1$coefficients
+  f2$coefficients
+
+
+  # This one fails because of problematic initialization
+  expect_equal(unname(f1$coefficients),
+               unname(c(f2$coefficients[1], f2$coefficients[2] - f2$coefficients[1])))
+  expect_equal(f1$s2, f2$s2, tolerance=1e-6)
+})
+
+
 
 
 

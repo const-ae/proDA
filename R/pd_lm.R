@@ -118,7 +118,12 @@ pd_lm.fit <- function(y, X,
   }else if(length(yo) == 0){
     beta_init <- rep(0, times=p)
   }else{
-    beta_init <- c(mean(yo), rep(0, times=p-1))
+    if(has_intercept(X)){
+      beta_init <- c(mean(yo), rep(0, times=p-1))
+    }else{
+      beta_init <- rep(mean(yo), times=p)
+    }
+
   }
   if(moderate_variance){
     sigma2_init <- variance_prior_df * variance_prior_scale / (variance_prior_df + 2)
@@ -379,5 +384,11 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
 }
 
 
+has_intercept <- function(X){
 
+  any(vapply(seq_len(ncol(X)), function(idx){
+    all(X[, idx] == 1)
+  }, FUN.VALUE = FALSE))
+
+}
 
