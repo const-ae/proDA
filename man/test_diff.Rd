@@ -2,13 +2,13 @@
 % Please edit documentation in R/test_diff.R
 \name{test_diff}
 \alias{test_diff}
-\title{Main proDA function to identify significant parameters}
+\title{Main proDA function to identify significant coefficients}
 \usage{
-test_diff(parameters, contrast, reduced_model = ~1,
+test_diff(fit, contrast, reduced_model = ~1,
   alternative = c("two.sided", "greater", "less"),
   pval_adjust_method = "BH", sort_by = NULL, decreasing = FALSE,
   n_max = Inf, verbose = FALSE)
 }
 \description{
-Main proDA function to identify significant parameters
+Main proDA function to identify significant coefficients
 }

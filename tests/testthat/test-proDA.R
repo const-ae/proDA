@@ -134,13 +134,6 @@ test_that("fit works with SummarizedExperiment object", {
 })
 
 
-y <- rnorm(10, mean=20)
-df <- data.frame(cond = rep(c("A", "A", "A", "A", "B"), each=2))
-lin_m <- lm(y ~ cond, data=df)
-summary(lin_m)$coef[2,4]
-anova(lin_m,  lm(y ~ 1, data=df))[2,6]
-
-
 test_that("t-test works", {
   set.seed(1)
   data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
