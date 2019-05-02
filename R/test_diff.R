@@ -134,6 +134,7 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
   res_mat <- mply_dbl(seq_len(nrow(fit)), function(idx){
 
     # if(idx == 1 || idx == 4 || idx == 15 || idx == 35) browser()
+    full_model <- design(fit)
     y <- fit$abundances[idx, ]
     yo <- y[! is.na(y)]
 
@@ -172,7 +173,6 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
       lik_red <- red_res$objective
     }
 
-    full_model <- design(fit)
     lik_full <- - objective_fnc(y, yo,
                                 X = full_model,
                                 Xm = full_model[is.na(y), , drop=FALSE],

@@ -170,6 +170,9 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
   converged <- FALSE
   iter <- 1
+  error <- NA
+  res_reg <- res_init
+  res_unreg <- res_init
   while(! converged && iter <= max_iter){
     if(verbose){
       message(paste0("Starting iter: ", iter))
@@ -199,7 +202,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     if(moderate_location){
       lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                           # mu0 = mean( Pred_reg, na.rm=TRUE),
+                           mu0 = median( Pred_reg, na.rm=TRUE),
                            s2 = s2_unreg)
       mu0 <- lp$mu0
       sigma20 <- lp$sigma20
@@ -272,7 +275,7 @@ variance_prior <- function(s2, df){
 
 
 location_prior <- function(X, Pred, s2,
-                           mu0 = mean(Pred, na.rm=TRUE),
+                           mu0 = median(Pred, na.rm=TRUE),
                            min_var = 0, max_var = 1e3){
   if(any(s2 <= 0, na.rm=TRUE)){
     stop(paste0("All s2 must be positive. ", paste0(which(s2 < 0), collapse=", "), " are not."))
@@ -309,6 +312,10 @@ dropout_curves <- function(Y, X, Pred, s2){
 
   mu0 <- median(Pred, na.rm=TRUE)
   sigma20 <- median((mu0 - Pred)^2, na.rm=TRUE)
+  if(sigma20 == 0){
+    sigma20 <- 5 # Not ideal. But what else can I do...
+  }
+
 
   rho <- rep(NA, n_samples)
   zetainv <- rep(NA, n_samples)
