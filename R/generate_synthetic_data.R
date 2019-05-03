@@ -1,5 +1,47 @@
 
-
+#' Generate a dataset according to the probabilistic dropout model
+#'
+#'
+#' @param n_proteins the number of rows in the dataset
+#' @param n_conditions the number of conditions. Default: 2
+#' @param n_replicates the number of replicates per condition.
+#'   Can either be a single number or a vector with
+#'   \code{length(n_replicates) == n_conditions}. Default: 3
+#' @param frac_changed the fraction of proteins that actually
+#'   differ between the conditions. Default: 0.1
+#' @param dropout_curve_position the point where the chance
+#'   to observe a value is 50%. Can be a single number or
+#'   a vector of \code{length(dropout_curve_position) == n_conditions * n_replicates}.
+#'   Default: 18.5
+#' @param dropout_curve_scale The width of the dropout curve.
+#'   Negative numbers mean that lower intensities are more likely
+#'   to be missing.
+#'   Can be a single number or a vector of
+#'   \code{length(dropout_curve_position) == n_conditions * n_replicates}.
+#'   Default: -1.2
+#' @param location_prior_mean,location_prior_scale
+#'   the position and the variance around which the individual
+#'   condition means (\code{t_mu}) scatter. Default: 20 and 4
+#' @param variance_prior_scale,variance_prior_df
+#'    the scale and the degrees of freedom of the inverse
+#'    Chi-squared distribution used as a prior for the
+#'    variances. Default: 0.05 and 2
+#'
+#' @return a list with the following elements
+#'   \describe{
+#'     \item{Y}{the intensity matrix including the missing values}
+#'     \item{Z}{the intensity matrix before dropping out values}
+#'     \item{t_mu}{a matrix with \code{n_proteins} rows and
+#'        \code{n_conditions} columns that contains the underlying
+#'        means for each protein.}
+#'     \item{t_sigma2}{a vector with the true variance for each
+#'        protein.}
+#'     \item{changed}{a vector with boolean values if the
+#'        protein is actually changed.}
+#'     \item{group}{the group structure mapping samples to conditions}
+#'   }
+#'
+#' @export
 generate_synthetic_data <- function(n_proteins, n_conditions = 2,
                                     n_replicates = 3,
                                     frac_changed = 0.1,
