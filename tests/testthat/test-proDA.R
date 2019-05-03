@@ -150,3 +150,10 @@ test_that("t-test works", {
 
 
 
+test_that("parameter recovery works", {
+
+  data <-
+
+})
+
+
