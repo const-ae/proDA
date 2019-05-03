@@ -152,7 +152,20 @@ test_that("t-test works", {
 
 test_that("parameter recovery works", {
 
-  data <-
+  data <- generate_synthetic_data(n_proteins = 500,
+                                  dropout_curve_scale = -0.4)
+  hist(data$Z, col=ggplot2::alpha("green", 0.3))
+  hist(data$Y, add=TRUE, col=ggplot2::alpha("red", 0.2))
+  fit <- proDA(data$Y, design = data$groups, verbose=TRUE)
+
+
+  # dat <- generate_synthetic_data(n_proteins = 100, frac_changed = 0)$Z
+  dat <- matrix(rnorm(100 * 6, mean=20, sd=3), nrow=100)
+  dat[sample(seq_len(prod(dim(dat))), prod(dim(dat)) * 0.6)] <- NA
+  fit2 <- proDA(dat, data$groups,
+                moderate_location = FALSE, moderate_variance = FALSE,
+                verbose=TRUE)
+  fit2
 
 })
 

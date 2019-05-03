@@ -325,10 +325,11 @@ dropout_curves <- function(Y, X, Pred, s2){
     predm <- Pred[is.na(y), colidx]
     pred_var_m <- Pred_var[is.na(y), colidx]
     if(any(is.na(y))){
-      opt_res <- optim(par=c(rho=0, zetainv=-1/5), function(par){
+      opt_res <- optim(par=c(rho=mu0, zetainv=-1/sqrt(sigma20)), function(par){
         if(par[2]  >= 0) return(Inf)
         val <- 0 +
           dnorm(par[1], mu0, sd=sqrt(sigma20), log=TRUE) +
+          min(log(abs(par[2])), log(1e4)) +
           sum(invprobit(yo, par[1], 1/par[2], log=TRUE, oneminus = TRUE), na.rm=TRUE) +
           sum(invprobit(predm, par[1], sign(par[2]) * sqrt(1/par[2]^2 +  pred_var_m), log=TRUE), na.rm=TRUE)
         -val
@@ -337,7 +338,11 @@ dropout_curves <- function(Y, X, Pred, s2){
         warning("Dropout curve estimation did not properly converge")
       }
       rho[colidx] <- opt_res$par[1]
-      zetainv[colidx] <- opt_res$par[2]
+      zetainv[colidx] <- if(abs(opt_res$par[2]) > 1e4){
+        -1e4
+      }else{
+        opt_res$par[2]
+      }
     }else{
       rho[colidx] <- NA_real_
       zetainv[colidx] <- NA_real_
@@ -408,7 +413,7 @@ log_parameters <- function(hp){
                            paste0(vapply(seq_along(hp), function(idx){
                              pretty_num <- if(names(hp)[idx] == "dropout_curve_scale"){
                                scales <- hp[[idx]]
-                               ifelse(is.na(scales) | scales > -100,
+                               ifelse(is.na(scales) | 1/scales > -100,
                                       formatC(1/scales, digits=3, width=1, format="g"),
                                       "< -100")
                              }else if(names(hp)[idx] == "variance_prior_df"){
