@@ -54,7 +54,7 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
 
   Y <- t(vapply(seq_len(n_proteins), function(idx){
     y <- Z[idx, ]
-    dropout_prob <-  invprobit(y, dropout_curve_position[idx], dropout_curve_scale[idx])
+    dropout_prob <-  invprobit(y, dropout_curve_position, dropout_curve_scale)
     y[runif(length(y)) < dropout_prob] <- NA
     y
   }, FUN.VALUE = rep(0, length(groups))))
