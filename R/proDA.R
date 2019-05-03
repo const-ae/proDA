@@ -228,8 +228,8 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
     if(verbose){
-      print(last_round_params)
-      print(paste0("Error: ", sprintf("%.2g", error)))
+      log_parameters(last_round_params)
+      message(paste0("Error: ", sprintf("%.2g", error)), "\n")
     }
     iter <- iter + 1
   }
@@ -400,7 +400,32 @@ convert_formula_to_model_matrix <- function(formula, col_data, reference_level=N
 
 
 
-
+log_parameters <- function(hp){
+  names(hp) <- c("location_prior_mean", "location_prior_scale",
+                             "dropout_curve_position", "dropout_curve_scale",
+                             "variance_prior_scale", "variance_prior_df")
+  hyper_para_txt <- paste0("The inferred parameters are:\n",
+                           paste0(vapply(seq_along(hp), function(idx){
+                             pretty_num <- if(names(hp)[idx] == "dropout_curve_scale"){
+                               scales <- hp[[idx]]
+                               ifelse(is.na(scales) | scales > -100,
+                                      formatC(1/scales, digits=3, width=1, format="g"),
+                                      "< -100")
+                             }else if(names(hp)[idx] == "variance_prior_df"){
+                               if(is.na(hp[[idx]]) || 1/hp[[idx]] < 100){
+                                 formatC(1/hp[[idx]], digits=3, width=1, format="g")
+                               }else{
+                                 "> 100"
+                               }
+                             }else{
+                               formatC(hp[[idx]], digits=3, width=1, format="g")
+                             }
+                             paste0(names(hp)[idx], ":",
+                                    paste0(rep(" ", times=24-nchar(names(hp)[idx])), collapse=""),
+                                    paste0(pretty_num, collapse=", "))
+                           }, FUN.VALUE = ""), collapse = "\n"))
+  message(hyper_para_txt)
+}
 
 
 
