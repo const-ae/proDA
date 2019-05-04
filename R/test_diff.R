@@ -250,3 +250,10 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
 }
 
 
+result_names <- function(fit) {
+  colnames(coefficients(fit))
+}
+
+
+
+
