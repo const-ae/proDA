@@ -100,7 +100,6 @@ proDA <- function(data, design=~ 1,
   feat_df <- as.data.frame(mply_dbl(fit_result$feature_parameters, function(f){
     unlist(f[-1])
   }, ncol = 5))
-  feat_df$rss <- fit_result$rss
   coef_mat <- mply_dbl(fit_result$feature_parameters, function(f){
     f$coefficients
   }, ncol=ncol(model_matrix))
@@ -242,11 +241,9 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   last_round_params[["dropout_curve_scale"]] <- 1/last_round_params[["dropout_curve_scale"]]
   last_round_params[["variance_prior_df"]] <- 1/last_round_params[["variance_prior_df"]]
 
-  rss_unreg <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   list(hyper_parameters = last_round_params,
        convergence = convergence,
-       feature_parameters = res_reg,
-       rss = rss_unreg)
+       feature_parameters = res_reg)
 
 }
 
