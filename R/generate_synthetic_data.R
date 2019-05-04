@@ -50,7 +50,9 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
                                     location_prior_mean = 20,
                                     location_prior_scale = 4,
                                     variance_prior_scale  = 0.05,
-                                    variance_prior_df = 2) {
+                                    variance_prior_df = 2,
+                                    effect_size = 2,
+                                    return_summarized_experiment = FALSE) {
 
   if(length(n_replicates) == 1){
     n_replicates <- rep(n_replicates, n_conditions)
@@ -85,9 +87,12 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
   t_mu <- matrix(rep(rnorm(n_proteins-n_changed, location_prior_mean,
                           sd=sqrt(location_prior_scale)), times=n_conditions),
                 ncol=n_conditions)
-  t_mu <- rbind(t_mu, t(mply_dbl(seq_len(n_conditions), ncol=n_changed, function(cond){
-    rnorm(n_changed, location_prior_mean, sd=sqrt(location_prior_scale))
-  })))
+
+  t_mu <- rbind(t_mu, mply_dbl(seq_len(n_changed), ncol = n_conditions, function(idx){
+    avg <- rnorm(1, mean=location_prior_mean, sd=sqrt(location_prior_scale))
+    eff <- rnorm(n_conditions, mean = 0, sd = effect_size)
+    avg + eff
+  }))
 
 
   Z <- do.call(cbind, lapply(as.numeric(groups), function(cond){
@@ -116,10 +121,27 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
   names(t_sigma2) <- prot_names
   names(changed) <- prot_names
 
-  return(list(Y=Y, Z=Z, t_mu=t_mu, t_sigma2=t_sigma2,
-              changed=changed,
-              groups = groups))
+  if(return_summarized_experiment){
+    cdf <- data.frame(group = groups,
+                      true_dropout_curve_position = dropout_curve_position,
+                      true_dropout_curve_scale = dropout_curve_scale)
+    rownames(cdf) <- colnames(Y)
+    rdf <- data.frame(changed = changed,
+                      true_s2 = t_sigma2)
+    feat_df <- as.data.frame(t_mu)
+    colnames(feat_df) <- paste0("true_", colnames(feat_df))
+    rdf <- cbind(rdf, feat_df)
+    rownames(rdf) <- rownames(Y)
 
+    SummarizedExperiment(assays = list(abundances = Y,
+                                       full_observations = Z),
+                         colData = cdf,
+                         rowData = rdf)
+  }else{
+    return(list(Y=Y, Z=Z, t_mu=t_mu, t_sigma2=t_sigma2,
+                changed=changed,
+                groups = groups))
+  }
 }
 
 
