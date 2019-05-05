@@ -6,7 +6,9 @@
 #' The function is used to test coefficients of a 'proDAFit'
 #' object. It provides a Wald test to test individual
 #' coefficients and a likelihood ratio F-test to compare the
-#' original model with a reduced model.
+#' original model with a reduced model. The \code{result_names}
+#' method provides a quick overview which coefficients are
+#' available for testing.
 #'
 #' To test if coefficient is different from zero with a Wald
 #' test use the \code{contrast} function argument. To test if two
@@ -18,8 +20,7 @@
 #' base R test functions (ie. \code{\link[stats]{t.test}} and
 #' \code{\link[stats]{wilcox.test}}) and the functions designed
 #' for collecting the results of high-throughput  testing
-#' (ie. \code{\link[limma]{topTable}} and
-#' \code{\link[DESeq2]{results}}).
+#' (ie. \code{limma::topTable} and \code{DESeq2::results}).
 #'
 #' @param fit an object of class 'proDAFit'. Usually, this is
 #'   produced by calling \code{proDA()}
@@ -41,7 +42,7 @@
 #'   the t-test / contrast test. Default: \code{"two.sided"}
 #' @param pval_adjust_method a string the indicates the method
 #'   that is used to adjust the p-value for the multiple testing.
-#'   It must match the options in \code{\link[stats]{p.adjust}}.
+#'   It must match the options in \code{\link[stats]{p.adjust.methods}}.
 #'   Default: \code{"BH"}
 #' @param sort_by a string that specifies the column that is used
 #'   to sort the resulting data.frame. Default: \code{NULL} which
@@ -111,8 +112,8 @@
 #'   }
 #'
 #'
-#' @seealso \code{\link{result_names}} to see the coefficient that can be tested.
-#'   The contrast argument is inspired by \code{\link[limma]{makeContrasts}}.
+#' @seealso The contrast argument is inspired by
+#'   \code{limma::makeContrasts}.
 #'
 #' @examples
 #'   # "t-test"

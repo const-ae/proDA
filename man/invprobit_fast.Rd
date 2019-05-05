@@ -9,3 +9,4 @@ invprobit_fast(x, rho, zeta, log = FALSE, oneminus = FALSE)
 \description{
 Same thing as invprobit, but without the parameter validation
 }
+\keyword{internal}

@@ -1,7 +1,23 @@
 
 
-#' Get the abundance matrix
+#' Get different features and elements of the 'proDAFit' object
 #'
+#' The functions listed below can all be accessed using the
+#' fluent dollar notation (ie. \code{fit$abundances[1:3,1:3]}) without
+#' any additional parentheses.
+#'
+#'
+#' @param object the 'proDAFit' object
+#' @param formula specific argument for the \code{design} function
+#'   to get the formula that was used to create the linear model.
+#'   If no formula was used \code{NULL} is returned.
+#'
+#' @name accessor_methods
+NULL
+
+
+
+#' @rdname accessor_methods
 #' @export
 setMethod("abundances", signature = "proDAFit", function(object){
   assays(object)[["abundances"]]
@@ -9,8 +25,7 @@ setMethod("abundances", signature = "proDAFit", function(object){
 
 
 
-#' Access the design matrix or formula used to fit the parameters
-#'
+#' @rdname accessor_methods
 #' @export
 setMethod("design", signature = "proDAFit", function(object, formula = FALSE){
   if(formula){
@@ -21,9 +36,7 @@ setMethod("design", signature = "proDAFit", function(object, formula = FALSE){
 })
 
 
-
-#' Get a list of the hyperparameters
-#'
+#' @rdname accessor_methods
 #' @export
 setMethod("hyper_parameters", signature = "proDAFit", function(object){
   list(location_prior_mean = object@location_prior_mean,
@@ -35,31 +48,30 @@ setMethod("hyper_parameters", signature = "proDAFit", function(object){
        dropout_curve_scale =  colData(object)$dropout_curve_scale)
 })
 
-#' Get a feature parameters as a data.frame
-#'
+
+#' @rdname accessor_methods
 #' @export
 setMethod("feature_parameters", signature = "proDAFit", function(object){
   rd <- rowData(object)
   as.data.frame(rd[, which(mcols(rd)$type == "feature_parameter"), drop=FALSE])
 })
 
-#' Get the coefficients as a matrix
-#'
+
+#' @rdname accessor_methods
 #' @export
 setMethod("coefficients", signature = "proDAFit", function(object){
   rd <- rowData(object)
   as.matrix(rd[, which(mcols(rd)$type == "coefficient"), drop=FALSE])
 })
 
-#' Get a the reference class
-#'
+
+#' @rdname accessor_methods
 #' @export
 setMethod("reference_level", signature = "proDAFit", function(object){
   object@reference_level
 })
 
-#' Get information on the convergence
-#'
+#' @rdname accessor_methods
 #' @export
 setMethod("convergence", signature = "proDAFit", function(object){
   object@convergence

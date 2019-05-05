@@ -54,6 +54,7 @@ invprobit <- function(x, rho, zeta, log=FALSE, oneminus=FALSE){
 }
 
 #' Same thing as invprobit, but without the parameter validation
+#' @keywords internal
 invprobit_fast <- function(x, rho, zeta, log=FALSE, oneminus=FALSE){
   sign_sum <- sum(sign(zeta), na.rm=TRUE)
   if(sign_sum < 0){

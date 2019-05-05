@@ -39,9 +39,9 @@ test_that("Formula to model_matrix", {
   mm <- convert_formula_to_model_matrix(~ f3 + f4, col_data, reference_level = "world")
   expect_equal(colnames(mm), c("Intercept", "f3hello", "f4bar", "f4foo", "f4foobar", "f4hello"))
 
-  f3_mod <- relevel(col_data$f3, ref = "world")
-  f4_mod <- relevel(col_data$f4, ref = "world")
-  expect_equal(c(mm), c(model.matrix(~ f3_mod + f4_mod)))
+  f3_mod <- stats::relevel(col_data$f3, ref = "world")
+  f4_mod <- stats::relevel(col_data$f4, ref = "world")
+  expect_equal(c(mm), c(stats::model.matrix.default(~ f3_mod + f4_mod)))
 
 })
 

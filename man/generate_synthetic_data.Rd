@@ -41,6 +41,14 @@ condition means (\code{t_mu}) scatter. Default: 20 and 4}
 \item{variance_prior_scale, variance_prior_df}{the scale and the degrees of freedom of the inverse
 Chi-squared distribution used as a prior for the
 variances. Default: 0.05 and 2}
+
+\item{effect_size}{the standard deviation that used to draw
+different values for the \code{frac_changed} part of the
+proteins. Default: 2}
+
+\item{return_summarized_experiment}{a boolean indicator if
+the method should return a \code{SummarizedExperiment}
+object instead of a list. Default: \code{FALSE}}
 }
 \value{
 a list with the following elements
@@ -56,6 +64,8 @@ a list with the following elements
        protein is actually changed.}
     \item{group}{the group structure mapping samples to conditions}
   }
+  if \code{return_summarized_experiment} is \code{FALSE}. Otherwise
+  returns a \code{SummarizedExperiment} with the same information.
 }
 \description{
 Generate a dataset according to the probabilistic dropout model

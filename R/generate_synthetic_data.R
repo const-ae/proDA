@@ -26,6 +26,12 @@
 #'    the scale and the degrees of freedom of the inverse
 #'    Chi-squared distribution used as a prior for the
 #'    variances. Default: 0.05 and 2
+#' @param effect_size the standard deviation that used to draw
+#'   different values for the \code{frac_changed} part of the
+#'   proteins. Default: 2
+#' @param return_summarized_experiment a boolean indicator if
+#'   the method should return a \code{SummarizedExperiment}
+#'   object instead of a list. Default: \code{FALSE}
 #'
 #' @return a list with the following elements
 #'   \describe{
@@ -40,6 +46,8 @@
 #'        protein is actually changed.}
 #'     \item{group}{the group structure mapping samples to conditions}
 #'   }
+#'   if \code{return_summarized_experiment} is \code{FALSE}. Otherwise
+#'   returns a \code{SummarizedExperiment} with the same information.
 #'
 #' @export
 generate_synthetic_data <- function(n_proteins, n_conditions = 2,
@@ -163,7 +171,7 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
 #' @seealso \code{\link[base]{order}}, \code{\link[base]{rank}}
 #' @examples
 #'   x <- c("a", "b", "a", "b", "b", "d")
-#'   all(proDD:::as_replicate(x) == c(1,1,2,2,3,1))
+#'   all(proDA:::as_replicate(x) == c(1,1,2,2,3,1))
 #'
 as_replicate <- function(x){
   counter <- as.list(rep(1, times=length(unique(x))))

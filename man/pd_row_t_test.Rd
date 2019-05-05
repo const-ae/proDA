@@ -33,7 +33,7 @@ the t-test / contrast test. Default: \code{"two.sided"}}
 
 \item{pval_adjust_method}{a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
-It must match the options in \code{\link[stats]{p.adjust}}.
+It must match the options in \code{\link[stats]{p.adjust.methods}}.
 Default: \code{"BH"}}
 
 \item{location_prior_df}{the number of degrees of freedom used
@@ -52,11 +52,16 @@ data.frame with the hypothesis test results, the fit from
 \code{proDA()} is returned. Default: \code{FALSE}}
 
 \item{verbose}{boolean that signals if the method prints informative
-messages. Default: \code{FALSE}.}
+messages. Default: \code{FALSE}}
+
+\item{groups}{a factor or character vector with that assignes the
+columns of \code{X} to different conditions. This parameter is
+only applicable for the F-test and must be specified if only a
+single matrix is provided.}
 }
 \value{
 If \code{return_fit == FALSE} a data.frame is returned with the content
-  that is described in \code{\link{test_diff()}}.
+  that is described in \code{\link{test_diff}}.
 
   If \code{return_fit == TRUE} a list is returned with two elements:
   \code{fit} with a reference to the object returned from \code{proDA()}
@@ -85,8 +90,8 @@ more widely understood, we choose to use that name.
   pd_row_f_test(data1, data2, data3)
 
   # Alternative
-  data_comd <- cbind(data1, data2, data3)
-  pd_row_f_test(data_comd,
+  data_comb <- cbind(data1, data2, data3)
+  pd_row_f_test(data_comb,
      groups = c(rep("A",3), rep("B", 4), rep("C", 2)))
 
   # t.test, lm, pd_row_t_test, and pd_row_f_test are
@@ -111,6 +116,6 @@ more widely understood, we choose to use that name.
 \seealso{
 \code{\link{proDA}} and \code{\link{test_diff}} for more
   flexible versions. The  function was inspired
-  by the \code{\link[genefilter]{rowttest}} function in the genefilter
+  by the \code{\link[genefilter]{rowttests}} function in the genefilter
   package.
 }

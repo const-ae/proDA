@@ -37,7 +37,7 @@ the t-test / contrast test. Default: \code{"two.sided"}}
 
 \item{pval_adjust_method}{a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
-It must match the options in \code{\link[stats]{p.adjust}}.
+It must match the options in \code{\link[stats]{p.adjust.methods}}.
 Default: \code{"BH"}}
 
 \item{sort_by}{a string that specifies the column that is used
@@ -114,7 +114,9 @@ Both functions return a \code{data.frame} with one row per protein
 The function is used to test coefficients of a 'proDAFit'
 object. It provides a Wald test to test individual
 coefficients and a likelihood ratio F-test to compare the
-original model with a reduced model.
+original model with a reduced model. The \code{result_names}
+method provides a quick overview which coefficients are
+available for testing.
 }
 \details{
 To test if coefficient is different from zero with a Wald
@@ -127,8 +129,7 @@ The function is designed to follow the principles of the
 base R test functions (ie. \code{\link[stats]{t.test}} and
 \code{\link[stats]{wilcox.test}}) and the functions designed
 for collecting the results of high-throughput  testing
-(ie. \code{\link[limma]{topTable}} and
-\code{\link[DESeq2]{results}}).
+(ie. \code{limma::topTable} and \code{DESeq2::results}).
 }
 \examples{
   # "t-test"
@@ -155,6 +156,6 @@ for collecting the results of high-throughput  testing
 
 }
 \seealso{
-\code{\link{result_names}} to see the coefficient that can be tested.
-  The contrast argument is inspired by \code{\link[limma]{makeContrasts}}.
+The contrast argument is inspired by
+  \code{limma::makeContrasts}.
 }

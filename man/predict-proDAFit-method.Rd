@@ -16,6 +16,9 @@ the new abundances for which values are predicted.}
 
 \item{type}{either "response" or "feature_parameters". Default:
 \code{"response"}}
+
+\item{...}{additional parameters for the construction of the
+'proDAFit' object.}
 }
 \value{
 If \code{type = "response"} a matrix with the same dimensions

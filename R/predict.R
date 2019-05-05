@@ -22,6 +22,9 @@
 #'   the new abundances for which values are predicted.
 #' @param type either "response" or "feature_parameters". Default:
 #'   \code{"response"}
+#' @param ... additional parameters for the construction of the
+#'   'proDAFit' object.
+#'
 #'
 #' @return If \code{type = "response"} a matrix with the same dimensions
 #'   as \code{object}. Or, if \code{type = "feature_parameters"} a

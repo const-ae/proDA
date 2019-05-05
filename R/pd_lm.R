@@ -2,6 +2,46 @@
 
 #' Fit a single linear probabilistic dropout model
 #'
+#' The function works similar to the classical \code{\link[stats]{lm}}
+#' but with special handling of \code{NA}'s. Whereas \code{lm} usually
+#' just ignores response value that are missing, \code{pd_lm} applies
+#' a probabilistic dropout model, that assumes that missing values
+#' occur because of the dropout cuve. The dropout curve describes for
+#' each position the chance that that a value is missed. A negative
+#' \code{dropout_curve_scale} means that the lower the intensity was,
+#' the more likely it is to miss the value.
+#'
+#' @param formula a formula that specifies a linear model
+#' @param data an optional data.frame whose columns can be used to
+#'   specify the \code{formula}
+#' @param subset an optional selection vector for data to subset it
+#' @param dropout_curve_position the value where the chance to
+#'   observe a value is 50%. Can either be a single value that is
+#'   repeated for each row or a vector with one element for each
+#'   row. Not optional.
+#' @param dropout_curve_scale the width of the dropout curve. Smaller
+#'   values mean that the sigmoidal curve is steeper.
+#'   Can either be a single value that is
+#'   repeated for each row or a vector with one element for each
+#'   row. Not optional.
+#' @param location_prior_mean,location_prior_scale the optional mean
+#'   and variance of the prior around
+#'   which the predictions are supposed to scatter. If no value is
+#'   provided no location regularization is applied.
+#' @param variance_prior_scale,variance_prior_df the optional scale and degrees of
+#'   freedom of the variance prior.
+#'   If no value is provided no variance regularization is applied.
+#' @param location_prior_df The degrees of freedom for the t-distribution
+#'   of the location prior. If it is large (> 30) the prior is approximately
+#'   Normal. Default: 3
+#' @param method one of 'analytic_hessian', 'analytic_gradient', or
+#'   'numeric'. If 'analytic_hessian' the \code{\link[stats]{nlminb}}
+#'   optimization routine is used, with the hand derived first and
+#'   second derivative. Otherwise, \code{\link[stats]{optim}} either
+#'   with or without the first derivative is used.
+#' @param verbose boolean that signals if the method prints informative
+#'   messages. Default: \code{FALSE}.
+#'
 #'
 #'
 #' @return a list with the following entries
@@ -10,9 +50,37 @@
 #'     \item{n_approx}{the estimated "size" of the data set (n_hat - variance_prior_df)}
 #'     \item{df}{the estimated degrees of freedom (n_hat - p)}
 #'     \item{s2}{the estimated unbiased variance}
-#'     \item{rss}{the estimated sum of the squared residuals. `NA` if the variance is moderated}
 #'     \item{n_obs}{the number of response values that were not `NA`}
 #'   }
+#'
+#' @examples
+#'   # Without missing values
+#'   y <- rnorm(5, mean=20)
+#'   lm(y ~ 1)
+#'   pd_lm(y ~ 1,
+#'         dropout_curve_position = NA,
+#'         dropout_curve_scale = NA)
+#'
+#'   # With some missing values
+#'   y <- c(23, 21.4, NA)
+#'   lm(y ~ 1)
+#'   pd_lm(y ~ 1,
+#'         dropout_curve_position = 19,
+#'         dropout_curve_scale = -1)
+#'
+#'
+#'   # With only missing values
+#'   y <- c(NA, NA, NA)
+#'   # lm(y ~ 1)  # Fails
+#'   pd_lm(y ~ 1,
+#'         dropout_curve_position = 19,
+#'         dropout_curve_scale = -1,
+#'         location_prior_mean = 21,
+#'         location_prior_scale = 3,
+#'         variance_prior_scale = 0.1,
+#'         variance_prior_df = 2)
+#'
+#'
 #' @export
 pd_lm <- function(formula, data = NULL, subset = NULL,
                   dropout_curve_position,
@@ -34,7 +102,7 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
 
   current.na.action <- options('na.action')
   options(na.action = "na.pass")
-  X <- model.matrix(formula, data=data)
+  X <- stats::model.matrix.default(formula, data=data)
   options('na.action' = unname(unlist(current.na.action)))
   colnames(X)[colnames(X) == "(Intercept)"] <- "Intercept"
 

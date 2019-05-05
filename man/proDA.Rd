@@ -58,7 +58,10 @@ to converge to the hyper-parameter estimates. Default:
 the model has converged. Default: \code{1e-3}}
 
 \item{verbose}{boolean that signals if the method prints informative
-messages. Default: \code{FALSE}.}
+messages. Default: \code{FALSE}}
+
+\item{...}{additional parameters for the construction of the
+'proDAFit' object}
 }
 \value{
 An object of class 'proDAFit'. The object contains information

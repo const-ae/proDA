@@ -1,10 +1,10 @@
 Package: proDA
 Type: Package
-Title: Differential Abundance analysis of label-free mass spectrometry data
+Title: Differential Abundance Analysis of Label-Free Mass Spectrometry Data
 Version: 0.1.0
 Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre")),
              person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", role="ths"))
-Description: Accounting for missing values in label-free mass spectrometry data 
+Description: Account for missing values in label-free mass spectrometry data 
     without imputation. The package implements a probabilistic dropout model that
     ensures that the information from observed and missing values are properly 
     combined. It adds empirical Bayesian priors to increase power to detect
@@ -21,4 +21,5 @@ Imports:
     methods,
     BiocGenerics,
     SummarizedExperiment,
-    S4Vectors
+    S4Vectors,
+    extraDistr

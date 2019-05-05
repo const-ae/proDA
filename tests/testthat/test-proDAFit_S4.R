@@ -25,7 +25,7 @@ test_that("proDAFit object construction works", {
 
   conv <- list(successful = TRUE, iterations = 7, error =1e-5)
 
-  dm <- model.matrix(~ annot_data$condition)
+  dm <- stats::model.matrix.default(~ annot_data$condition)
   pf <- proDAFit(se,
            col_data = NULL,
            dropout_curve_position = rho,

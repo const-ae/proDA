@@ -12,6 +12,10 @@
 #'
 #' @param X,Y,... the matrices for condition 1, 2 and so on. They must
 #'   have the same number of rows.
+#' @param groups a factor or character vector with that assignes the
+#'   columns of \code{X} to different conditions. This parameter is
+#'   only applicable for the F-test and must be specified if only a
+#'   single matrix is provided.
 #' @param return_fit boolean that signals that in addition to the
 #'   data.frame with the hypothesis test results, the fit from
 #'   \code{proDA()} is returned. Default: \code{FALSE}
@@ -20,7 +24,7 @@
 #'
 #' @return
 #'   If \code{return_fit == FALSE} a data.frame is returned with the content
-#'   that is described in \code{\link{test_diff()}}.
+#'   that is described in \code{\link{test_diff}}.
 #'
 #'   If \code{return_fit == TRUE} a list is returned with two elements:
 #'   \code{fit} with a reference to the object returned from \code{proDA()}
@@ -31,7 +35,7 @@
 #'
 #' @seealso \code{\link{proDA}} and \code{\link{test_diff}} for more
 #'   flexible versions. The  function was inspired
-#'   by the \code{\link[genefilter]{rowttest}} function in the genefilter
+#'   by the \code{\link[genefilter]{rowttests}} function in the genefilter
 #'   package.
 #'
 #'
@@ -47,8 +51,8 @@
 #'   pd_row_f_test(data1, data2, data3)
 #'
 #'   # Alternative
-#'   data_comd <- cbind(data1, data2, data3)
-#'   pd_row_f_test(data_comd,
+#'   data_comb <- cbind(data1, data2, data3)
+#'   pd_row_f_test(data_comb,
 #'      groups = c(rep("A",3), rep("B", 4), rep("C", 2)))
 #'
 #'   # t.test, lm, pd_row_t_test, and pd_row_f_test are

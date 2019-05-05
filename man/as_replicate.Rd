@@ -18,7 +18,7 @@ is the count how often the element was observed previously
 }
 \examples{
   x <- c("a", "b", "a", "b", "b", "d")
-  all(proDD:::as_replicate(x) == c(1,1,2,2,3,1))
+  all(proDA:::as_replicate(x) == c(1,1,2,2,3,1))
 
 }
 \seealso{
