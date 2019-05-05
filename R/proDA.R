@@ -368,7 +368,12 @@ convert_chr_vec_to_model_matrix <- function(design, reference_level){
   }else{
     design_fct <- design
   }
-  if(is.null(reference_level)){
+
+  if(length(levels(design_fct)) == 1){
+    # All entries are identical build an intercept only model
+    mm <- matrix(1, nrow=length(design_fct), ncol=1)
+    colnames(mm) <- levels(design_fct)
+  }else if(is.null(reference_level)){
     helper_df <- data.frame(x_ = design_fct)
     mm <- model.matrix(~ x_ - 1, helper_df)
     colnames(mm) <- sub("^x_", "", colnames(mm))
