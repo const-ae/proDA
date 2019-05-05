@@ -4,8 +4,8 @@
 .methods_to_suggest <- c("abundances", "hyper_parameters", "feature_parameters", "coefficients",
                          "convergence", "design", "reference_level", "colData", "rowData")
 
-
-# #' @export
+#' @rdname cash-proDAFit-method
+#' @export
 .DollarNames.proDAFit <- function(x, pattern = ""){
   grep(pattern, .methods_to_suggest, value = TRUE)
 }
@@ -34,12 +34,13 @@
 #' @param name one of the functions listed above
 #' @param value \strong{Warning:} modifying the content of a 'proDAFit'
 #'   object is not allowed
+#' @param pattern the regex pattern that is provided by the IDE
 #'
 #' @return whatever the function called \code{name} returns.
 #'
 #' @seealso \link{accessor_methods} for more documentation on the
 #'   accessor functions.
-#'
+#' @aliases dollar_methods
 setMethod("$", "proDAFit",
 function(x, name){
   if(! name %in% .methods_to_suggest){
