@@ -17,7 +17,6 @@ a list with the following entries
     \item{n_approx}{the estimated "size" of the data set (n_hat - variance_prior_df)}
     \item{df}{the estimated degrees of freedom (n_hat - p)}
     \item{s2}{the estimated unbiased variance}
-    \item{rss}{the estimated sum of the squared residuals. `NA` if the variance is moderated}
     \item{n_obs}{the number of response values that were not `NA`}
   }
 }

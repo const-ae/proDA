@@ -75,19 +75,30 @@ proDA <- function(data, design=~ 1,
 
   # Extract the raw data matrix
   if(is.matrix(data)){
+    if(any(! is.na(data) & data == 0)){
+      warning(paste0("The data contains", sum(! is.na(data) & data == 0) ," exact zeros. ",
+                     "Replacing them with 'NA's."))
+      data[! is.na(data) & data == 0] <- NA
+    }
     if(! data_is_log_transformed){
       data <- log2(data)
     }
     data_mat <- data
   }else if(inherits(data, "SummarizedExperiment")){
+    if(any(! is.na(assay(data)) & assay(data) == 0)){
+      warning(paste0("The data contains", sum(! is.na(assay(data)) & assay(data) == 0) ," exact zeros. ",
+                     "Replacing them with 'NA's."))
+      assay(data)[! is.na(assay(data)) & assay(data) == 0] <- NA
+    }
     if(! data_is_log_transformed){
       assay(data) <- log2(assay(data))
     }
     data_mat <- assay(data)
-
   }else{
     stop("data of tye ", class(data), " is not supported.")
   }
+
+
 
   fit_result <- fit_parameters_loop(data_mat, model_matrix,
                                     location_prior_df = location_prior_df,
@@ -99,7 +110,7 @@ proDA <- function(data, design=~ 1,
 
   feat_df <- as.data.frame(mply_dbl(fit_result$feature_parameters, function(f){
     unlist(f[-1])
-  }, ncol = 5))
+  }, ncol = 4))
   coef_mat <- mply_dbl(fit_result$feature_parameters, function(f){
     f$coefficients
   }, ncol=ncol(model_matrix))

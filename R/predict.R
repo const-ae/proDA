@@ -73,7 +73,7 @@ fit_feature_parameters <- function(fit, newdata){
   feat_df <- as.data.frame(mply_dbl(res_reg, function(f){
     unlist(f[-1])
   }, ncol = 5))
-  feat_df$rss <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
+  # feat_df$rss <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   coef_mat <- mply_dbl(res_reg, function(f){
     f$coefficients
   }, ncol=ncol(design(fit)))

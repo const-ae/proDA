@@ -77,7 +77,6 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
 #'     \item{n_approx}{the estimated "size" of the data set (n_hat - variance_prior_df)}
 #'     \item{df}{the estimated degrees of freedom (n_hat - p)}
 #'     \item{s2}{the estimated unbiased variance}
-#'     \item{rss}{the estimated sum of the squared residuals. `NA` if the variance is moderated}
 #'     \item{n_obs}{the number of response values that were not `NA`}
 #'   }
 #' @keywords internal
@@ -303,7 +302,8 @@ pd_lm.fit <- function(y, X,
 
   list(coefficients=fit_beta,
        n_approx=n_approx, df=df_approx,
-       s2=s2_approx, rss = rss_approx,
+       s2=s2_approx,
+       # rss = rss_approx,
        n_obs = length(yo))
 
 }
