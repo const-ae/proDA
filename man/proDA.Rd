@@ -2,13 +2,117 @@
 % Please edit documentation in R/proDA.R
 \name{proDA}
 \alias{proDA}
-\title{Main proDA function to determine the hyper and protein parameters}
+\title{Main function to determine the hyper and protein parameters}
 \usage{
 proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
-  data_is_log_transformed = TRUE, location_prior_df = 3,
-  moderate_location = TRUE, moderate_variance = TRUE, max_iter = 20,
+  data_is_log_transformed = TRUE, moderate_location = TRUE,
+  moderate_variance = TRUE, location_prior_df = 3, max_iter = 20,
   epsilon = 0.001, verbose = FALSE, ...)
 }
+\arguments{
+\item{data}{a matrix like object (\code{matrix()} or
+\code{SummarizedExperiment()}) with the one column per
+sample and one row per protein. Missing values should be
+coded \code{NA}.}
+
+\item{design}{a specification of the experimental design that
+is used to fit the linear model. It can be a \code{model.matrix()}
+with one row for each sample and one column for each
+coefficient. It can also be a formula with the entries refering
+to global objects, columns in the \code{col_data} argument or
+columns in the \code{colData(data)} if data is a
+\code{SummarizedExperiment}. Thirdly, it can be a vector that
+for each sample specifies the condition of that sample.
+Default: \code{~ 1}, which means that all samples are treated
+as if they are in the same condition.}
+
+\item{col_data}{a data.frame with one row for each sample in
+\code{data}. Default: \code{NULL}}
+
+\item{reference_level}{a string that specifies which level in a
+factor coefficient is used for the intercept.  Default:
+\code{NULL}}
+
+\item{data_is_log_transformed}{the raw intensities from mass
+spectrometry experiments have a linear mean-variance relation.
+This is undesirable and can be removed by working on the log
+scale. The easiest way to find out if the data is already log-
+transformed is to see if the intensities are in the range of
+0 to 100 in which case they are transformed or if they rather
+are between 1e5 to 1e12, in which case they need to be
+transformed. Default: \code{TRUE}}
+
+\item{moderate_location, moderate_variance}{boolean values
+to indicate if the location and the variances are
+moderated. Default: \code{TRUE}}
+
+\item{location_prior_df}{the number of degrees of freedom used
+for the location prior. A large number (> 30) means that the
+prior is approximately Normal. Default: \code{3}}
+
+\item{max_iter}{the maximum of iterations \code{proDA()} tries
+to converge to the hyper-parameter estimates. Default:
+\code{20}}
+
+\item{epsilon}{if the remaining error is smaller than \code{epsilon}
+the model has converged. Default: \code{1e-3}}
+
+\item{verbose}{boolean that signals if the method prints informative
+messages. Default: \code{FALSE}.}
+}
+\value{
+An object of class 'proDAFit'. The object contains information
+  on the hyper-parameters and feature parameters, the convergence,
+  the experimental design etc. Internally, it is a sub-class of
+  \code{SummarizedExperiment} which means the object is subsettable.
+}
 \description{
-Main proDA function to determine the hyper and protein parameters
+The function fits a linear probabilistic dropout model and infers
+the hyper-parameters for the location prior, the variance prior,
+and the dropout curves. In addition it infers for each protein
+the coefficients that best explain the observed data and the
+associated uncertainty.
+}
+\details{
+By default, the method is moderating the locations and the variance
+of each protein estimate. The variance moderation is fairly standard
+in high-throughput experiments and can boost the power to detect
+differentially abundant proteins. The location moderation is important
+to handle extreme cases where in one conditio a protein is not observed
+in any sample. In addition it can help to get more precise estimates
+of the difference between conditions. Unlike 'DESeq2', which moderates
+the coefficient estimates (ie. the "betas") to be centered around zero,
+'proDA' penalizes predicted intensities that strain far from the other
+observed intensities.
+}
+\examples{
+
+# Quick start
+set.seed(1)
+library(proDA)
+syn_data <- generate_synthetic_data(n_proteins = 10)
+fit <- proDA(syn_data$Y, design = syn_data$groups)
+fit
+result_names(fit)
+test_diff(fit, Condition_1 - Condition_2)
+
+# SummarizedExperiment
+se <- generate_synthetic_data(n_proteins = 10,
+                     return_summarized_experiment = TRUE)
+se
+proDA(se, design = ~ group)
+
+# Design using model.matrix()
+data_mat <- matrix(rnorm(5 * 10), nrow=10)
+colnames(data_mat) <- paste0("sample", 1:5)
+annotation_df <- data.frame(names = paste0("sample", 1:5),
+                     condition = c("A", "A", "A", "B", "B"),
+                     age = rnorm(5, mean=40, sd=10))
+
+design_mat <- model.matrix(~ condition + age,
+                           data=annotation_df)
+design_mat
+proDA(data_mat, design_mat, col_data = annotation_df)
+
+
 }
