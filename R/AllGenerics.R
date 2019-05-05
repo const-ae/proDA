@@ -56,3 +56,8 @@ setGeneric("reference_level", function(object, ...) standardGeneric("reference_l
 setGeneric("convergence", function(object, ...) standardGeneric("convergence"))
 
 
+
+setGeneric("dist_approx", function(object, ...) standardGeneric("dist_approx"))
+
+
+
