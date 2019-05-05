@@ -2,12 +2,15 @@
 % Please edit documentation in R/test_diff.R
 \name{test_diff}
 \alias{test_diff}
+\alias{result_names}
 \title{Identify significant coefficients}
 \usage{
 test_diff(fit, contrast, reduced_model = ~1,
   alternative = c("two.sided", "greater", "less"),
   pval_adjust_method = "BH", sort_by = NULL, decreasing = FALSE,
   n_max = Inf, verbose = FALSE)
+
+result_names(fit)
 }
 \arguments{
 \item{fit}{an object of class 'proDAFit'. Usually, this is
@@ -135,7 +138,7 @@ for collecting the results of high-throughput  testing
   test_diff(fit, Condition_1 - Condition_2)
 
 
-
+  suppressPackageStartupMessages(library(SummarizedExperiment))
   se <- generate_synthetic_data(n_proteins = 10,
                                 n_conditions = 3,
                                 return_summarized_experiment = TRUE)

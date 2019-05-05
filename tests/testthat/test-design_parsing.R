@@ -1,4 +1,4 @@
-context("test-design_specification")
+context("test-design_parsing")
 
 test_that("Character to model matrix", {
   design_vec <- rep(c("A", "B"), each = 5)
@@ -48,7 +48,7 @@ test_that("Formula to model_matrix", {
 
 test_that("Formula can handle empty input", {
   mm <- convert_formula_to_model_matrix(~ 1, as.data.frame(matrix(numeric(0), nrow=10)))
-  expect_equal(nrow(mm) == 10)
-  expect_equal(ncol(mm) == 1)
+  expect_equal(nrow(mm), 10)
+  expect_equal(ncol(mm), 1)
   check_valid_model_matrix(mm, matrix(1, ncol=10))
 })

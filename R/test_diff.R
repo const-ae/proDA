@@ -122,7 +122,7 @@
 #'   test_diff(fit, Condition_1 - Condition_2)
 #'
 #'
-#'
+#'   suppressPackageStartupMessages(library(SummarizedExperiment))
 #'   se <- generate_synthetic_data(n_proteins = 10,
 #'                                 n_conditions = 3,
 #'                                 return_summarized_experiment = TRUE)
@@ -382,7 +382,8 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
   res
 }
 
-
+#' @rdname test_diff
+#' @export
 result_names <- function(fit) {
   colnames(coefficients(fit))
 }

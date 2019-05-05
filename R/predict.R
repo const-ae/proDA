@@ -1,8 +1,32 @@
 
 #' Predict the parameters or values of additional proteins
 #'
+#' This function can either predict the abundance matrix for proteins
+#' (\code{type = "response"}) without missing values according to the
+#' linear probabilistic dropout model, fitted with \code{proDA()}. Or, it
+#' can predict the feature parameters for additional proteins given their
+#' abundances including missing values after estimating the hyper-
+#' parameters on a dataset with the same sample structure
+#' (\code{type = "feature_parameters"}).
 #'
+#' \strong{Note:} this method behaves a little different from what one might
+#' expect from the classical \code{predict.lm()} function, because
+#' \code{object} is not just a single set of coefficients for one fit, but
+#' many fits (ie. one for each protein) with some more hyper-parameters. The
+#' classical \code{predict} function predicts the response for new samples.
+#' This function does not support this, instead it is useful for getting a
+#' matrix without missing values for additional proteins.
 #'
+#' @param object an 'proDAFit' object that is produced by \code{proDA()}.
+#' @param newdata a matrix or a SummarizedExperiment which contains
+#'   the new abundances for which values are predicted.
+#' @param type either "response" or "feature_parameters". Default:
+#'   \code{"response"}
+#'
+#' @return If \code{type = "response"} a matrix with the same dimensions
+#'   as \code{object}. Or, if \code{type = "feature_parameters"} a
+#'   'proDAFit' object with the same hyper-parameters and column data
+#'   as \code{object}, but new fitted \code{rowData()}.
 #'
 #' @export
 setMethod("predict", signature = "proDAFit", function(object, newdata,
@@ -72,7 +96,7 @@ fit_feature_parameters <- function(fit, newdata){
 
   feat_df <- as.data.frame(mply_dbl(res_reg, function(f){
     unlist(f[-1])
-  }, ncol = 5))
+  }, ncol = 4))
   # feat_df$rss <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   coef_mat <- mply_dbl(res_reg, function(f){
     f$coefficients

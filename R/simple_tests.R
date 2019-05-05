@@ -102,6 +102,7 @@ pd_row_t_test <- function(X, Y,
 
 
 #' @rdname pd_row_t_test
+#' @export
 pd_row_f_test <- function(X, ..., groups = NULL,
                           moderate_location = TRUE,
                           moderate_variance = TRUE,
