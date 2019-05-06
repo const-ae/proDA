@@ -20,6 +20,8 @@
 #' @param object an 'proDAFit' object that is produced by \code{proDA()}.
 #' @param newdata a matrix or a SummarizedExperiment which contains
 #'   the new abundances for which values are predicted.
+#' @param newdesign a formula or design matrix that specifies the new structure
+#'   that will be fitted
 #' @param type either "response" or "feature_parameters". Default:
 #'   \code{"response"}
 #' @param ... additional parameters for the construction of the
@@ -32,21 +34,43 @@
 #'   as \code{object}, but new fitted \code{rowData()}.
 #'
 #' @export
-setMethod("predict", signature = "proDAFit", function(object, newdata,
+setMethod("predict", signature = "proDAFit", function(object, newdata, newdesign,
                                                       type=c("response", "feature_parameters"), ...){
   type <- match.arg(type, c("response", "feature_parameters"))
 
-  if(type == "response" && (missing(newdata) || is.null(newdata))){
+  if(type == "response" && (missing(newdata) || is.null(newdata)) &&
+     (missing(newdesign) || is.null(newdesign))){
     return(object$coefficients %*% t(object$design))
-  }else if(type == "feature_parameters" && (missing(newdata) || is.null(newdata))){
+  }else if(type == "feature_parameters" && (missing(newdata) || is.null(newdata)) &&
+           (missing(newdesign) || is.null(newdesign))){
     return(object)
+  }
+
+  design_formula <- NULL
+  if(missing(newdesign) || is.null(newdesign)){
+    design <- design(object)
+  }else if(inherits(newdesign,"formula")){
+    design <- convert_formula_to_model_matrix(newdesign, colData(object))
+    design_formula <- newdesign
+  }else if(is.matrix(newdesign)){
+    design <- newdesign
+  }else{
+    stop("Illegal newdesign of class", paste0(class(design)), ". Can only handle ",
+         "formula or matrix arguments")
+  }
+
+  if(missing(newdata) || is.null(newdata)){
+    newdata <- abundances(object)
   }
 
   # Check if newdata is applicable
   stopifnot(ncol(object) == ncol(newdata))
   stopifnot(colnames(object) == colnames(newdata))
+  stopifnot(ncol(object) == nrow(design))
 
-  feat_data <- fit_feature_parameters(object, newdata)
+
+
+  feat_data <- fit_feature_parameters(object, newdata, design)
   feat_df <- feat_data$feature_df
   coef_mat <- feat_data$coefficient_matrix
 
@@ -55,8 +79,8 @@ setMethod("predict", signature = "proDAFit", function(object, newdata,
                       dropout_curve_scale = object$hyper_parameters$dropout_curve_scale,
                       feature_parameters = feat_df,
                       coefficients = coef_mat,
-                      design_matrix = design(object),
-                      design_formula = design(object, formula=TRUE),
+                      design_matrix = design,
+                      design_formula = design_formula,
                       reference_level = reference_level(object),
                       location_prior_mean = object$hyper_parameters$location_prior_mean,
                       location_prior_scale = object$hyper_parameters$location_prior_scale,
@@ -74,19 +98,19 @@ setMethod("predict", signature = "proDAFit", function(object, newdata,
 })
 
 
-fit_feature_parameters <- function(fit, newdata){
+fit_feature_parameters <- function(fit, newdata, design){
 
   res_unreg <- lapply(seq_len(nrow(newdata)), function(i){
-    pd_lm.fit(newdata[i, ], design(fit),
+    pd_lm.fit(newdata[i, ], design,
               dropout_curve_position = fit$hyper_parameters$dropout_curve_position,
               dropout_curve_scale = fit$hyper_parameters$dropout_curve_position)
   })
   if(! is.null(fit$hyper_parameters$location_prior_mean) ||
      ! is.null(fit$hyper_parameters$variance_prior_scale)){
     res_reg <- lapply(seq_len(nrow(newdata)), function(i){
-      pd_lm.fit(newdata[i, ], design(fit),
+      pd_lm.fit(newdata[i, ], design,
                 dropout_curve_position = fit$hyper_parameters$dropout_curve_position,
-                dropout_curve_scale = fit$hyper_parameters$dropout_curve_position,
+                dropout_curve_scale = fit$hyper_parameters$dropout_curve_scale,
                 location_prior_mean = fit$hyper_parameters$location_prior_mean,
                 location_prior_scale = fit$hyper_parameters$location_prior_scale,
                 variance_prior_scale = fit$hyper_parameters$variance_prior_scale,
@@ -103,7 +127,7 @@ fit_feature_parameters <- function(fit, newdata){
   # feat_df$rss <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   coef_mat <- mply_dbl(res_reg, function(f){
     f$coefficients
-  }, ncol=ncol(design(fit)))
+  }, ncol=ncol(design))
   colnames(coef_mat) <- names(res_reg[[1]]$coefficients)
 
   list(feature_df = feat_df,

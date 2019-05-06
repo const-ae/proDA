@@ -5,14 +5,17 @@
 \alias{predict,proDAFit-method}
 \title{Predict the parameters or values of additional proteins}
 \usage{
-\S4method{predict}{proDAFit}(object, newdata, type = c("response",
-  "feature_parameters"), ...)
+\S4method{predict}{proDAFit}(object, newdata, newdesign,
+  type = c("response", "feature_parameters"), ...)
 }
 \arguments{
 \item{object}{an 'proDAFit' object that is produced by \code{proDA()}.}
 
 \item{newdata}{a matrix or a SummarizedExperiment which contains
 the new abundances for which values are predicted.}
+
+\item{newdesign}{a formula or design matrix that specifies the new structure
+that will be fitted}
 
 \item{type}{either "response" or "feature_parameters". Default:
 \code{"response"}}
