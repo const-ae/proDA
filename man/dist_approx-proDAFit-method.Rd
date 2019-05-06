@@ -5,8 +5,28 @@
 \alias{dist_approx,proDAFit-method}
 \title{Distance method for 'proDAFit' object}
 \usage{
-\S4method{dist_approx}{proDAFit}(object, by_sample = TRUE)
+\S4method{dist_approx}{proDAFit}(object, by_sample = TRUE,
+  blind = TRUE)
+}
+\arguments{
+\item{object}{the 'proDAFit' object for which we calculate the distance}
+
+\item{by_sample}{a boolean that indicates if the distances is calculated
+between the samples (`by_sample = TRUE`) or between the proteins
+(`by_sample = FALSE`). Default: `TRUE`}
+
+\item{blind}{fit an intercept model for the missing values to make
+sure that the results are not biased for the expected result.
+Default: `TRUE`}
+}
+\value{
+a list with two elements: `mean` and `sd` both are formally
+  of class "dist"
 }
 \description{
-Distance method for 'proDAFit' object
+The method calculates either the euclidean distance between samples or proteins
+taking into account the missing values and the associated uncertainty.
+Because with missing value no single deterministic distance can be
+calculated two objects are returned: the mean and the associated
+standard deviation of the distance estimates.
 }

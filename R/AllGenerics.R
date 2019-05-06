@@ -56,7 +56,15 @@ setGeneric("reference_level", function(object, ...) standardGeneric("reference_l
 setGeneric("convergence", function(object, ...) standardGeneric("convergence"))
 
 
-
+#' Calculate an approximate distance for 'object'
+#'
+#' @param object the object for which the distance is approximated
+#' @param ... additional arguments used by the concrete implementation
+#'
+#' @seealso \code{\link[stats]{dist}} for the base R function and
+#'   \code{\link[dist_approx,proDAFit-method]{dist_approx()}} concrete implementation
+#'   for 'proDAFit' objects
+#' @export
 setGeneric("dist_approx", function(object, ...) standardGeneric("dist_approx"))
 
 
