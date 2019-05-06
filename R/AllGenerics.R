@@ -62,7 +62,7 @@ setGeneric("convergence", function(object, ...) standardGeneric("convergence"))
 #' @param ... additional arguments used by the concrete implementation
 #'
 #' @seealso \code{\link[stats]{dist}} for the base R function and
-#'   \code{\link[dist_approx,proDAFit-method]{dist_approx()}} concrete implementation
+#'   \code{\link[proDA:dist_approx,proDAFit-method]{dist_approx()}} concrete implementation
 #'   for 'proDAFit' objects
 #' @export
 setGeneric("dist_approx", function(object, ...) standardGeneric("dist_approx"))
