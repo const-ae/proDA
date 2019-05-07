@@ -8,19 +8,24 @@
 #' calculated two objects are returned: the mean and the associated
 #' standard deviation of the distance estimates.
 #'
-#' @param object the 'proDAFit' object for which we calculate the distance
+#' @param object the 'proDAFit' object for which we calculate the distance or a matrix like
+#'   object for which 'proDAFit' is created internally
 #' @param by_sample a boolean that indicates if the distances is calculated
 #'   between the samples (`by_sample = TRUE`) or between the proteins
 #'   (`by_sample = FALSE`). Default: `TRUE`
 #' @param blind fit an intercept model for the missing values to make
 #'   sure that the results are not biased for the expected result.
 #'   Default: `TRUE`
+#' @param ... additional argument to \code{proDA()} in case object is a
+#'   \code{SummarizedExperiment} or a \code{matrix}
 #'
 #'
 #' @return a list with two elements: `mean` and `sd` both are formally
 #'   of class "dist"
 #'
 #'
+#' @name dist_approx_impl
+#' @aliases dist_approx,proDAFit-method
 #' @export
 setMethod("dist_approx", signature = "proDAFit", function(object,
                                                           by_sample=TRUE,
@@ -39,6 +44,28 @@ setMethod("dist_approx", signature = "proDAFit", function(object,
                        by_sample = by_sample)
 
 })
+
+
+#' @rdname dist_approx_impl
+#' @export
+setMethod("dist_approx", signature = "SummarizedExperiment", function(object,
+                                                                      by_sample=TRUE,
+                                                                      blind = TRUE, ...){
+  fit <- proDA(object, ...)
+  dist_approx(fit, by_sample = by_sample, blind = blind)
+})
+
+
+#' @rdname dist_approx_impl
+#' @export
+setMethod("dist_approx", signature = "ANY", function(object,
+                                                     by_sample=TRUE,
+                                                     blind = TRUE, ...){
+  fit <- proDA(object, ...)
+  dist_approx(fit, by_sample = by_sample, blind = blind)
+})
+
+
 
 
 dist_approx_mean_var <- function(Y, Pred, X, sigma2, by_sample = FALSE){
@@ -92,6 +119,4 @@ distance_sq <- function(mu1, sigma1, mu2, sigma2){
   analyt_var <- 2 *  sum(sigma^2) + 4 * sum(mu^2 * sigma)
   list(mean=analyt_mean, var=analyt_var)
 }
-
-
 
