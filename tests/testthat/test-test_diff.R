@@ -36,6 +36,19 @@ test_that("Parser contrast can handle reference to object in environment", {
 })
 
 
+test_that("parse contrast can handle being inside a function", {
+
+  fnc <- function(){
+    string <- "A - B"
+    parse_contrast(string, levels = LETTERS[1:2])
+  }
+
+  c1 <- parse_contrast(A - B, levels = LETTERS[1:2])
+  c2 <- fnc()
+  expect_equal(c1, c2)
+})
+
+
 test_that("F works", {
 
   y <- rnorm(10, mean=20)

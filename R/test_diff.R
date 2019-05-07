@@ -358,7 +358,7 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
   rownames(indicators) <- levels
   colnames(indicators) <- levels
 
-  level_environment <- new.env()
+  level_environment <- new.env(parent = parent.frame(n = 1 + (!direct_call)))
 
   for(lvl in levels){
     ind <- indicators[, lvl]
@@ -368,12 +368,11 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
   if(! is.null(reference_level)){
     assign(reference_level, NA_real_, level_environment)
   }
-
-  res <- eval(cnt_capture, envir= level_environment, parent.frame(n = 1 + direct_call))
+  res <- eval(cnt_capture, envir= level_environment)
   if(! is.numeric(res)){
     if(is.character(res)){
       # If contrast was a string, eval will just spit it out the same way
-      res <- eval(parse(text = res), envir= level_environment, parent.frame(n = 1 + direct_call))
+      res <- eval(parse(text = res), envir= level_environment)
     }
   }
   if(any(is.na(res))){
