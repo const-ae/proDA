@@ -233,77 +233,22 @@ observed intensities.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='co'># Quick start</span>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>1</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>proDA</span>)
-<span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/generate_synthetic_data'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/proDA'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
-<span class='no'>fit</span></div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
-#&gt; 
-#&gt; The dataset contains 6 samples and 10 proteins
-#&gt; 23.3% of the values are missing
-#&gt; 
-#&gt; Experimental design was specified using a design matrix (design(object)).
-#&gt; The model has successfully converged.
-#&gt; 
-#&gt; The inferred parameters are:
-#&gt; location_prior_mean:     19.7
-#&gt; location_prior_scale:    1.91
-#&gt; location_prior_df:       3
-#&gt; variance_prior_scale:    0.016
-#&gt; variance_prior_df:       0.724
-#&gt; dropout_curve_position:  18.8, 18.1, 19.1, 19.1, ...
-#&gt; dropout_curve_scale:     -0.0001, -0.0001, -0.0001, -0.0001, ...</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/test_diff'>result_names</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Condition_1" "Condition_2"</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/test_diff'>test_diff</a></span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)</div><div class='output co'>#&gt;          name        pval   adj_pval         diff t_statistic         se
-#&gt; 1   protein_1 0.753801892 0.99890735  0.068775657  0.33242098  0.2068932
-#&gt; 2   protein_2 0.477422834 0.95484567  0.363776108  0.80877454  0.4497868
-#&gt; 3   protein_3 0.290590356 0.82790238  0.709765449  1.18934847  0.5967683
-#&gt; 4   protein_4 0.730608347 0.99890735 -0.140600270 -0.48838569  0.2878878
-#&gt; 5   protein_5 0.331160950 0.82790238  0.361706686  1.08242468  0.3341634
-#&gt; 6   protein_6 0.998907351 0.99890735 -0.525915279 -0.04190022 12.5516123
-#&gt; 7   protein_7 0.857203838 0.99890735  0.174211607  0.20177091  0.8634129
-#&gt; 8   protein_8 0.250931691 0.82790238 -0.150456867 -1.30777277  0.1150482
-#&gt; 9   protein_9 0.980646131 0.99890735  0.003703558  0.02556760  0.1448536
-#&gt; 10 protein_10 0.001334949 0.01334949 -1.156117007 -6.76493598  0.1708984
-#&gt;           df avg_abundance n_approx n_obs
-#&gt; 1  4.7271713      19.39872 6.000000     6
-#&gt; 2  3.0230193      19.01267 4.295848     4
-#&gt; 3  4.7271713      20.27136 6.000000     6
-#&gt; 4  0.7501127      18.18511 2.022941     2
-#&gt; 5  4.7271713      20.97065 6.000000     6
-#&gt; 6  0.0010000      17.88790 2.001000     0
-#&gt; 7  2.2046609      19.37095 3.477490     4
-#&gt; 8  4.7271713      20.64059 6.000000     6
-#&gt; 9  4.7271715      20.24079 6.000000     6
-#&gt; 10 4.7271713      22.08797 6.000000     6</div><div class='input'>
+<span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>proDA</span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+<span class='no'>fit</span>
+<span class='fu'><a href='test_diff.html'>result_names</a></span>(<span class='no'>fit</span>)
+<span class='fu'><a href='test_diff.html'>test_diff</a></span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)
+
 <span class='co'># SummarizedExperiment</span>
-<span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/generate_synthetic_data'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+<span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
                      <span class='kw'>return_summarized_experiment</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>se</span></div><div class='output co'>#&gt; class: SummarizedExperiment 
-#&gt; dim: 10 6 
-#&gt; metadata(0):
-#&gt; assays(2): abundances full_observations
-#&gt; rownames(10): protein_1 protein_2 ... protein_9 protein_10
-#&gt; rowData names(4): changed true_s2 true_Condition_1 true_Condition_2
-#&gt; colnames(6): Condition_1-1 Condition_1-2 ... Condition_2-2
-#&gt;   Condition_2-3
-#&gt; colData names(3): group true_dropout_curve_position
-#&gt;   true_dropout_curve_scale</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/proDA'>proDA</a></span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
-#&gt; 
-#&gt; The dataset contains 6 samples and 10 proteins
-#&gt; 18.3% of the values are missing
-#&gt; 
-#&gt; Experimental design: y~group
-#&gt; The model has successfully converged.
-#&gt; 
-#&gt; The inferred parameters are:
-#&gt; location_prior_mean:     20.7
-#&gt; location_prior_scale:    7.21
-#&gt; location_prior_df:       3
-#&gt; variance_prior_scale:    0.0479
-#&gt; variance_prior_df:       1.76
-#&gt; dropout_curve_position:  NA, 19.9, 19, 19.1, ...
-#&gt; dropout_curve_scale:     NA, -0.0001, -0.824, -0.0001, ...</div><div class='input'>
+<span class='no'>se</span>
+<span class='fu'>proDA</span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)
+
 <span class='co'># Design using model.matrix()</span>
 <span class='no'>data_mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>5</span> * <span class='fl'>10</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/colnames'>colnames</a></span>(<span class='no'>data_mat</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='st'>"sample"</span>, <span class='fl'>1</span>:<span class='fl'>5</span>)
@@ -313,35 +258,11 @@ observed intensities.</p>
 
 <span class='no'>design_mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/model.matrix'>model.matrix</a></span>(~ <span class='no'>condition</span> + <span class='no'>age</span>,
                            <span class='kw'>data</span><span class='kw'>=</span><span class='no'>annotation_df</span>)
-<span class='no'>design_mat</span></div><div class='output co'>#&gt;   (Intercept) conditionB      age
-#&gt; 1           1          0 24.85113
-#&gt; 2           1          0 44.34537
-#&gt; 3           1          0 34.80463
-#&gt; 4           1          1 31.65441
-#&gt; 5           1          1 32.43352
-#&gt; attr(,"assign")
-#&gt; [1] 0 1 2
-#&gt; attr(,"contrasts")
-#&gt; attr(,"contrasts")$condition
-#&gt; [1] "contr.treatment"
-#&gt; </div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/proDA'>proDA</a></span>(<span class='no'>data_mat</span>, <span class='no'>design_mat</span>, <span class='kw'>col_data</span> <span class='kw'>=</span> <span class='no'>annotation_df</span>)</div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
-#&gt; 
-#&gt; The dataset contains 5 samples and 10 proteins
-#&gt; 0% of the values are missing
-#&gt; 
-#&gt; Experimental design was specified using a design matrix (design(object)).
-#&gt; The model has successfully converged.
-#&gt; 
-#&gt; The inferred parameters are:
-#&gt; location_prior_mean:     -0.00877
-#&gt; location_prior_scale:    0.657
-#&gt; location_prior_df:       3
-#&gt; variance_prior_scale:    0.798
-#&gt; variance_prior_df:       &gt; 100
-#&gt; dropout_curve_position:  NA, NA, NA, NA, ...
-#&gt; dropout_curve_scale:     NA, NA, NA, NA, ...</div><div class='input'>
+<span class='no'>design_mat</span>
+<span class='fu'>proDA</span>(<span class='no'>data_mat</span>, <span class='no'>design_mat</span>, <span class='kw'>col_data</span> <span class='kw'>=</span> <span class='no'>annotation_df</span>)
 
-</div></pre>
+
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

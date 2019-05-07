@@ -133,7 +133,7 @@ available for testing.</p>
     <tr>
       <th>fit</th>
       <td><p>an object of class 'proDAFit'. Usually, this is
-produced by calling <code>proDA()</code></p></td>
+produced by calling <code><a href='proDA.html'>proDA()</a></code></p></td>
     </tr>
     <tr>
       <th>contrast</th>
@@ -266,94 +266,30 @@ for collecting the results of high-throughput  testing
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>  <span class='co'># "t-test"</span>
-  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'>generate_synthetic_data</span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>proDA</span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
-  <span class='fu'>result_names</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Condition_1" "Condition_2"</div><div class='input'>  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)</div><div class='output co'>#&gt;          name      pval  adj_pval         diff  t_statistic        se  df
-#&gt; 1   protein_1 0.9927096 0.9927096 -0.004223618 -0.009137237 0.4622423 Inf
-#&gt; 2   protein_2 0.6040467 0.9121588  0.239714226  0.518589961 0.4622423 Inf
-#&gt; 3   protein_3 0.5845090 0.9121588 -0.252758922 -0.546810434 0.4622423 Inf
-#&gt; 4   protein_4 0.6120942 0.9121588 -0.234396790 -0.507086394 0.4622423 Inf
-#&gt; 5   protein_5 0.4240296 0.9121588  0.369539540  0.799449826 0.4622423 Inf
-#&gt; 6   protein_6 0.7967979 0.9622396 -0.119024358 -0.257493427 0.4622423 Inf
-#&gt; 7   protein_7 0.6385111 0.9121588 -0.217152885 -0.469781491 0.4622423 Inf
-#&gt; 8   protein_8 0.8660156 0.9622396  0.077990274  0.168721622 0.4622423 Inf
-#&gt; 9   protein_9 0.2187656 0.9121588 -0.568473486 -1.229817056 0.4622423 Inf
-#&gt; 10 protein_10 0.3946087 0.9121588 -0.393501913 -0.851289244 0.4622423 Inf
-#&gt;    avg_abundance n_approx n_obs
-#&gt; 1       21.43147 6.000000     6
-#&gt; 2       21.31997 6.000000     6
-#&gt; 3       20.17345 6.000001     6
-#&gt; 4       19.32016 4.976555     5
-#&gt; 5       18.89193 3.769757     4
-#&gt; 6       21.26211 6.000000     6
-#&gt; 7       17.86636 3.129155     2
-#&gt; 8       20.43760 4.819343     5
-#&gt; 9       19.00201 4.089473     4
-#&gt; 10      17.18440 2.892746     2</div><div class='input'>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+  <span class='co'># "t-test"</span>
+  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+  <span class='fu'>result_names</span>(<span class='no'>fit</span>)
+  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)
+
 
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/message'>suppressPackageStartupMessages</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>SummarizedExperiment</span>))
-  <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'>generate_synthetic_data</span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
                                 <span class='kw'>n_conditions</span> <span class='kw'>=</span> <span class='fl'>3</span>,
                                 <span class='kw'>return_summarized_experiment</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
   <span class='fu'><a href='https://www.rdocumentation.org/packages/SummarizedExperiment/topics/SummarizedExperiment-class'>colData</a></span>(<span class='no'>se</span>)$<span class='no'>age</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>9</span>, <span class='kw'>mean</span><span class='kw'>=</span><span class='fl'>45</span>, <span class='kw'>sd</span><span class='kw'>=</span><span class='fl'>5</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/SummarizedExperiment/topics/SummarizedExperiment-class'>colData</a></span>(<span class='no'>se</span>)</div><div class='output co'>#&gt; DataFrame with 9 rows and 4 columns
-#&gt;                     group true_dropout_curve_position true_dropout_curve_scale
-#&gt;                  &lt;factor&gt;                   &lt;numeric&gt;                &lt;numeric&gt;
-#&gt; Condition_1-1 Condition_1                        18.5                     -1.2
-#&gt; Condition_1-2 Condition_1                        18.5                     -1.2
-#&gt; Condition_1-3 Condition_1                        18.5                     -1.2
-#&gt; Condition_2-1 Condition_2                        18.5                     -1.2
-#&gt; Condition_2-2 Condition_2                        18.5                     -1.2
-#&gt; Condition_2-3 Condition_2                        18.5                     -1.2
-#&gt; Condition_3-1 Condition_3                        18.5                     -1.2
-#&gt; Condition_3-2 Condition_3                        18.5                     -1.2
-#&gt; Condition_3-3 Condition_3                        18.5                     -1.2
-#&gt;                            age
-#&gt;                      &lt;numeric&gt;
-#&gt; Condition_1-1 53.8179317387294
-#&gt; Condition_1-2 48.4480011096705
-#&gt; Condition_1-3 39.4962967778804
-#&gt; Condition_2-1 48.5725467844891
-#&gt; Condition_2-2 43.7676484153299
-#&gt; Condition_2-3  43.401069170364
-#&gt; Condition_3-1 51.8132214647735
-#&gt; Condition_3-2 38.8605870500866
-#&gt; Condition_3-3 42.4439038362476</div><div class='input'>  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>proDA</span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span> + <span class='no'>age</span>)
-  <span class='fu'>result_names</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Intercept"        "groupCondition_2" "groupCondition_3" "age"             </div><div class='input'>  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='st'>"groupCondition_2"</span>,
-            <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>sort_by</span> <span class='kw'>=</span> <span class='st'>"pval"</span>)</div><div class='output co'>#&gt;          name         pval     adj_pval       diff t_statistic        se
-#&gt; 10 protein_10 1.714522e-05 0.0001714522 -4.4443151 -10.3951608 0.4275369
-#&gt; 2   protein_2 8.790763e-02 0.4395381300  0.8444637   1.9836991 0.4257015
-#&gt; 5   protein_5 3.717365e-01 0.8789893680  0.4208211   0.9713005 0.4332553
-#&gt;          df avg_abundance n_approx n_obs
-#&gt; 10 6.965131      25.84181 9.000000     9
-#&gt; 2  6.965131      20.75706 9.000000     9
-#&gt; 5  5.559794      19.63989 7.594663     8</div><div class='input'>
-  <span class='co'># F-test</span>
-  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='kw'>reduced_model</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt;          name       pval  adj_pval f_statistic df1      df2 avg_abundance
-#&gt; 1   protein_1 1.00000000 1.0000000 -0.32290307   1 0.001000      16.92451
-#&gt; 2   protein_2 0.06907857 0.6907857  4.61105576   1 6.965131      20.75706
-#&gt; 3   protein_3 0.16278223 0.8139111  2.53855708   1 5.930433      20.19763
-#&gt; 4   protein_4 0.54296194 1.0000000  0.40893553   1 6.965131      22.44727
-#&gt; 5   protein_5 1.00000000 1.0000000 -0.01567429   1 5.559794      19.63989
-#&gt; 6   protein_6 0.82971927 1.0000000  0.04985717   1 6.965131      19.23611
-#&gt; 7   protein_7 0.38224180 1.0000000  1.36489526   1 1.676575      17.59597
-#&gt; 8   protein_8 1.00000000 1.0000000 -0.30738112   1 2.534480      18.89329
-#&gt; 9   protein_9 1.00000000 1.0000000 -0.02226001   1 4.900007      19.22638
-#&gt; 10 protein_10 0.61372519 1.0000000  0.27905946   1 6.965131      25.84181
-#&gt;    n_approx n_obs
-#&gt; 1  4.001000     1
-#&gt; 2  9.000000     9
-#&gt; 3  7.965302     8
-#&gt; 4  9.000000     9
-#&gt; 5  7.594663     8
-#&gt; 6  9.000000     9
-#&gt; 7  3.711444     3
-#&gt; 8  4.569349     4
-#&gt; 9  6.934876     7
-#&gt; 10 9.000000     9</div><div class='input'>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/SummarizedExperiment/topics/SummarizedExperiment-class'>colData</a></span>(<span class='no'>se</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span> + <span class='no'>age</span>)
+  <span class='fu'>result_names</span>(<span class='no'>fit</span>)
+  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='st'>"groupCondition_2"</span>,
+            <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>sort_by</span> <span class='kw'>=</span> <span class='st'>"pval"</span>)
 
-</div></pre>
+  <span class='co'># F-test</span>
+  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='kw'>reduced_model</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)
+
+
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

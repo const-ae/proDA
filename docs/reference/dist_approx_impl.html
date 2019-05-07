@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the coefficients — coefficients • proDA</title>
+<title>Distance method for 'proDAFit' object — dist_approx_impl • proDA</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,13 @@
 
 
 
-<meta property="og:title" content="Get the coefficients — coefficients" />
+<meta property="og:title" content="Distance method for 'proDAFit' object — dist_approx_impl" />
 
-<meta property="og:description" content="Get the coefficients" />
+<meta property="og:description" content="The method calculates either the euclidean distance between samples or proteins
+taking into account the missing values and the associated uncertainty.
+Because with missing value no single deterministic distance can be
+calculated two objects are returned: the mean and the associated
+standard deviation of the distance estimates." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -99,35 +103,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the coefficients</h1>
-    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/AllGenerics.R'><code>R/AllGenerics.R</code></a></small>
-    <div class="hidden name"><code>coefficients.Rd</code></div>
+    <h1>Distance method for 'proDAFit' object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/calculate_distance.R'><code>R/calculate_distance.R</code></a></small>
+    <div class="hidden name"><code>dist_approx_impl.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Get the coefficients</p>
+    <p>The method calculates either the euclidean distance between samples or proteins
+taking into account the missing values and the associated uncertainty.
+Because with missing value no single deterministic distance can be
+calculated two objects are returned: the mean and the associated
+standard deviation of the distance estimates.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>coefficients</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S4 method for proDAFit</span>
+<span class='fu'><a href='dist_approx.html'>dist_approx</a></span>(<span class='no'>object</span>, <span class='kw'>by_sample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>blind</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'><a href='dist_approx.html'>dist_approx</a></span>(<span class='no'>object</span>, <span class='kw'>by_sample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>blind</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for ANY</span>
+<span class='fu'><a href='dist_approx.html'>dist_approx</a></span>(<span class='no'>object</span>, <span class='kw'>by_sample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>blind</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>the object to get from</p></td>
+      <td><p>the 'proDAFit' object for which we calculate the distance or a matrix like
+object for which 'proDAFit' is created internally</p></td>
+    </tr>
+    <tr>
+      <th>by_sample</th>
+      <td><p>a boolean that indicates if the distances is calculated
+between the samples (`by_sample = TRUE`) or between the proteins
+(`by_sample = FALSE`). Default: `TRUE`</p></td>
+    </tr>
+    <tr>
+      <th>blind</th>
+      <td><p>fit an intercept model for the missing values to make
+sure that the results are not biased for the expected result.
+Default: `TRUE`</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments used by the concrete implementation</p></td>
+      <td><p>additional argument to <code><a href='proDA.html'>proDA()</a></code> in case object is a
+<code>SummarizedExperiment</code> or a <code>matrix</code></p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <div class='dont-index'><p><a href='accessor_methods.html'>accessor_methods</a> for the implementation for a 'proDAFit' object</p></div>
+    <p>a list with two elements: `mean` and `sd` both are formally
+  of class "dist"</p>
     
 
   </div>
@@ -136,7 +169,7 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#value">Value</a></li>
           </ul>
 
   </div>
