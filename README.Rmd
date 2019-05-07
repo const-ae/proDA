@@ -126,7 +126,7 @@ they don't require any additional installed packages.
 ```{r}
 # Load the table into memory
 maxquant_protein_table <- read.delim(
-    system.file("extdata/proteinGroups.txt", package = "proDD", mustWork = TRUE),
+    system.file("extdata/proteinGroups.txt", package = "proDA", mustWork = TRUE),
     stringsAsFactors = FALSE
 )
 ```

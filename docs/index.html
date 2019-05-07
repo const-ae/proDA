@@ -148,7 +148,7 @@ fit &lt;-<span class="st"> </span><span class="kw"><a href="reference/proDA.html
 <p>In this example, I will use the base R functions to load the data, because they don’t require any additional installed packages.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load the table into memory</span>
 maxquant_protein_table &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.delim</a></span>(
-    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/proteinGroups.txt"</span>, <span class="dt">package =</span> <span class="st">"proDD"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>),
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/proteinGroups.txt"</span>, <span class="dt">package =</span> <span class="st">"proDA"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>),
     <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>
 )</code></pre></div>
 <p>As I have mentioned, the table contains a lot of information (359 columns!!), but we are only interested in the columns which contain the measured intensities.</p>

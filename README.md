@@ -94,7 +94,7 @@ In this example, I will use the base R functions to load the data, because they 
 ``` r
 # Load the table into memory
 maxquant_protein_table <- read.delim(
-    system.file("extdata/proteinGroups.txt", package = "proDD", mustWork = TRUE),
+    system.file("extdata/proteinGroups.txt", package = "proDA", mustWork = TRUE),
     stringsAsFactors = FALSE
 )
 ```
