@@ -24,7 +24,16 @@ test_that("parse_contrast works", {
 
 })
 
-
+test_that("Parser contrast can handle reference to object in environment", {
+  c1 <- parse_contrast(A - B, levels = LETTERS[1:2])
+  c2 <- parse_contrast("A - B", levels = LETTERS[1:2])
+  string <- "A - B"
+  c3 <- parse_contrast(string, levels = LETTERS[1:2])
+  c4 <- parse_contrast(paste0("A", " - ", "B"), levels = LETTERS[1:2])
+  expect_equal(c1, c2)
+  expect_equal(c1, c3)
+  expect_equal(c1, c4)
+})
 
 
 test_that("F works", {

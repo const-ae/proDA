@@ -373,7 +373,7 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
   if(! is.numeric(res)){
     if(is.character(res)){
       # If contrast was a string, eval will just spit it out the same way
-      res <- eval(parse(text = cnt_capture), envir= level_environment, parent.frame(n = 1 + direct_call))
+      res <- eval(parse(text = res), envir= level_environment, parent.frame(n = 1 + direct_call))
     }
   }
   if(any(is.na(res))){
