@@ -84,6 +84,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #' @param location_prior_df the number of degrees of freedom used
 #'   for the location prior. A large number (> 30) means that the
 #'   prior is approximately Normal. Default: \code{3}
+#' @param n_subsample the number of proteins that are used to estimate the
+#'   hyper-parameter. Reducing this number can speed up the fitting, but
+#'   also mean that the final estimate is less precise. By default all
+#'   proteins are used. Default: \code{nrow(data)}
 #' @param max_iter the maximum of iterations \code{proDA()} tries
 #'   to converge to the hyper-parameter estimates. Default:
 #'   \code{20}
@@ -206,7 +210,7 @@ proDA <- function(data, design=~ 1,
 
 
 
-  sub_sample_mat <- data_mat[seq_len(n_subsample), ]
+  sub_sample_mat <- data_mat[seq_len(n_subsample), ,drop=FALSE]
   fit_result <- fit_parameters_loop(sub_sample_mat, model_matrix,
                                     location_prior_df = location_prior_df,
                                     moderate_location = moderate_location,
@@ -223,7 +227,7 @@ proDA <- function(data, design=~ 1,
   }, ncol=ncol(model_matrix))
   colnames(coef_mat) <- names(fit_result$feature_parameters[[1]]$coefficients)
 
-  fit <- proDAFit(data[seq_len(n_subsample), ], col_data,
+  fit <- proDAFit(data[seq_len(n_subsample), ,drop=FALSE], col_data,
            dropout_curve_position = fit_result$hyper_parameters$dropout_curve_position,
            dropout_curve_scale = fit_result$hyper_parameters$dropout_curve_scale,
            feature_parameters = feat_df,
@@ -245,11 +249,11 @@ proDA <- function(data, design=~ 1,
     }
     # Make predictions for remainig values
     if(is(data, "SummarizedExperiment") && ! is.null(rowData(data))){
-      fit2 <- predict(fit, newdata = data_mat[sel, ],
+      fit2 <- predict(fit, newdata = data_mat[sel, ,drop=FALSE],
                       type = "feature_parameters",
-                      rowData = rowData(data)[sel, ])
+                      rowData = rowData(data)[sel, ,drop=FALSE])
     }else{
-      fit2 <- predict(fit, newdata = data_mat[sel, ],
+      fit2 <- predict(fit, newdata = data_mat[sel, ,drop=FALSE],
                       type = "feature_parameters")
     }
     rbind(fit, fit2)

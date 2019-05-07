@@ -6,8 +6,9 @@
 \usage{
 proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
   data_is_log_transformed = TRUE, moderate_location = TRUE,
-  moderate_variance = TRUE, location_prior_df = 3, max_iter = 20,
-  epsilon = 0.001, verbose = FALSE, ...)
+  moderate_variance = TRUE, location_prior_df = 3,
+  n_subsample = nrow(data), max_iter = 20, epsilon = 0.001,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{data}{a matrix like object (\code{matrix()} or
@@ -49,6 +50,11 @@ moderated. Default: \code{TRUE}}
 \item{location_prior_df}{the number of degrees of freedom used
 for the location prior. A large number (> 30) means that the
 prior is approximately Normal. Default: \code{3}}
+
+\item{n_subsample}{the number of proteins that are used to estimate the
+hyper-parameter. Reducing this number can speed up the fitting, but
+also mean that the final estimate is less precise. By default all
+proteins are used. Default: \code{nrow(data)}}
 
 \item{max_iter}{the maximum of iterations \code{proDA()} tries
 to converge to the hyper-parameter estimates. Default:
