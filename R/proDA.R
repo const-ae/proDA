@@ -139,6 +139,7 @@ proDA <- function(data, design=~ 1,
                   moderate_location = TRUE,
                   moderate_variance = TRUE,
                   location_prior_df = 3,
+                  n_subsample = nrow(data),
                   max_iter = 20,
                   epsilon = 1e-3,
                   verbose=FALSE, ...){
@@ -197,13 +198,16 @@ proDA <- function(data, design=~ 1,
       assay(data) <- log2(assay(data))
     }
     data_mat <- assay(data)
+    # Delete superfluous assays
+    assays(data)[seq_len(length(assays(data)) - 1) + 1] <- NULL
   }else{
     stop("data of tye ", class(data), " is not supported.")
   }
 
 
 
-  fit_result <- fit_parameters_loop(data_mat, model_matrix,
+  sub_sample_mat <- data_mat[seq_len(n_subsample), ]
+  fit_result <- fit_parameters_loop(sub_sample_mat, model_matrix,
                                     location_prior_df = location_prior_df,
                                     moderate_location = moderate_location,
                                     moderate_variance = moderate_variance,
@@ -219,7 +223,7 @@ proDA <- function(data, design=~ 1,
   }, ncol=ncol(model_matrix))
   colnames(coef_mat) <- names(fit_result$feature_parameters[[1]]$coefficients)
 
-  proDAFit(data, col_data,
+  fit <- proDAFit(data[seq_len(n_subsample), ], col_data,
            dropout_curve_position = fit_result$hyper_parameters$dropout_curve_position,
            dropout_curve_scale = fit_result$hyper_parameters$dropout_curve_scale,
            feature_parameters = feat_df,
@@ -233,6 +237,26 @@ proDA <- function(data, design=~ 1,
            variance_prior_scale = fit_result$hyper_parameters$variance_prior_scale,
            variance_prior_df = fit_result$hyper_parameters$variance_prior_df,
            convergence = fit_result$convergence, ...)
+
+  if(n_subsample != nrow(data)){
+    sel <- seq_len(nrow(data) - n_subsample) + n_subsample
+    if(verbose){
+      message("Predict feature parameters for remaining ", length(sel), " proteins.")
+    }
+    # Make predictions for remainig values
+    if(is(data, "SummarizedExperiment") && ! is.null(rowData(data))){
+      fit2 <- predict(fit, newdata = data_mat[sel, ],
+                      type = "feature_parameters",
+                      rowData = rowData(data)[sel, ])
+    }else{
+      fit2 <- predict(fit, newdata = data_mat[sel, ],
+                      type = "feature_parameters")
+    }
+    rbind(fit, fit2)
+  }else{
+    fit
+  }
+
 }
 
 

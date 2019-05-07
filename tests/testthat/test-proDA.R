@@ -139,5 +139,16 @@ test_that("fit works with SummarizedExperiment object", {
 
 
 
+test_that("subsampling works", {
+
+  se <- generate_synthetic_data(n_proteins = 100, return_summarized_experiment = TRUE)
+
+  fit <- proDA(se, ~ group, n_subsample = 50, verbose=TRUE)
+  fit2 <- proDA(se, ~ group, verbose=TRUE)
+
+  expect_gt(cor(c(predict(fit)), c(predict(fit2))), 0.99)
+})
+
+
 
 

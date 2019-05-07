@@ -74,7 +74,9 @@ setMethod("predict", signature = "proDAFit", function(object, newdata, newdesign
   feat_df <- feat_data$feature_df
   coef_mat <- feat_data$coefficient_matrix
 
-  new_fit_object <- proDAFit(newdata, NULL,
+  new_fit_object <- proDAFit(newdata,
+                      col_data = colData(object)[, is.na(mcols(colData(object))$type) |
+                                                   mcols(colData(object))$type != "hyper_parameter"],
                       dropout_curve_position = object$hyper_parameters$dropout_curve_position,
                       dropout_curve_scale = object$hyper_parameters$dropout_curve_scale,
                       feature_parameters = feat_df,
