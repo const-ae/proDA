@@ -538,7 +538,12 @@ convert_formula_to_model_matrix <- function(formula, col_data, reference_level=N
     if(all(has_ref_level == FALSE)){
       stop("None of the columns contains the specified reference_level.")
     }
-    col_data[has_ref_level] <- lapply(col_data[has_ref_level], stats::relevel, ref = reference_level)
+    col_data[has_ref_level] <- lapply(col_data[has_ref_level], function(col){
+      if(is.character(col)){
+        col <- as.factor(col)
+      }
+      stats::relevel(col, ref = reference_level)
+    })
   }
   mm <- stats::model.matrix.default(formula, col_data)
   colnames(mm)[colnames(mm) == "(Intercept)"] <- "Intercept"
