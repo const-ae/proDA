@@ -120,8 +120,9 @@ associated uncertainty.</p>
 
     <pre class="usage"><span class='fu'>proDA</span>(<span class='no'>data</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~<span class='fl'>1</span>, <span class='kw'>col_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>reference_level</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>data_is_log_transformed</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>moderate_location</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>location_prior_df</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>max_iter</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.001</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>location_prior_df</span> <span class='kw'>=</span> <span class='fl'>3</span>,
+  <span class='kw'>n_subsample</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>nrow</a></span>(<span class='no'>data</span>), <span class='kw'>max_iter</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,6 +180,13 @@ moderated. Default: <code>TRUE</code></p></td>
       <td><p>the number of degrees of freedom used
 for the location prior. A large number (&gt; 30) means that the
 prior is approximately Normal. Default: <code>3</code></p></td>
+    </tr>
+    <tr>
+      <th>n_subsample</th>
+      <td><p>the number of proteins that are used to estimate the
+hyper-parameter. Reducing this number can speed up the fitting, but
+also mean that the final estimate is less precise. By default all
+proteins are used. Default: <code><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>nrow(data)</a></code></p></td>
     </tr>
     <tr>
       <th>max_iter</th>

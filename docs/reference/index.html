@@ -110,6 +110,182 @@
     <tbody>
       <tr>
         <th colspan="2">
+          <h2 id="section-main-functions" class="hasAnchor"><a href="#section-main-functions" class="anchor"></a>Main Functions</h2>
+          <p class="section-desc"><p>The most important functions to analyze mass spectrometry data with lots of missing values</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="median_normalization.html">median_normalization()</a></code> </p>
+        </td>
+        <td><p>Column wise median normalization of the data matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="proDA.html">proDA()</a></code> </p>
+        </td>
+        <td><p>Main function to determine the hyper and protein parameters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dist_approx-proDAFit-method.html">dist_approx(<i>&lt;proDAFit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Distance method for 'proDAFit' object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="test_diff.html">test_diff()</a></code> <code><a href="test_diff.html">result_names()</a></code> </p>
+        </td>
+        <td><p>Identify significant coefficients</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-accessor-methods" class="hasAnchor"><a href="#section-accessor-methods" class="anchor"></a>Accessor methods</h2>
+          <p class="section-desc"><p>Methods to access values of the fit</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="accessor_methods.html">abundances(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">design(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">hyper_parameters(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">feature_parameters(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">coefficients(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">reference_level(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="accessor_methods.html">convergence(<i>&lt;proDAFit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Get different features and elements of the 'proDAFit' object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cash-proDAFit-method.html">.DollarNames(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="cash-proDAFit-method.html">`$`(<i>&lt;proDAFit&gt;</i>)</a></code> <code><a href="cash-proDAFit-method.html">`$<-`(<i>&lt;proDAFit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fluent use of accessor methods</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-quick-start-functions" class="hasAnchor"><a href="#section-quick-start-functions" class="anchor"></a>Quick start functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="pd_row_t_test.html">pd_row_t_test()</a></code> <code><a href="pd_row_t_test.html">pd_row_f_test()</a></code> </p>
+        </td>
+        <td><p>Row-wise tests of difference using the probabilistic dropout model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="generate_synthetic_data.html">generate_synthetic_data()</a></code> </p>
+        </td>
+        <td><p>Generate a dataset according to the probabilistic dropout model</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-low-level-statistics-functions" class="hasAnchor"><a href="#section-low-level-statistics-functions" class="anchor"></a>Low-level statistics functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="pd_lm.html">pd_lm()</a></code> </p>
+        </td>
+        <td><p>Fit a single linear probabilistic dropout model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="invprobit.html">invprobit()</a></code> </p>
+        </td>
+        <td><p>Inverse probit function</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utility-function" class="hasAnchor"><a href="#section-utility-function" class="anchor"></a>Utility function</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="mply_dbl.html">mply_dbl()</a></code> <code><a href="mply_dbl.html">msply_dbl()</a></code> </p>
+        </td>
+        <td><p>apply function that always returns a numeric matrix</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-class-and-package-information" class="hasAnchor"><a href="#section-class-and-package-information" class="anchor"></a>Class and Package Information</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="proDAFit-class.html">proDAFit-class</a></code> </p>
+        </td>
+        <td><p>proDA Class Definition</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="proDA_package.html">proDA_package</a></code> </p>
+        </td>
+        <td><p>proDA: Identify differentially abundant proteins in label-free mass spectrometry</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-generic-functions" class="hasAnchor"><a href="#section-generic-functions" class="anchor"></a>Generic functions</h2>
+          <p class="section-desc"><p>Function definitions for S4 Generics</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="abundances.html">abundances()</a></code> </p>
+        </td>
+        <td><p>Get the abundance matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="coefficients.html">coefficients()</a></code> </p>
+        </td>
+        <td><p>Get the coefficients</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="convergence.html">convergence()</a></code> </p>
+        </td>
+        <td><p>Get the convergence information</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dist_approx.html">dist_approx()</a></code> </p>
+        </td>
+        <td><p>Calculate an approximate distance for 'object'</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="feature_parameters.html">feature_parameters()</a></code> </p>
+        </td>
+        <td><p>Get the feature parameters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="hyper_parameters.html">hyper_parameters()</a></code> </p>
+        </td>
+        <td><p>Get the hyper parameters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="reference_level.html">reference_level()</a></code> </p>
+        </td>
+        <td><p>Get the reference level</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
           <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
           <p class="section-desc"></p>
         </th>
@@ -248,6 +424,13 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#section-main-functions">Main Functions</a></li>
+      <li><a href="#section-accessor-methods">Accessor methods</a></li>
+      <li><a href="#section-quick-start-functions">Quick start functions</a></li>
+      <li><a href="#section-low-level-statistics-functions">Low-level statistics functions</a></li>
+      <li><a href="#section-utility-function">Utility function</a></li>
+      <li><a href="#section-class-and-package-information">Class and Package Information</a></li>
+      <li><a href="#section-generic-functions">Generic functions</a></li>
       <li><a href="#section-all-functions">All functions</a></li>
     </ul>
   </div>

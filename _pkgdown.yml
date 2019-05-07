@@ -1,3 +1,81 @@
 destination: docs
 development:
   mode: unreleased
+
+
+reference:
+- title: Main Functions
+  desc: >
+    The most important functions to analyze mass spectrometry data with
+    lots of missing values
+  contents:
+    - median_normalization
+    - proDA
+    - '`dist_approx,proDAFit-method`'
+    - test_diff
+
+- title: Accessor methods
+  desc: Methods to access values of the fit
+  contents:
+    - accessor_methods
+    - .DollarNames.proDAFit
+
+- title: Quick start functions
+  desc: ~
+  contents:
+    - '`pd_row_t_test`'
+    - '`generate_synthetic_data`'
+
+- title: Low-level statistics functions
+  desc: ~
+  contents:
+    - pd_lm
+    - invprobit
+
+
+- title: Utility function
+  desc: ~
+  contents:
+    - mply_dbl
+
+- title: Class and Package Information
+  desc: ~
+  contents:
+    - '`proDAFit-class`'
+    - proDA_package
+
+- title: Generic functions
+  desc: Function definitions for S4 Generics
+  contents:
+    - abundances
+    - coefficients
+    - convergence
+    - dist_approx
+    - feature_parameters
+    - hyper_parameters
+    - reference_level
+
+- title: All functions
+  desc: ~
+  contents:
+  - '`abundances`'
+  - '`accessor_methods`'
+  - '`.DollarNames.proDAFit`'
+  - '`coefficients`'
+  - '`convergence`'
+  - '`dist_approx,proDAFit-method`'
+  - '`dist_approx`'
+  - '`feature_parameters`'
+  - '`generate_synthetic_data`'
+  - '`hyper_parameters`'
+  - '`invprobit`'
+  - '`median_normalization`'
+  - '`mply_dbl`'
+  - '`pd_lm`'
+  - '`pd_row_t_test`'
+  - '`predict,proDAFit-method`'
+  - '`proDA`'
+  - '`proDAFit-class`'
+  - '`proDA_package`'
+  - '`reference_level`'
+  - '`test_diff`'
