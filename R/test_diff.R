@@ -382,12 +382,12 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
   res
 }
 
+
 #' @rdname test_diff
 #' @export
-result_names <- function(fit) {
+setMethod("result_names", signature = "proDAFit", function(fit){
   colnames(coefficients(fit))
-}
-
+})
 
 
 

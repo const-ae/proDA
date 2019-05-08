@@ -2,7 +2,8 @@
 
 
 .methods_to_suggest <- c("abundances", "hyper_parameters", "feature_parameters", "coefficients",
-                         "convergence", "design", "reference_level", "colData", "rowData")
+                         "convergence", "design", "reference_level", "result_names",
+                         "colData", "rowData")
 
 #' @rdname cash-proDAFit-method
 #' @export
@@ -26,6 +27,7 @@
 #'   \item convergence
 #'   \item design
 #'   \item reference_level
+#'   \item result_names
 #'   \item colData
 #'   \item rowData.
 #' }

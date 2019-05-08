@@ -54,6 +54,7 @@ reference:
     - feature_parameters
     - hyper_parameters
     - reference_level
+    - result_names
 
 - title: All functions
   desc: ~

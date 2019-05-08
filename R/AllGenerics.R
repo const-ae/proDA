@@ -68,4 +68,11 @@ setGeneric("convergence", function(object, ...) standardGeneric("convergence"))
 setGeneric("dist_approx", function(object, ...) standardGeneric("dist_approx"))
 
 
+#' Get the result_names
+#'
+#' @param fit the fit to get the result_names from
+#' @param ... additional arguments used by the concrete implementation
+#'
+#' @export
+setGeneric("result_names", function(fit, ...) standardGeneric("result_names"))
 
