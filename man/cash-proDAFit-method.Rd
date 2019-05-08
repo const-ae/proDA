@@ -42,6 +42,7 @@ the \code{`$`} operator only exposes a limited set of functions
   \item convergence
   \item design
   \item reference_level
+  \item result_names
   \item colData
   \item rowData.
 }

@@ -86,7 +86,7 @@
 <p>You can install the development version from <a href="https://github.com/const-ae/proDA">GitHub</a> with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"const-ae/proDA"</span>)</code></pre></div>
-<p>The pkgdown documentation is available on <a href="https://const-ae.github.io/proDA/reference" class="uri">https://const-ae.github.io/proDA/reference</a></p>
+<p>The pkgdown documentation for the package is available on <a href="https://const-ae.github.io/proDA/reference" class="uri">https://const-ae.github.io/proDA/reference</a></p>
 <p>In the following section, I will give a very brief overview on the main functionality of the <code>proDA</code> package. New users are advised to directly go to section two, where I give a complete walkthrough and explain in detail, what steps are necessary for the analysis of label-free mass spectrometry data.</p>
 </div>
 <div id="quickstart" class="section level2">
@@ -112,7 +112,7 @@ syn_dataset<span class="op">$</span>Y[<span class="dv">1</span><span class="op">
 <span class="co">#&gt; protein_4      25.62239      24.91191      25.47405      25.09780      24.42479      24.47261</span>
 <span class="co">#&gt; protein_5      23.60771      22.89148      23.02004      23.21011      23.12756      23.86721</span>
 
-<span class="co"># The labelling of columns to two conditions</span>
+<span class="co"># Assign the samples to the two conditions</span>
 syn_dataset<span class="op">$</span>groups
 <span class="co">#&gt; [1] Condition_1 Condition_1 Condition_1 Condition_2 Condition_2 Condition_2</span>
 <span class="co">#&gt; Levels: Condition_1 Condition_2</span>
@@ -136,22 +136,34 @@ fit &lt;-<span class="st"> </span><span class="kw"><a href="reference/proDA.html
 <h2 class="hasAnchor">
 <a href="#proda-walkthrough" class="anchor"></a>proDA Walkthrough</h2>
 <p><code>proDA</code> is an R package that implements a powerful probabilistic dropout model to identify differentially abundant proteins. The package was designed specifically with label-free mass spectrometry data in mind, which poses the challenge of many missing values.</p>
-<p>But all this is useless if you cannot load your data. So in the next section, I will give an example how to load the abundance matrix.</p>
-<div id="loading-data" class="section level3">
+<p>But all this is useless if you cannot load your data and get it into a shape that is useable. In the next section, I will give an example how to load the abundance matrix and bring it into a useful form. The steps that I will go through are</p>
+<ol style="list-style-type: decimal">
+<li>Load the <code>proteinGroups.txt</code> MaxQuant output table</li>
+<li>Extract the intensity columns and create the abundance matrix</li>
+<li>Replace the zeros with <code>NA</code>s and take the <code><a href="https://www.rdocumentation.org/packages/base/topics/Log">log2()</a></code> of the data</li>
+<li>Normalize the data using <code><a href="reference/median_normalization.html">median_normalization()</a></code>
+</li>
+<li>Inspect sample structure with a heatmap of the distance matrix (<code><a href="reference/dist_approx.html">dist_approx()</a></code>)</li>
+<li>Fit the probabilisitc dropout model with <code><a href="reference/proDA.html">proDA()</a></code>
+</li>
+<li>Identify differentially abundant proteins with <code><a href="reference/test_diff.html">test_diff()</a></code>
+</li>
+</ol>
+<div id="load-data" class="section level3">
 <h3 class="hasAnchor">
-<a href="#loading-data" class="anchor"></a>Loading Data</h3>
-<p>I will now demonstrate how to load a MaxQuant output file. For more information about different approaches, you can also take a look at the vignette on loading data.</p>
+<a href="#load-data" class="anchor"></a>Load Data</h3>
+<p>I will now demonstrate how to load a MaxQuant output file. For more information about other approaches for loading the data, please take a look at the vignette on loading data.</p>
 <p>MaxQuant is one of the most popular tools for handling raw MS data. It produces a number of files. The important file that contains the protein intensities is called <code>proteinGroups.txt</code>. It is a large table with detailed information about the identification and quantification process for each protein group (which I will from now on just call “protein”).</p>
-<p>This package comes with an example <code>proteinGroups.txt</code> file, located in the package folder. Naturally, your path will differ because of the installation location.</p>
+<p>This package comes with an example <code>proteinGroups.txt</code> file, located in the package folder. The file contains the reduced output from an experiment studying the different DHHCs in Drosophila melanogaster.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/proteinGroups.txt"</span>, <span class="dt">package =</span> <span class="st">"proDA"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; [1] "/home/constantin/R/x86_64-pc-linux-gnu-library/3.6/proDA/extdata/proteinGroups.txt"</span></code></pre></div>
-<p>In this example, I will use the base R functions to load the data, because they don’t require any additional installed packages.</p>
+<p>In this example, I will use the base R functions to load the data, because they don’t require any additional dependencies.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load the table into memory</span>
 maxquant_protein_table &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.delim</a></span>(
     <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/proteinGroups.txt"</span>, <span class="dt">package =</span> <span class="st">"proDA"</span>, <span class="dt">mustWork =</span> <span class="ot">TRUE</span>),
     <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>
 )</code></pre></div>
-<p>As I have mentioned, the table contains a lot of information (359 columns!!), but we are only interested in the columns which contain the measured intensities.</p>
+<p>As I have mentioned, the table contains a lot of information (359 columns!!), but we are first of all interested in the columns which contain the measured intensities.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># I use a regular expression (regex) to select the intensity columns</span>
 intensity_colnames &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(maxquant_protein_table)[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">grepl</a></span>(<span class="st">"^LFQ</span><span class="ch">\\</span><span class="st">.intensity</span><span class="ch">\\</span><span class="st">."</span>,
                                                              <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(maxquant_protein_table))]
@@ -165,15 +177,15 @@ abundance_matrix &lt;-<span class="st"> </span><span class="kw"><a href="https:/
 <span class="co"># Adapt column and row maxquant_protein_table</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(abundance_matrix) &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">sub</a></span>(<span class="st">"^LFQ</span><span class="ch">\\</span><span class="st">.intensity</span><span class="ch">\\</span><span class="st">."</span>, <span class="st">""</span>, intensity_colnames)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(abundance_matrix) &lt;-<span class="st"> </span>maxquant_protein_table<span class="op">$</span>Protein.IDs
-<span class="co"># Print top matrix</span>
+<span class="co"># Print some rows of the matrix with short names so they fit on the screen</span>
 abundance_matrix[<span class="dv">46</span><span class="op">:</span><span class="dv">48</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>]
 <span class="co">#&gt;                                       CG1407.01 CG1407.02 CG1407.03 CG4676.01 CG4676.02 CG4676.03</span>
 <span class="co">#&gt; A0A0B4K6W1;P08970                        713400    845440         0         0   1032600         0</span>
 <span class="co">#&gt; A0A0B4K6W2;A0A0B4K7S0;P55824-3;P55824   5018800   4429500   2667200         0   8780200   1395800</span>
 <span class="co">#&gt; A0A0B4K6X7;A1Z8J0                             0         0         0         0         0         0</span></code></pre></div>
-<p>After extracting the bits from the table we most care about, we will have to adapt the matrix slightly.</p>
-<p>First, MaxQuant codes missing values as <code>0</code>. This is misleading, because the actual abundance probably was not zero, but just some value too small to be detected by the mass spectrometer. Accordingly, I will replace all <code>0</code> with <code>NA</code>.</p>
-<p>Second, the raw intensity values have a linear mean-variance relation. This is undesirable, because a change of <code>x</code> units can be a large shift if the mean is small or irrelevant if the mean is large. Luckily, to make the mean and variance independent, we can just <code>log</code> the intensities. Now a change of <code>x</code> units is as significant for highly abundant proteins, as it is for low abundant ones.</p>
+<p>After extracting the bits from the table we most care about, we will have to modify it.</p>
+<p>Firstly, MaxQuant codes missing values as <code>0</code>. This is misleading, because the actual abundance probably was not zero, but just some value too small to be detected by the mass spectrometer. Accordingly, I will replace all <code>0</code> with <code>NA</code>.</p>
+<p>Secondly, the raw intensity values have a linear mean-variance relation. This is undesirable, because a change of <code>x</code> units can be a large shift if the mean is small or irrelevant if the mean is large. Luckily, to make the mean and variance independent, we can just <code>log</code> the intensities. Now a change of <code>x</code> units is as significant for highly abundant proteins, as it is for low abundant ones.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">abundance_matrix[abundance_matrix <span class="op">==</span><span class="st"> </span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
 abundance_matrix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log2</a></span>(abundance_matrix)
 abundance_matrix[<span class="dv">46</span><span class="op">:</span><span class="dv">48</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>]
@@ -185,20 +197,25 @@ abundance_matrix[<span class="dv">46</span><span class="op">:</span><span class=
 <div id="quality-control" class="section level3">
 <h3 class="hasAnchor">
 <a href="#quality-control" class="anchor"></a>Quality Control</h3>
-<p>It is well established truth that quality control (QC) is essential for a successful bioinformatics project, because mistakes happen. Often we start with normalizing the data to remove potential sample specific effects. But already this step is challenging, because the missing values cannot easily be corrected for. Thus, a first helpful plot is to look how many missing values each sample contains.</p>
+<p>Quality control (QC) is essential for a successful bioinformatics analysis, because any dataset shows some unwanted variation or could even contain more serious error like for example a sample swap.</p>
+<p>Often we start with normalizing the data to remove potential sample specific effects. But already this step is challenging, because the missing values cannot easily be corrected for. Thus, a first helpful plot is to look how many missing values are in each sample.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/barplot">barplot</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colSums">colSums</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(abundance_matrix)),
         <span class="dt">ylab =</span> <span class="st">"# missing values"</span>,
         <span class="dt">xlab =</span> <span class="st">"Sample 1 to 36"</span>)</code></pre></div>
 <p><img src="reference/figures/README-qc-mis_barplot-1.png" width="60%" style="display: block; margin: auto;"></p>
-<p>We can see that the number of missing values differs substantially between samples (between 30% and 90%). If we take a look at the intensity distribution for each sample, we see that they differ substantially as well.</p>
+<p>We can see that the number of missing values differs substantially between samples (between 30% and 90%) in this dataset. If we take a look at the intensity distribution for each sample, we see that they differ substantially as well.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/boxplot">boxplot</a></span>(abundance_matrix,
         <span class="dt">ylab =</span> <span class="st">"Intensity Distribution"</span>,
         <span class="dt">xlab =</span> <span class="st">"Sample 1 to 36"</span>)</code></pre></div>
 <p><img src="reference/figures/README-qc-raw_boxplot-1.png" width="60%" style="display: block; margin: auto;"></p>
-<p>Note that, the intensity distribution is shifted upwards for samples (for example the last one) which also have a large number of missing values. This agrees with our idea that small values are more likely to be missing. On the other hand, this also demonstrates why normalization methods such as quantile normalization are problematic. They distort the data until all the distributions are equal. I will apply the more “conservative” median normalization, which just ignores the missing values. It transforms the values so that the median difference between the sample and average across all other samples is zero.</p>
+<p>Note that, the intensity distribution is shifted upwards for samples which also have a large number of missing values (for example the last one). This agrees with our idea that small values are more likely to be missing. On the other hand, this also demonstrates why normalization methods such as quantile normalization, which distort the data until all the distributions are equal, are problematic. I will apply the more “conservative” median normalization, which ignores the missing values and transforms the values so that the median difference between the sample and average across all other samples is zero.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">normalized_abundance_matrix &lt;-<span class="st"> </span><span class="kw"><a href="reference/median_normalization.html">median_normalization</a></span>(abundance_matrix)</code></pre></div>
+<p>An important tool to identify sample swaps and outliers in the dataset is to look at the sample distance matrix. It shows the distances of samples A to B, A to C, B to C and so on.</p>
+<p>The base R <code><a href="https://www.rdocumentation.org/packages/stats/topics/dist">dist()</a></code> function can not handle input data that contains missing values, so we might be tempted to just replace the missing values with some other and calculate the distance on the completed dataset. But choosing a good replacement value is challenging and can also be misleading because the samples with many missing values would be considered too close.</p>
+<p>Instead <code>proDA</code> provides the <code><a href="reference/dist_approx.html">dist_approx()</a></code> function that takes either a fitted model (ie. the output from <code><a href="reference/proDA.html">proDA()</a></code>) or a simple matrix (for which it internally calls <code><a href="reference/proDA.html">proDA()</a></code>) and estimates the expected distance without imputing the missing values. In addition, it reports the associated uncertainty with every estimate. The estimates for samples with many missing values will be uncertain, allowing the data analyst to discount them.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">da &lt;-<span class="st"> </span><span class="kw"><a href="reference/dist_approx.html">dist_approx</a></span>(normalized_abundance_matrix)</code></pre></div>
+<p><code><a href="reference/dist_approx.html">dist_approx()</a></code> returns two elements the <code>mean</code> of the estimate and the associated <code>sd</code>. In the next step I will plot the heatmap for three differnet conditions, adding the 95% confidence interval as text to each cell.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># This chunk only works if pheatmap is installed</span>
 <span class="co"># install.packages("pheatmap")</span>
 sel &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,  <span class="co"># CG1407</span>
@@ -214,10 +231,10 @@ pheatmap<span class="op">::</span><span class="kw"><a href="https://www.rdocumen
                    <span class="dt">number_color =</span> <span class="st">"black"</span>)</code></pre></div>
 <p><img src="reference/figures/README-sample_dist-1.png" width="60%" style="display: block; margin: auto;"></p>
 </div>
-<div id="fitting-the-probabilistic-dropout-model" class="section level3">
+<div id="fit-the-probabilistic-dropout-model" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fitting-the-probabilistic-dropout-model" class="anchor"></a>Fitting the Probabilistic Dropout Model</h3>
-<p>In the next step we will fit the actual linear probabilistic dropoout model to the normalized data. But before we start I will create a data.frame that contains some additional info on each sample, in particular to which condition that sample belongs.</p>
+<a href="#fit-the-probabilistic-dropout-model" class="anchor"></a>Fit the Probabilistic Dropout Model</h3>
+<p>In the next step, we will fit the actual linear probabilistic dropoout model to the normalized data. But before we start, I will create a data.frame that contains some additional information on each sample, in particular to which condition that sample belongs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
 sample_info_df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">name =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(normalized_abundance_matrix),
                              <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
@@ -240,7 +257,7 @@ sample_info_df
 <span class="co">#&gt;  9 CG51963.03 CG51963           3</span>
 <span class="co">#&gt; 10 CG5620A.01 CG5620A           1</span>
 <span class="co">#&gt; # … with 26 more rows</span></code></pre></div>
-<p>Now we can call the <code><a href="reference/proDA.html">proDA()</a></code> function to actually fit the model. We specify the <code>design</code> using the formula notation, referencing the <code>condition</code> column in the <code>sample_info_df</code> data.frame that we have just created. In addition, I specify that I want to use the <code>S2R</code> condition as the reference because I know that it was the negative control and this way automatically all coefficients measure the difference between the condition and the negative control.</p>
+<p>Now we can call the <code><a href="reference/proDA.html">proDA()</a></code> function to actually fit the model. We specify the <code>design</code> using the formula notation, referencing the <code>condition</code> column in the <code>sample_info_df</code> data.frame that we have just created. In addition, I specify that I want to use the <code>S2R</code> condition as the reference because I know that it was the negative control and this way automatically all coefficients measure how much each condition differs from the negative control.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw"><a href="reference/proDA.html">proDA</a></span>(normalized_abundance_matrix, <span class="dt">design =</span> <span class="op">~</span><span class="st"> </span>condition, 
              <span class="dt">col_data =</span> sample_info_df, <span class="dt">reference_level =</span> <span class="st">"S2R"</span>)
 fit
@@ -262,6 +279,9 @@ fit
 <span class="co">#&gt; dropout_curve_scale:     -1.17, -0.661, -1.3, -2.44, ...</span></code></pre></div>
 <p>The <code>proDAFit</code> object prints a number of useful information about the convergence of the model, the size of the dataset, the number of missing values, and the inferred hyper parameters.</p>
 <p>To make it easy to find available methods on the <code>proDAFit</code> object, the <code>$</code>-operator is overloaded and shows a list of possible functions:</p>
+<div class="figure">
+<img src="reference/figures/README-screenshot_fit_functions.png" alt="Screenshot from Rstudio suggesting the available functions"><p class="caption">Screenshot from Rstudio suggesting the available functions</p>
+</div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Equivalent to feature_parameters(fit)</span>
 fit<span class="op">$</span>feature_parameters
 <span class="co">#&gt; # A tibble: 122 x 4</span>
@@ -278,17 +298,19 @@ fit<span class="op">$</span>feature_parameters
 <span class="co">#&gt;  9     12.0  0.001 213.        4</span>
 <span class="co">#&gt; 10     12.0  0.001 547.        4</span>
 <span class="co">#&gt; # … with 112 more rows</span></code></pre></div>
-<p>Internally <code>proDAFit</code> object is implemented as a subclass of <code>SummarizedExperiment</code>. This means it can be subsetted, which can be particularly useful for calculating the distance of a subset of proteins and samples.</p>
+<p>Internally the <code>proDAFit</code> object is implemented as a subclass of <code>SummarizedExperiment</code>. This means it can be subsetted, which is for example useful for calculating the distance of a subset of proteins and samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># This chunk only works if pheatmap is installed</span>
 <span class="co"># install.packages("pheatmap")</span>
 pheatmap<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/pheatmap/topics/pheatmap">pheatmap</a></span>(<span class="kw"><a href="reference/dist_approx.html">dist_approx</a></span>(fit[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>], <span class="dt">by_sample =</span> <span class="ot">FALSE</span>)<span class="op">$</span>mean)</code></pre></div>
 <p><img src="reference/figures/README-protein_dist-1.png" width="60%" style="display: block; margin: auto;"></p>
 </div>
-<div id="differential-abundance" class="section level3">
+<div id="identify-differential-abundance" class="section level3">
 <h3 class="hasAnchor">
-<a href="#differential-abundance" class="anchor"></a>Differential Abundance</h3>
-<p>Finally we can identify</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_res &lt;-<span class="st"> </span><span class="kw"><a href="reference/test_diff.html">test_diff</a></span>(fit, <span class="st">"conditionCG1407"</span>)
+<a href="#identify-differential-abundance" class="anchor"></a>Identify Differential Abundance</h3>
+<p>Lastly, we will use a Wald test to identify in which proteins a coefficient is significantly different from zero. The <code><a href="reference/test_diff.html">test_diff()</a></code> function takes first the fit object produced by <code><a href="reference/proDA.html">proDA()</a></code> and a contrast argument. This can either be a string or an expression if we want to test more complex combinations. For example <code>conditionCG1407 - (conditionCG6017 + conditionCG5880) / 2</code> would test for the difference between CG1407 and the average between CG6017 and CG5880.</p>
+<p>Alternatively <code><a href="reference/test_diff.html">test_diff()</a></code> also supports likelihood ratio F-tests, instead of the <code>contrast</code> argument the <code>reduced_model</code> argument is specified.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Test which proteins differ between condition CG1407 and S2R</span>
+test_res &lt;-<span class="st"> </span><span class="kw"><a href="reference/test_diff.html">test_diff</a></span>(fit, <span class="st">"conditionCG1407"</span>)
 test_res
 <span class="co">#&gt; # A tibble: 122 x 10</span>
 <span class="co">#&gt;    name                pval adj_pval     diff t_statistic     se     df avg_abundance n_approx n_obs</span>
@@ -304,6 +326,7 @@ test_res
 <span class="co">#&gt;  9 Q9VDV4;A0A0B4JCY… 0.996    1.000   6.42        0.539   11.9    0.001          16.4     12.0     4</span>
 <span class="co">#&gt; 10 A0A0B4JCY6;Q7KSF… 0.999    1.000  -0.946      -0.0495  19.1    0.001          17.0     12.0     4</span>
 <span class="co">#&gt; # … with 112 more rows</span></code></pre></div>
+<p>This walkthrough ends with the identification which proteins are differentially abundant. But for a real dataset, now the actual analysis only just begins. A list of significant proteins is hardly ever a publishable result, we need to make sense what the underlying biological mechanisms are. The precise question that should be asked very much dependent on the biological problem, but some helpful tool are gene ontology (GO) term analysis, set enrichment tests, and</p>
 </div>
 </div>
 </div>

@@ -209,21 +209,60 @@ messages. Default: <code>FALSE</code>.</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='co'># Without missing values</span>
+    <pre class="examples"><div class='input'>  <span class='co'># Without missing values</span>
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>5</span>, <span class='kw'>mean</span><span class='kw'>=</span><span class='fl'>20</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='no'>y</span> ~ <span class='fl'>1</span>)
-  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='no'>y</span> ~ <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ 1)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)  
+#&gt;       19.41  
+#&gt; </div><div class='input'>  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
         <span class='kw'>dropout_curve_position</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-        <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
-
+        <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</div><div class='output co'>#&gt; $coefficients
+#&gt; Intercept 
+#&gt;   19.4068 
+#&gt; 
+#&gt; $n_approx
+#&gt; [1] 5
+#&gt; 
+#&gt; $df
+#&gt; [1] 4
+#&gt; 
+#&gt; $s2
+#&gt; [1] 1.64812
+#&gt; 
+#&gt; $n_obs
+#&gt; [1] 5
+#&gt; </div><div class='input'>
   <span class='co'># With some missing values</span>
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>23</span>, <span class='fl'>21.4</span>, <span class='fl'>NA</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='no'>y</span> ~ <span class='fl'>1</span>)
-  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='no'>y</span> ~ <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = y ~ 1)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)  
+#&gt;        22.2  
+#&gt; </div><div class='input'>  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
         <span class='kw'>dropout_curve_position</span> <span class='kw'>=</span> <span class='fl'>19</span>,
-        <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> -<span class='fl'>1</span>)
-
+        <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> -<span class='fl'>1</span>)</div><div class='output co'>#&gt; $coefficients
+#&gt; Intercept 
+#&gt;  20.90007 
+#&gt; 
+#&gt; $n_approx
+#&gt; [1] 1.451011
+#&gt; 
+#&gt; $df
+#&gt; [1] 0.4510113
+#&gt; 
+#&gt; $s2
+#&gt; [1] 13.95306
+#&gt; 
+#&gt; $n_obs
+#&gt; [1] 2
+#&gt; </div><div class='input'>
 
   <span class='co'># With only missing values</span>
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>)
@@ -234,10 +273,24 @@ messages. Default: <code>FALSE</code>.</p></td>
         <span class='kw'>location_prior_mean</span> <span class='kw'>=</span> <span class='fl'>21</span>,
         <span class='kw'>location_prior_scale</span> <span class='kw'>=</span> <span class='fl'>3</span>,
         <span class='kw'>variance_prior_scale</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-        <span class='kw'>variance_prior_df</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+        <span class='kw'>variance_prior_df</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; $coefficients
+#&gt; Intercept 
+#&gt;  18.85837 
+#&gt; 
+#&gt; $n_approx
+#&gt; [1] 0.104369
+#&gt; 
+#&gt; $df
+#&gt; [1] 1.104369
+#&gt; 
+#&gt; $s2
+#&gt; [1] 0.5842082
+#&gt; 
+#&gt; $n_obs
+#&gt; [1] 0
+#&gt; </div><div class='input'>
 
-
-<span class='co'># }</span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -218,41 +218,112 @@ more widely understood, we choose to use that name.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-  <span class='no'>data1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>10</span> * <span class='fl'>3</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
+    <pre class="examples"><div class='input'>  <span class='no'>data1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>10</span> * <span class='fl'>3</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
   <span class='no'>data2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>10</span> * <span class='fl'>4</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
   <span class='no'>data3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>10</span> * <span class='fl'>2</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
 
   <span class='co'># Comparing two datasets</span>
-  <span class='fu'>pd_row_t_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>)
-
+  <span class='fu'>pd_row_t_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>)</div><div class='output co'>#&gt;    name      pval  adj_pval         diff  t_statistic        se  df
+#&gt; 1     1 0.9914288 0.9984385 -0.008890891 -0.010742587 0.8276303 Inf
+#&gt; 2     2 0.9965768 0.9984385 -0.003550782 -0.004290300 0.8276303 Inf
+#&gt; 3     3 0.9907547 0.9984385 -0.009590159 -0.011587490 0.8276303 Inf
+#&gt; 4     4 0.9983371 0.9984385 -0.001724887 -0.002084128 0.8276303 Inf
+#&gt; 5     5 0.9966341 0.9984385 -0.003491401 -0.004218551 0.8276303 Inf
+#&gt; 6     6 0.9984385 0.9984385  0.001619700  0.001957033 0.8276303 Inf
+#&gt; 7     7 0.9926246 0.9984385  0.007650454  0.009243806 0.8276303 Inf
+#&gt; 8     8 0.9977595 0.9984385 -0.002324040 -0.002808065 0.8276303 Inf
+#&gt; 9     9 0.9968236 0.9984385  0.003294788  0.003980989 0.8276303 Inf
+#&gt; 10   10 0.9928386 0.9984385  0.007428462  0.008975580 0.8276303 Inf
+#&gt;    avg_abundance n_approx n_obs
+#&gt; 1     0.05999606 6.999992     7
+#&gt; 2     0.04798522 6.999989     7
+#&gt; 3     0.06218992 7.000015     7
+#&gt; 4     0.05692854 7.023335     7
+#&gt; 5     0.05003051 7.000011     7
+#&gt; 6     0.05999822 7.000004     7
+#&gt; 7     0.05770435 7.023346     7
+#&gt; 8     0.06280995 7.000008     7
+#&gt; 9     0.05860901 7.023350     7
+#&gt; 10    0.06270283 7.000000     7</div><div class='input'>
   <span class='co'># Comparing multiple datasets</span>
-  <span class='fu'>pd_row_f_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)
-
+  <span class='fu'>pd_row_f_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)</div><div class='output co'>#&gt;    name      pval  adj_pval f_statistic df1      df2 avg_abundance n_approx
+#&gt; 1     1 0.9409221 0.9936389 0.060918821   2 155.3865    0.14960923 9.000000
+#&gt; 2     2 0.9936389 0.9936389 0.006381663   2 155.3865    0.05390131 9.000001
+#&gt; 3     3 0.9347733 0.9936389 0.067480481   2 155.3865    0.14594953 9.000000
+#&gt; 4     4 0.9888938 0.9936389 0.011169096   2 155.3865    0.12290321 9.000000
+#&gt; 5     5 0.9804838 0.9936389 0.019711674   2 155.3865    0.07475612 9.000000
+#&gt; 6     6 0.9442829 0.9936389 0.057350579   2 155.3865    0.15674822 9.000000
+#&gt; 7     7 0.8852703 0.9936389 0.121957933   2 155.3865    0.14394840 9.000000
+#&gt; 8     8 0.9859178 0.9936389 0.014183629   2 155.3865    0.16759604 9.000001
+#&gt; 9     9 0.9918730 0.9936389 0.008160682   2 155.3865    0.13214597 9.000000
+#&gt; 10   10 0.9569444 0.9936389 0.044022437   2 155.3865    0.15075326 9.000002
+#&gt;    n_obs
+#&gt; 1      9
+#&gt; 2      9
+#&gt; 3      9
+#&gt; 4      9
+#&gt; 5      9
+#&gt; 6      9
+#&gt; 7      9
+#&gt; 8      9
+#&gt; 9      9
+#&gt; 10     9</div><div class='input'>
   <span class='co'># Alternative</span>
   <span class='no'>data_comb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)
   <span class='fu'>pd_row_f_test</span>(<span class='no'>data_comb</span>,
-     <span class='kw'>groups</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"A"</span>,<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"B"</span>, <span class='fl'>4</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"C"</span>, <span class='fl'>2</span>)))
-
+     <span class='kw'>groups</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"A"</span>,<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"B"</span>, <span class='fl'>4</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"C"</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt;    name      pval  adj_pval f_statistic df1      df2 avg_abundance n_approx
+#&gt; 1     1 0.9409221 0.9936389 0.060918821   2 155.3865    0.14960923 9.000000
+#&gt; 2     2 0.9936389 0.9936389 0.006381663   2 155.3865    0.05390131 9.000001
+#&gt; 3     3 0.9347733 0.9936389 0.067480481   2 155.3865    0.14594953 9.000000
+#&gt; 4     4 0.9888938 0.9936389 0.011169096   2 155.3865    0.12290321 9.000000
+#&gt; 5     5 0.9804838 0.9936389 0.019711674   2 155.3865    0.07475612 9.000000
+#&gt; 6     6 0.9442829 0.9936389 0.057350579   2 155.3865    0.15674822 9.000000
+#&gt; 7     7 0.8852703 0.9936389 0.121957933   2 155.3865    0.14394840 9.000000
+#&gt; 8     8 0.9859178 0.9936389 0.014183629   2 155.3865    0.16759604 9.000001
+#&gt; 9     9 0.9918730 0.9936389 0.008160682   2 155.3865    0.13214597 9.000000
+#&gt; 10   10 0.9569444 0.9936389 0.044022437   2 155.3865    0.15075326 9.000002
+#&gt;    n_obs
+#&gt; 1      9
+#&gt; 2      9
+#&gt; 3      9
+#&gt; 4      9
+#&gt; 5      9
+#&gt; 6      9
+#&gt; 7      9
+#&gt; 8      9
+#&gt; 9      9
+#&gt; 10     9</div><div class='input'>
   <span class='co'># t.test, lm, pd_row_t_test, and pd_row_f_test are</span>
   <span class='co'># approximately equivalent on fully observed data</span>
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>1</span>)
   <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>5</span>)
   <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>5</span>, <span class='kw'>mean</span><span class='kw'>=</span><span class='fl'>0.3</span>)
 
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/t.test'>t.test</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x</span>, <span class='no'>y</span>) ~ <span class='no'>cond</span>,
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/t.test'>t.test</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)</div><div class='output co'>#&gt; 
+#&gt; 	Welch Two Sample t-test
+#&gt; 
+#&gt; data:  x and y
+#&gt; t = -0.58413, df = 7.1385, p-value = 0.5771
+#&gt; alternative hypothesis: true difference in means is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  -1.5391981  0.9274665
+#&gt; sample estimates:
+#&gt; mean of x mean of y 
+#&gt; 0.1292699 0.4351357 
+#&gt; </div><div class='input'>  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x</span>, <span class='no'>y</span>) ~ <span class='no'>cond</span>,
              <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>cond</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"x"</span>, <span class='fl'>5</span>),
-                                        <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"y"</span>, <span class='fl'>5</span>)))))$<span class='no'>coef</span>[<span class='fl'>2</span>,]
-  <span class='fu'>pd_row_t_test</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>x</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>y</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>),
+                                        <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"y"</span>, <span class='fl'>5</span>)))))$<span class='no'>coef</span>[<span class='fl'>2</span>,]</div><div class='output co'>#&gt;   Estimate Std. Error    t value   Pr(&gt;|t|) 
+#&gt;  0.3058658  0.5236289  0.5841270  0.5752316 </div><div class='input'>  <span class='fu'>pd_row_t_test</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>x</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>y</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>),
                 <span class='kw'>moderate_location</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-                <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-  <span class='fu'>pd_row_f_test</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>x</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>y</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>),
+                <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;   name      pval  adj_pval       diff t_statistic        se df avg_abundance
+#&gt; 1    1 0.5752316 0.5752316 -0.3058658   -0.584127 0.5236289  8     0.2822028
+#&gt;   n_approx n_obs
+#&gt; 1       10    10</div><div class='input'>  <span class='fu'>pd_row_f_test</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>x</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>y</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>),
                 <span class='kw'>moderate_location</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-                <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+                <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;   name      pval  adj_pval f_statistic df1 df2 avg_abundance n_approx n_obs
+#&gt; 1    1 0.5752316 0.5752316   0.3412044   1   8     0.2822028       10    10</div><div class='input'>
 
-
-<span class='co'># }</span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

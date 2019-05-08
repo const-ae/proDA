@@ -19,7 +19,7 @@ You can install the development version from [GitHub](https://github.com/const-a
 devtools::install_github("const-ae/proDA")
 ```
 
-The pkgdown documentation is available on <https://const-ae.github.io/proDA/reference>
+The pkgdown documentation for the package is available on <https://const-ae.github.io/proDA/reference>
 
 In the following section, I will give a very brief overview on the main functionality of the `proDA` package. New users are advised to directly go to section two, where I give a complete walkthrough and explain in detail, what steps are necessary for the analysis of label-free mass spectrometry data.
 
@@ -47,7 +47,7 @@ syn_dataset$Y[1:5, ]
 #> protein_4      25.62239      24.91191      25.47405      25.09780      24.42479      24.47261
 #> protein_5      23.60771      22.89148      23.02004      23.21011      23.12756      23.86721
 
-# The labelling of columns to two conditions
+# Assign the samples to the two conditions
 syn_dataset$groups
 #> [1] Condition_1 Condition_1 Condition_1 Condition_2 Condition_2 Condition_2
 #> Levels: Condition_1 Condition_2
@@ -74,22 +74,30 @@ proDA Walkthrough
 
 `proDA` is an R package that implements a powerful probabilistic dropout model to identify differentially abundant proteins. The package was designed specifically with label-free mass spectrometry data in mind, which poses the challenge of many missing values.
 
-But all this is useless if you cannot load your data. So in the next section, I will give an example how to load the abundance matrix.
+But all this is useless if you cannot load your data and get it into a shape that is useable. In the next section, I will give an example how to load the abundance matrix and bring it into a useful form. The steps that I will go through are
 
-### Loading Data
+1.  Load the `proteinGroups.txt` MaxQuant output table
+2.  Extract the intensity columns and create the abundance matrix
+3.  Replace the zeros with `NA`s and take the `log2()` of the data
+4.  Normalize the data using `median_normalization()`
+5.  Inspect sample structure with a heatmap of the distance matrix (`dist_approx()`)
+6.  Fit the probabilisitc dropout model with `proDA()`
+7.  Identify differentially abundant proteins with `test_diff()`
 
-I will now demonstrate how to load a MaxQuant output file. For more information about different approaches, you can also take a look at the vignette on loading data.
+### Load Data
+
+I will now demonstrate how to load a MaxQuant output file. For more information about other approaches for loading the data, please take a look at the vignette on loading data.
 
 MaxQuant is one of the most popular tools for handling raw MS data. It produces a number of files. The important file that contains the protein intensities is called `proteinGroups.txt`. It is a large table with detailed information about the identification and quantification process for each protein group (which I will from now on just call "protein").
 
-This package comes with an example `proteinGroups.txt` file, located in the package folder. Naturally, your path will differ because of the installation location.
+This package comes with an example `proteinGroups.txt` file, located in the package folder. The file contains the reduced output from an experiment studying the different DHHCs in Drosophila melanogaster.
 
 ``` r
 system.file("extdata/proteinGroups.txt", package = "proDA", mustWork = TRUE)
 #> [1] "/home/constantin/R/x86_64-pc-linux-gnu-library/3.6/proDA/extdata/proteinGroups.txt"
 ```
 
-In this example, I will use the base R functions to load the data, because they don't require any additional installed packages.
+In this example, I will use the base R functions to load the data, because they don't require any additional dependencies.
 
 ``` r
 # Load the table into memory
@@ -99,7 +107,7 @@ maxquant_protein_table <- read.delim(
 )
 ```
 
-As I have mentioned, the table contains a lot of information (359 columns!!), but we are only interested in the columns which contain the measured intensities.
+As I have mentioned, the table contains a lot of information (359 columns!!), but we are first of all interested in the columns which contain the measured intensities.
 
 ``` r
 # I use a regular expression (regex) to select the intensity columns
@@ -115,7 +123,7 @@ abundance_matrix <- as.matrix(maxquant_protein_table[, intensity_colnames])
 # Adapt column and row maxquant_protein_table
 colnames(abundance_matrix) <- sub("^LFQ\\.intensity\\.", "", intensity_colnames)
 rownames(abundance_matrix) <- maxquant_protein_table$Protein.IDs
-# Print top matrix
+# Print some rows of the matrix with short names so they fit on the screen
 abundance_matrix[46:48, 1:6]
 #>                                       CG1407.01 CG1407.02 CG1407.03 CG4676.01 CG4676.02 CG4676.03
 #> A0A0B4K6W1;P08970                        713400    845440         0         0   1032600         0
@@ -123,11 +131,11 @@ abundance_matrix[46:48, 1:6]
 #> A0A0B4K6X7;A1Z8J0                             0         0         0         0         0         0
 ```
 
-After extracting the bits from the table we most care about, we will have to adapt the matrix slightly.
+After extracting the bits from the table we most care about, we will have to modify it.
 
-First, MaxQuant codes missing values as `0`. This is misleading, because the actual abundance probably was not zero, but just some value too small to be detected by the mass spectrometer. Accordingly, I will replace all `0` with `NA`.
+Firstly, MaxQuant codes missing values as `0`. This is misleading, because the actual abundance probably was not zero, but just some value too small to be detected by the mass spectrometer. Accordingly, I will replace all `0` with `NA`.
 
-Second, the raw intensity values have a linear mean-variance relation. This is undesirable, because a change of `x` units can be a large shift if the mean is small or irrelevant if the mean is large. Luckily, to make the mean and variance independent, we can just `log` the intensities. Now a change of `x` units is as significant for highly abundant proteins, as it is for low abundant ones.
+Secondly, the raw intensity values have a linear mean-variance relation. This is undesirable, because a change of `x` units can be a large shift if the mean is small or irrelevant if the mean is large. Luckily, to make the mean and variance independent, we can just `log` the intensities. Now a change of `x` units is as significant for highly abundant proteins, as it is for low abundant ones.
 
 ``` r
 abundance_matrix[abundance_matrix == 0] <- NA
@@ -141,7 +149,9 @@ abundance_matrix[46:48, 1:6]
 
 ### Quality Control
 
-It is well established truth that quality control (QC) is essential for a successful bioinformatics project, because mistakes happen. Often we start with normalizing the data to remove potential sample specific effects. But already this step is challenging, because the missing values cannot easily be corrected for. Thus, a first helpful plot is to look how many missing values each sample contains.
+Quality control (QC) is essential for a successful bioinformatics analysis, because any dataset shows some unwanted variation or could even contain more serious error like for example a sample swap.
+
+Often we start with normalizing the data to remove potential sample specific effects. But already this step is challenging, because the missing values cannot easily be corrected for. Thus, a first helpful plot is to look how many missing values are in each sample.
 
 ``` r
 
@@ -152,7 +162,7 @@ barplot(colSums(is.na(abundance_matrix)),
 
 <img src="man/figures/README-qc-mis_barplot-1.png" width="60%" style="display: block; margin: auto;" />
 
-We can see that the number of missing values differs substantially between samples (between 30% and 90%). If we take a look at the intensity distribution for each sample, we see that they differ substantially as well.
+We can see that the number of missing values differs substantially between samples (between 30% and 90%) in this dataset. If we take a look at the intensity distribution for each sample, we see that they differ substantially as well.
 
 ``` r
 boxplot(abundance_matrix,
@@ -162,15 +172,23 @@ boxplot(abundance_matrix,
 
 <img src="man/figures/README-qc-raw_boxplot-1.png" width="60%" style="display: block; margin: auto;" />
 
-Note that, the intensity distribution is shifted upwards for samples (for example the last one) which also have a large number of missing values. This agrees with our idea that small values are more likely to be missing. On the other hand, this also demonstrates why normalization methods such as quantile normalization are problematic. They distort the data until all the distributions are equal. I will apply the more "conservative" median normalization, which just ignores the missing values. It transforms the values so that the median difference between the sample and average across all other samples is zero.
+Note that, the intensity distribution is shifted upwards for samples which also have a large number of missing values (for example the last one). This agrees with our idea that small values are more likely to be missing. On the other hand, this also demonstrates why normalization methods such as quantile normalization, which distort the data until all the distributions are equal, are problematic. I will apply the more "conservative" median normalization, which ignores the missing values and transforms the values so that the median difference between the sample and average across all other samples is zero.
 
 ``` r
 normalized_abundance_matrix <- median_normalization(abundance_matrix)
 ```
 
+An important tool to identify sample swaps and outliers in the dataset is to look at the sample distance matrix. It shows the distances of samples A to B, A to C, B to C and so on.
+
+The base R `dist()` function can not handle input data that contains missing values, so we might be tempted to just replace the missing values with some other and calculate the distance on the completed dataset. But choosing a good replacement value is challenging and can also be misleading because the samples with many missing values would be considered too close.
+
+Instead `proDA` provides the `dist_approx()` function that takes either a fitted model (ie. the output from `proDA()`) or a simple matrix (for which it internally calls `proDA()`) and estimates the expected distance without imputing the missing values. In addition, it reports the associated uncertainty with every estimate. The estimates for samples with many missing values will be uncertain, allowing the data analyst to discount them.
+
 ``` r
 da <- dist_approx(normalized_abundance_matrix)
 ```
+
+`dist_approx()` returns two elements the `mean` of the estimate and the associated `sd`. In the next step I will plot the heatmap for three differnet conditions, adding the 95% confidence interval as text to each cell.
 
 ``` r
 # This chunk only works if pheatmap is installed
@@ -190,9 +208,9 @@ pheatmap::pheatmap(plot_mat,
 
 <img src="man/figures/README-sample_dist-1.png" width="60%" style="display: block; margin: auto;" />
 
-### Fitting the Probabilistic Dropout Model
+### Fit the Probabilistic Dropout Model
 
-In the next step we will fit the actual linear probabilistic dropoout model to the normalized data. But before we start I will create a data.frame that contains some additional info on each sample, in particular to which condition that sample belongs.
+In the next step, we will fit the actual linear probabilistic dropoout model to the normalized data. But before we start, I will create a data.frame that contains some additional information on each sample, in particular to which condition that sample belongs.
 
 ``` r
 
@@ -219,7 +237,7 @@ sample_info_df
 #> # … with 26 more rows
 ```
 
-Now we can call the `proDA()` function to actually fit the model. We specify the `design` using the formula notation, referencing the `condition` column in the `sample_info_df` data.frame that we have just created. In addition, I specify that I want to use the `S2R` condition as the reference because I know that it was the negative control and this way automatically all coefficients measure the difference between the condition and the negative control.
+Now we can call the `proDA()` function to actually fit the model. We specify the `design` using the formula notation, referencing the `condition` column in the `sample_info_df` data.frame that we have just created. In addition, I specify that I want to use the `S2R` condition as the reference because I know that it was the negative control and this way automatically all coefficients measure how much each condition differs from the negative control.
 
 ``` r
 fit <- proDA(normalized_abundance_matrix, design = ~ condition, 
@@ -247,6 +265,8 @@ The `proDAFit` object prints a number of useful information about the convergenc
 
 To make it easy to find available methods on the `proDAFit` object, the `$`-operator is overloaded and shows a list of possible functions:
 
+![Screenshot from Rstudio suggesting the available functions](man/figures/README-screenshot_fit_functions.png)
+
 ``` r
 # Equivalent to feature_parameters(fit)
 fit$feature_parameters
@@ -266,7 +286,7 @@ fit$feature_parameters
 #> # … with 112 more rows
 ```
 
-Internally `proDAFit` object is implemented as a subclass of `SummarizedExperiment`. This means it can be subsetted, which can be particularly useful for calculating the distance of a subset of proteins and samples.
+Internally the `proDAFit` object is implemented as a subclass of `SummarizedExperiment`. This means it can be subsetted, which is for example useful for calculating the distance of a subset of proteins and samples.
 
 ``` r
 # This chunk only works if pheatmap is installed
@@ -276,11 +296,14 @@ pheatmap::pheatmap(dist_approx(fit[1:20, 1:3], by_sample = FALSE)$mean)
 
 <img src="man/figures/README-protein_dist-1.png" width="60%" style="display: block; margin: auto;" />
 
-### Differential Abundance
+### Identify Differential Abundance
 
-Finally we can identify
+Lastly, we will use a Wald test to identify in which proteins a coefficient is significantly different from zero. The `test_diff()` function takes first the fit object produced by `proDA()` and a contrast argument. This can either be a string or an expression if we want to test more complex combinations. For example `conditionCG1407 - (conditionCG6017 + conditionCG5880) / 2` would test for the difference between CG1407 and the average between CG6017 and CG5880.
+
+Alternatively `test_diff()` also supports likelihood ratio F-tests, instead of the `contrast` argument the `reduced_model` argument is specified.
 
 ``` r
+# Test which proteins differ between condition CG1407 and S2R
 test_res <- test_diff(fit, "conditionCG1407")
 test_res
 #> # A tibble: 122 x 10
@@ -298,3 +321,5 @@ test_res
 #> 10 A0A0B4JCY6;Q7KSF… 0.999    1.000  -0.946      -0.0495  19.1    0.001          17.0     12.0     4
 #> # … with 112 more rows
 ```
+
+This walkthrough ends with the identification which proteins are differentially abundant. But for a real dataset, now the actual analysis only just begins. A list of significant proteins is hardly ever a publishable result, we need to make sense what the underlying biological mechanisms are. The precise question that should be asked very much dependent on the biological problem, but some helpful tool are gene ontology (GO) term analysis, set enrichment tests, and

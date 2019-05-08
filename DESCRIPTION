@@ -16,7 +16,8 @@ RoxygenNote: 6.1.1
 Suggests: 
     testthat,
     limma,
-    numDeriv
+    numDeriv,
+    pheatmap
 Imports: 
     methods,
     BiocGenerics,
