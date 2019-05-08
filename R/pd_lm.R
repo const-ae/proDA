@@ -380,7 +380,7 @@ pd_lm.fit <- function(y, X,
 objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance){
   val <- 0
   if(moderate_location){
-    val <- val + mean(dt.scaled(X %*% beta, df=location_prior_df, mean= mu0, sd=sqrt(sigma20), log=TRUE))
+    val <- val + sum(dt.scaled(X %*% beta, df=location_prior_df, mean= mu0, sd=sqrt(sigma20), log=TRUE))
   }
   if(moderate_variance){
     val <- val +
@@ -398,7 +398,7 @@ grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
   imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
   if(moderate_location){
-    dbeta_p <-  -(location_prior_df + 1) * t(X) %*% ((X %*% beta - mu0) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2)) / nrow(X)
+    dbeta_p <-  -(location_prior_df + 1) * t(X) %*% ((X %*% beta - mu0) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2))
   }else{
     dbeta_p <-  0
   }
@@ -423,7 +423,7 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
 
     if(moderate_location){
       t_prior_fact <- c((location_prior_df * sigma20 - (X %*% beta - mu0)^2) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2)^2)
-      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X / nrow(X)
+      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X
     }else{
       dbb_p <- 0
     }
