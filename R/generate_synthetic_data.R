@@ -87,8 +87,7 @@ generate_synthetic_data <- function(n_proteins, n_conditions = 2,
   }
 
 
-  t_sigma2 <- rchisq(n_proteins, df=variance_prior_df) *
-    variance_prior_df * variance_prior_scale
+  t_sigma2 <- rchisq(n_proteins, df=variance_prior_df)  * sqrt(variance_prior_scale) / variance_prior_df
 
 
   n_changed <- round(n_proteins * frac_changed)
