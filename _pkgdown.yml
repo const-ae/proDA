@@ -31,6 +31,7 @@ reference:
   contents:
     - pd_lm
     - invprobit
+    - '`predict,proDAFit-method`'
 
 
 - title: Utility function
@@ -49,6 +50,7 @@ reference:
   contents:
     - abundances
     - coefficients
+    - coefficient_variance_matrices
     - convergence
     - dist_approx
     - feature_parameters
@@ -63,6 +65,7 @@ reference:
   - '`accessor_methods`'
   - '`.DollarNames.proDAFit`'
   - '`coefficients`'
+  - '`coefficient_variance_matrices`'
   - '`convergence`'
   - '`dist_approx,proDAFit-method`'
   - '`dist_approx`'

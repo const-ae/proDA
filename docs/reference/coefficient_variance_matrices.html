@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fluent use of accessor methods — .DollarNames.proDAFit • proDA</title>
+<title>Get the coefficients — coefficient_variance_matrices • proDA</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,26 +30,9 @@
 
 
 
-<meta property="og:title" content="Fluent use of accessor methods — .DollarNames.proDAFit" />
+<meta property="og:title" content="Get the coefficients — coefficient_variance_matrices" />
 
-<meta property="og:description" content="The 'proDAFit' object overwrites the dollar function to make it easy
-to call functions to access values inside the object. This has the
-advantage that it is very easy to discover the relevant methods
-but nonetheless have an isolated implementation. Unlike the
-`@` operator which directly accesses the underlying implementation,
-the `$` operator only exposes a limited set of functions
-abundances
-hyper_parameters
-feature_parameters
-coefficients
-convergence
-design
-reference_level
-result_names
-coefficient_variance_matrices
-colData
-rowData.
-" />
+<meta property="og:description" content="Get the coefficients" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -116,73 +99,35 @@ rowData.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fluent use of accessor methods</h1>
-    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/completion.R'><code>R/completion.R</code></a></small>
-    <div class="hidden name"><code>cash-proDAFit-method.Rd</code></div>
+    <h1>Get the coefficients</h1>
+    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/AllGenerics.R'><code>R/AllGenerics.R</code></a></small>
+    <div class="hidden name"><code>coefficient_variance_matrices.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The 'proDAFit' object overwrites the dollar function to make it easy
-to call functions to access values inside the object. This has the
-advantage that it is very easy to discover the relevant methods
-but nonetheless have an isolated implementation. Unlike the
-<code>`@`</code> operator which directly accesses the underlying implementation,
-the <code>`$`</code> operator only exposes a limited set of functions</p><ul>
-<li><p>abundances</p></li>
-<li><p>hyper_parameters</p></li>
-<li><p>feature_parameters</p></li>
-<li><p>coefficients</p></li>
-<li><p>convergence</p></li>
-<li><p>design</p></li>
-<li><p>reference_level</p></li>
-<li><p>result_names</p></li>
-<li><p>coefficient_variance_matrices</p></li>
-<li><p>colData</p></li>
-<li><p>rowData.</p></li>
-</ul>
+    <p>Get the coefficients</p>
     
     </div>
 
-    <pre class="usage"># S3 method for proDAFit
-.DollarNames(x, pattern = "")
-
-# S4 method for proDAFit
-$(x, name)
-
-# S4 method for proDAFit
-$(x, name) <- value</pre>
+    <pre class="usage"><span class='fu'>coefficient_variance_matrices</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>an object of class 'proDAFit' produced by <code><a href='proDA.html'>proDA()</a></code></p></td>
+      <th>object</th>
+      <td><p>the object to get from</p></td>
     </tr>
     <tr>
-      <th>pattern</th>
-      <td><p>the regex pattern that is provided by the IDE</p></td>
-    </tr>
-    <tr>
-      <th>name</th>
-      <td><p>one of the functions listed above</p></td>
-    </tr>
-    <tr>
-      <th>value</th>
-      <td><p><strong>Warning:</strong> modifying the content of a 'proDAFit'
-object is not allowed</p></td>
+      <th>...</th>
+      <td><p>additional arguments used by the concrete implementation</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>whatever the function called <code>name</code> returns.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='accessor_methods.html'>accessor_methods</a> for more documentation on the
-  accessor functions.</p></div>
+    <div class='dont-index'><p><a href='accessor_methods.html'>accessor_methods</a> for the implementation for a 'proDAFit' object</p></div>
     
 
   </div>
@@ -191,8 +136,6 @@ object is not allowed</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
           </ul>
 

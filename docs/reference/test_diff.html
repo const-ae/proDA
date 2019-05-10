@@ -271,27 +271,27 @@ for collecting the results of high-throughput  testing
   <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
   <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
   <span class='fu'><a href='result_names.html'>result_names</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Condition_1" "Condition_2"</div><div class='input'>  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)</div><div class='output co'>#&gt;          name      pval  adj_pval         diff  t_statistic        se  df
-#&gt; 1   protein_1 0.9935739 0.9935739 -0.003683657 -0.008053976 0.4573712 Inf
-#&gt; 2   protein_2 0.6532176 0.9935739  0.205495368  0.449296694 0.4573712 Inf
-#&gt; 3   protein_3 0.6769552 0.9935739 -0.190550721 -0.416621601 0.4573712 Inf
-#&gt; 4   protein_4 0.6459248 0.9935739 -0.210130465 -0.459430907 0.4573712 Inf
-#&gt; 5   protein_5 0.9844568 0.9935739  0.008910395  0.019481759 0.4573712 Inf
-#&gt; 6   protein_6 0.8250244 0.9935739 -0.101118984 -0.221087345 0.4573712 Inf
-#&gt; 7   protein_7 0.5395040 0.9935739 -0.280626156 -0.613563241 0.4573712 Inf
-#&gt; 8   protein_8 0.8453393 0.9935739  0.089218727  0.195068528 0.4573712 Inf
-#&gt; 9   protein_9 0.3992664 0.9935739 -0.385532912 -0.842932200 0.4573712 Inf
-#&gt; 10 protein_10 0.2652593 0.9935739  0.509532711  1.114046339 0.4573712 Inf
+#&gt; 1   protein_1 0.9943172 0.9943172 -0.004462424 -0.007122347 0.6265384 Inf
+#&gt; 2   protein_2 0.6856990 0.9943172  0.252917181  0.404698682 0.6249518 Inf
+#&gt; 3   protein_3 0.6631704 0.9943172 -0.266073335 -0.435540198 0.6109042 Inf
+#&gt; 4   protein_4 0.7104590 0.9943172 -0.247763006 -0.371239648 0.6673937 Inf
+#&gt; 5   protein_5 0.6318757 0.9943172  0.373792089  0.479088435 0.7802152 Inf
+#&gt; 6   protein_6 0.8405586 0.9943172 -0.125649592 -0.201178991 0.6245662 Inf
+#&gt; 7   protein_7 0.7943413 0.9943172 -0.238312682 -0.260677355 0.9142055 Inf
+#&gt; 8   protein_8 0.9052005 0.9943172  0.079842606  0.119094463 0.6704141 Inf
+#&gt; 9   protein_9 0.3870191 0.9943172 -0.574924429 -0.865035816 0.6646250 Inf
+#&gt; 10 protein_10 0.7369086 0.9943172 -0.419254855 -0.335949981 1.2479681 Inf
 #&gt;    avg_abundance n_approx n_obs
-#&gt; 1       21.08237 6.000006     6
-#&gt; 2       20.98692 6.000011     6
-#&gt; 3       20.07388 6.000000     6
-#&gt; 4       19.45017 4.986517     5
-#&gt; 5       19.24395 3.812491     4
-#&gt; 6       20.93682 6.000009     6
-#&gt; 7       18.51581 2.723117     2
-#&gt; 8       20.25957 4.906474     5
-#&gt; 9       19.21564 3.773366     4
-#&gt; 10      18.20284 2.653161     2</div><div class='input'>
+#&gt; 1       21.42860 6.000002     6
+#&gt; 2       21.28680 6.000000     6
+#&gt; 3       20.18215 6.000000     6
+#&gt; 4       19.32293 4.975093     5
+#&gt; 5       18.89834 3.777090     4
+#&gt; 6       21.24898 6.000000     6
+#&gt; 7       17.86231 3.129577     2
+#&gt; 8       20.43527 4.816353     5
+#&gt; 9       18.99253 4.081410     4
+#&gt; 10      17.17630 2.932776     2</div><div class='input'>
 
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/message'>suppressPackageStartupMessages</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>SummarizedExperiment</span>))
   <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
@@ -321,36 +321,36 @@ for collecting the results of high-throughput  testing
 #&gt; Condition_3-1 51.8132214647735
 #&gt; Condition_3-2 38.8605870500866
 #&gt; Condition_3-3 42.4439038362476</div><div class='input'>  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span> + <span class='no'>age</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Dropout curve estimation did not properly converge</span></div><div class='input'>  <span class='fu'><a href='result_names.html'>result_names</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Intercept"        "groupCondition_2" "groupCondition_3" "age"             </div><div class='input'>  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='st'>"groupCondition_2"</span>,
-            <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>sort_by</span> <span class='kw'>=</span> <span class='st'>"pval"</span>)</div><div class='output co'>#&gt;          name         pval    adj_pval       diff t_statistic        se
-#&gt; 10 protein_10 0.0000177626 0.000177626 -4.4503631 -10.3378643 0.4304915
-#&gt; 2   protein_2 0.0922230978 0.461115489  0.8318491   1.9510714 0.4263550
-#&gt; 5   protein_5 0.3788492204 0.992013396  0.4142066   0.9557837 0.4333686
+            <span class='kw'>n_max</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>sort_by</span> <span class='kw'>=</span> <span class='st'>"pval"</span>)</div><div class='output co'>#&gt;          name         pval     adj_pval       diff t_statistic        se
+#&gt; 10 protein_10 6.635730e-06 0.0000663573 -4.3994247  -12.343730 0.3564097
+#&gt; 2   protein_2 4.084391e-02 0.2042195485  0.8927792    2.518773 0.3544501
+#&gt; 5   protein_5 2.806670e-01 0.7059323978  0.4434504    1.229442 0.3606924
 #&gt;          df avg_abundance n_approx n_obs
-#&gt; 10 6.966178      25.79399 9.000000     9
-#&gt; 2  6.966178      20.73585 9.000000     9
-#&gt; 5  5.562959      19.63621 7.596781     8</div><div class='input'>
+#&gt; 10 6.798832      25.85982 9.000000     9
+#&gt; 2  6.798832      20.75867 9.000000     9
+#&gt; 5  4.392250      19.62519 6.593418     7</div><div class='input'>
   <span class='co'># F-test</span>
-  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='kw'>reduced_model</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt;          name      pval  adj_pval f_statistic df1      df2 avg_abundance
-#&gt; 1   protein_1 1.0000000 1.0000000 -2.09851282   1 0.001000      17.53187
-#&gt; 2   protein_2 0.0721679 0.7216790  4.48419304   1 6.966178      20.73585
-#&gt; 3   protein_3 0.1642050 0.8210248  2.51812436   1 5.932027      20.19210
-#&gt; 4   protein_4 0.5482641 1.0000000  0.39798095   1 6.966178      22.43375
-#&gt; 5   protein_5 1.0000000 1.0000000 -0.01676887   1 5.562959      19.63621
-#&gt; 6   protein_6 0.8304182 1.0000000  0.04944042   1 6.966178      19.23689
-#&gt; 7   protein_7 0.8659416 1.0000000  0.03957787   1 1.496228      17.79062
-#&gt; 8   protein_8 1.0000000 1.0000000 -0.24959699   1 2.513792      18.90239
-#&gt; 9   protein_9 1.0000000 1.0000000 -0.01927298   1 4.902852      19.22842
-#&gt; 10 protein_10 0.6370960 1.0000000  0.24315976   1 6.966178      25.79399
+  <span class='fu'>test_diff</span>(<span class='no'>fit</span>, <span class='kw'>reduced_model</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt;          name       pval  adj_pval f_statistic df1      df2 avg_abundance
+#&gt; 1   protein_1 1.00000000 1.0000000 -0.31474344   1 0.001000      16.92693
+#&gt; 2   protein_2 0.06862109 0.6862109  4.67129542   1 6.798832      20.75867
+#&gt; 3   protein_3 0.14932680 0.7466340  2.76683689   1 5.763133      20.18251
+#&gt; 4   protein_4 0.52478137 1.0000000  0.44928160   1 6.798832      22.45078
+#&gt; 5   protein_5 1.00000000 1.0000000 -0.04919088   1 4.392250      19.62519
+#&gt; 6   protein_6 0.81907578 1.0000000  0.05652795   1 6.798832      19.23328
+#&gt; 7   protein_7 0.41248562 1.0000000  1.24914569   1 1.483953      17.60181
+#&gt; 8   protein_8 1.00000000 1.0000000 -0.23746301   1 2.358127      18.90052
+#&gt; 9   protein_9 0.86831471 1.0000000  0.03058988   1 4.786377      19.23185
+#&gt; 10 protein_10 0.61189929 1.0000000  0.28263459   1 6.798832      25.85982
 #&gt;    n_approx n_obs
 #&gt; 1  4.001000     1
 #&gt; 2  9.000000     9
-#&gt; 3  7.965850     8
+#&gt; 3  7.964301     8
 #&gt; 4  9.000000     9
-#&gt; 5  7.596781     8
+#&gt; 5  6.593418     7
 #&gt; 6  9.000000     9
-#&gt; 7  3.530050     3
-#&gt; 8  4.547614     4
-#&gt; 9  6.936674     7
+#&gt; 7  3.685121     3
+#&gt; 8  4.559295     4
+#&gt; 9  6.987545     7
 #&gt; 10 9.000000     9</div><div class='input'>
 
 </div></pre>

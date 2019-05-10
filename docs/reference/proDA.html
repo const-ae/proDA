@@ -238,8 +238,7 @@ observed intensities.</p>
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>1</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>proDA</span>)
 <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>proDA</span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
-<span class='no'>fit</span></div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>proDA</span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Dropout curve estimation did not properly converge</span></div><div class='input'><span class='no'>fit</span></div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
 #&gt; 
 #&gt; The dataset contains 6 samples and 10 proteins
 #&gt; 23.3% of the values are missing
@@ -248,34 +247,34 @@ observed intensities.</p>
 #&gt; The model has successfully converged.
 #&gt; 
 #&gt; The inferred parameters are:
-#&gt; location_prior_mean:     19.8
-#&gt; location_prior_scale:    1.65
+#&gt; location_prior_mean:     19.7
+#&gt; location_prior_scale:    1.95
 #&gt; location_prior_df:       3
-#&gt; variance_prior_scale:    0.0178
-#&gt; variance_prior_df:       0.78
-#&gt; dropout_curve_position:  19.1, 18.1, 19.1, 19.1, ...
-#&gt; dropout_curve_scale:     -0.44, -0.0001, -0.0001, -0.0001, ...</div><div class='input'><span class='fu'><a href='result_names.html'>result_names</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Condition_1" "Condition_2"</div><div class='input'><span class='fu'><a href='test_diff.html'>test_diff</a></span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)</div><div class='output co'>#&gt;          name       pval  adj_pval         diff t_statistic         se
-#&gt; 1   protein_1 0.76434251 0.9665133  0.066805523  0.31736266  0.2105022
-#&gt; 2   protein_2 0.62545108 0.9665133  0.242710232  0.54359784  0.4464886
-#&gt; 3   protein_3 0.39245714 0.9665133  0.570384108  0.93942994  0.6071598
-#&gt; 4   protein_4 0.73473526 0.9665133 -0.145233580 -0.45677807  0.3179522
-#&gt; 5   protein_5 0.36283631 0.9665133  0.346173036  1.00529668  0.3443491
-#&gt; 6   protein_6 0.99845018 0.9984502 -0.728131919 -0.07124857 10.2195999
-#&gt; 7   protein_7 0.77321066 0.9665133  0.225745355  0.32989393  0.6842968
-#&gt; 8   protein_8 0.27932966 0.9665133 -0.149315297 -1.21946188  0.1224436
-#&gt; 9   protein_9 0.98163059 0.9984502  0.003647569  0.02425119  0.1504079
-#&gt; 10 protein_10 0.00149052 0.0149052 -1.155891268 -6.52488552  0.1771512
+#&gt; variance_prior_scale:    0.0179
+#&gt; variance_prior_df:       0.724
+#&gt; dropout_curve_position:  18.7, 18.1, 19.1, 19.1, ...
+#&gt; dropout_curve_scale:     -0.0001, -0.0001, -0.0001, -0.0001, ...</div><div class='input'><span class='fu'><a href='result_names.html'>result_names</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; [1] "Condition_1" "Condition_2"</div><div class='input'><span class='fu'><a href='test_diff.html'>test_diff</a></span>(<span class='no'>fit</span>, <span class='no'>Condition_1</span> - <span class='no'>Condition_2</span>)</div><div class='output co'>#&gt;          name         pval    adj_pval         diff t_statistic         se
+#&gt; 1   protein_1 0.7060763154 0.996231662  0.072690682  0.40073981 0.18139122
+#&gt; 2   protein_2 0.4237058276 0.847411655  0.401437653  0.92315012 0.43485631
+#&gt; 3   protein_3 0.2120055631 0.634356389  0.747953323  1.44240629 0.51854552
+#&gt; 4   protein_4 0.6973046672 0.996231662 -0.148779812 -0.55760827 0.26681780
+#&gt; 5   protein_5 0.2537425556 0.634356389  0.382277102  1.29881328 0.29432799
+#&gt; 6   protein_6 0.9967733556 0.996773356 -0.507729191 -0.39999134 1.26935045
+#&gt; 7   protein_7 0.7969853297 0.996231662  0.198034364  0.28979781 0.68335356
+#&gt; 8   protein_8 0.1730855067 0.634356389 -0.159082184 -1.60343657 0.09921327
+#&gt; 9   protein_9 0.9764973789 0.996773356  0.003915554  0.03105014 0.12610425
+#&gt; 10 protein_10 0.0007393126 0.007393126 -1.158100457 -7.73846509 0.14965506
 #&gt;           df avg_abundance n_approx n_obs
-#&gt; 1  4.7864275      19.41219 6.000000     6
-#&gt; 2  2.9212059      19.13895 4.134778     4
-#&gt; 3  4.7864275      20.18496 6.000000     6
-#&gt; 4  0.8858506      18.28594 2.099423     2
-#&gt; 5  4.7864277      20.89578 6.000000     6
-#&gt; 6  0.0010000      18.41393 2.001000     0
-#&gt; 7  1.9727666      19.60072 3.186339     4
-#&gt; 8  4.7864276      20.63263 6.000000     6
-#&gt; 9  4.7864275      20.23424 6.000000     6
-#&gt; 10 4.7864275      22.06313 6.000000     6</div><div class='input'>
+#&gt; 1  4.7276086      19.39852 6.000000     6
+#&gt; 2  3.0150835      18.99498 4.287475     4
+#&gt; 3  4.7276086      20.25723 6.000000     6
+#&gt; 4  0.7656805      18.18300 2.038072     2
+#&gt; 5  4.7276086      20.97573 6.000000     6
+#&gt; 6  0.0010000      17.86300 2.001000     0
+#&gt; 7  2.2045986      19.36016 3.476990     4
+#&gt; 8  4.7276086      20.63405 6.000000     6
+#&gt; 9  4.7276086      20.23926 6.000000     6
+#&gt; 10 4.7276086      22.08977 6.000000     6</div><div class='input'>
 <span class='co'># SummarizedExperiment</span>
 <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
                      <span class='kw'>return_summarized_experiment</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
@@ -288,7 +287,7 @@ observed intensities.</p>
 #&gt; colnames(6): Condition_1-1 Condition_1-2 ... Condition_2-2
 #&gt;   Condition_2-3
 #&gt; colData names(3): group true_dropout_curve_position
-#&gt;   true_dropout_curve_scale</div><div class='input'><span class='fu'>proDA</span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
+#&gt;   true_dropout_curve_scale</div><div class='input'><span class='fu'>proDA</span>(<span class='no'>se</span>, <span class='kw'>design</span> <span class='kw'>=</span> ~ <span class='no'>group</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Dropout curve estimation did not properly converge</span></div><div class='output co'>#&gt; 	Parameters of the probabilistic dropout model
 #&gt; 
 #&gt; The dataset contains 6 samples and 10 proteins
 #&gt; 18.3% of the values are missing
@@ -298,12 +297,12 @@ observed intensities.</p>
 #&gt; 
 #&gt; The inferred parameters are:
 #&gt; location_prior_mean:     20.7
-#&gt; location_prior_scale:    7.21
+#&gt; location_prior_scale:    7.23
 #&gt; location_prior_df:       3
-#&gt; variance_prior_scale:    0.0479
-#&gt; variance_prior_df:       1.76
-#&gt; dropout_curve_position:  NA, 19.9, 19.1, 19.1, ...
-#&gt; dropout_curve_scale:     NA, -0.0001, -0.849, -0.0001, ...</div><div class='input'>
+#&gt; variance_prior_scale:    0.0538
+#&gt; variance_prior_df:       1.8
+#&gt; dropout_curve_position:  NA, 19.9, 19, 19.1, ...
+#&gt; dropout_curve_scale:     NA, -0.0001, -0.824, -0.0001, ...</div><div class='input'>
 <span class='co'># Design using model.matrix()</span>
 <span class='no'>data_mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>5</span> * <span class='fl'>10</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>10</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/colnames'>colnames</a></span>(<span class='no'>data_mat</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='st'>"sample"</span>, <span class='fl'>1</span>:<span class='fl'>5</span>)
@@ -333,7 +332,7 @@ observed intensities.</p>
 #&gt; The model has successfully converged.
 #&gt; 
 #&gt; The inferred parameters are:
-#&gt; location_prior_mean:     -0.0089
+#&gt; location_prior_mean:     -0.00877
 #&gt; location_prior_scale:    0.657
 #&gt; location_prior_df:       3
 #&gt; variance_prior_scale:    0.798
