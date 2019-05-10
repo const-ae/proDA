@@ -21,6 +21,9 @@ test_that("proDAFit object construction works", {
                             )
   coef_mat <- matrix(rnorm(40), nrow=20, ncol=2)
   colnames(coef_mat) <- c("Intercept", "beta1")
+  coef_var <- lapply(seq_len(20), function(idx){
+    diag(2)
+  })
 
 
   conv <- list(successful = TRUE, iterations = 7, error =1e-5)
@@ -32,6 +35,7 @@ test_that("proDAFit object construction works", {
            dropout_curve_scale = zeta,
            feature_parameters = feat_params,
            coefficients = coef_mat,
+           coef_var = coef_var,
            design_matrix = dm,
            design_formula = NULL,
            reference_level = NULL,
@@ -41,23 +45,24 @@ test_that("proDAFit object construction works", {
            variance_prior_scale = 0.05,
            variance_prior_df = 2.1,
            convergence = conv
-           )
+  )
 
   pf2 <- proDAFit(data,
-                 col_data = annot_data,
-                 dropout_curve_position = rho,
-                 dropout_curve_scale = zeta,
-                 feature_parameters = feat_params,
-                 coefficients = coef_mat,
-                 design_matrix = dm,
-                 design_formula = NULL,
-                 reference_level = NULL,
-                 location_prior_mean = 20,
-                 location_prior_scale = 4.5,
-                 location_prior_df = 3,
-                 variance_prior_scale = 0.05,
-                 variance_prior_df = 2.1,
-                 convergence = conv
+                  col_data = annot_data,
+                  dropout_curve_position = rho,
+                  dropout_curve_scale = zeta,
+                  feature_parameters = feat_params,
+                  coefficients = coef_mat,
+                  coef_var = coef_var,
+                  design_matrix = dm,
+                  design_formula = NULL,
+                  reference_level = NULL,
+                  location_prior_mean = 20,
+                  location_prior_scale = 4.5,
+                  location_prior_df = 3,
+                  variance_prior_scale = 0.05,
+                  variance_prior_df = 2.1,
+                  convergence = conv
   )
 
   rowData(pf2) <- cbind(row_annot_data, rowData(pf2))

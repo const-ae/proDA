@@ -3,6 +3,7 @@
 
 .methods_to_suggest <- c("abundances", "hyper_parameters", "feature_parameters", "coefficients",
                          "convergence", "design", "reference_level", "result_names",
+                         "coefficient_variance_matrices",
                          "colData", "rowData")
 
 #' @rdname cash-proDAFit-method
@@ -28,6 +29,7 @@
 #'   \item design
 #'   \item reference_level
 #'   \item result_names
+#'   \item coefficient_variance_matrices
 #'   \item colData
 #'   \item rowData.
 #' }

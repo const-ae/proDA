@@ -8,6 +8,7 @@
 \alias{hyper_parameters,proDAFit-method}
 \alias{feature_parameters,proDAFit-method}
 \alias{coefficients,proDAFit-method}
+\alias{coefficient_variance_matrices,proDAFit-method}
 \alias{reference_level,proDAFit-method}
 \alias{convergence,proDAFit-method}
 \title{Get different features and elements of the 'proDAFit' object}
@@ -21,6 +22,8 @@
 \S4method{feature_parameters}{proDAFit}(object)
 
 \S4method{coefficients}{proDAFit}(object)
+
+\S4method{coefficient_variance_matrices}{proDAFit}(object)
 
 \S4method{reference_level}{proDAFit}(object)
 

@@ -64,6 +64,21 @@ setMethod("coefficients", signature = "proDAFit", function(object){
   as.matrix(rd[, which(mcols(rd)$type == "coefficient"), drop=FALSE])
 })
 
+#' @rdname accessor_methods
+#' @export
+setMethod("coefficient_variance_matrices", signature = "proDAFit", function(object){
+  rd <- rowData(object)
+  n <- result_names(object)
+  p <- length(n)
+  lapply(rd[, which(mcols(rd)$type == "coefficient_variance"), drop=TRUE], function(elem){
+    stopifnot(length(elem) == p^2)
+    res <- matrix(elem, nrow=p, ncol=p)
+    colnames(res) <- n
+    rownames(res) <- n
+    res
+  })
+})
+
 
 #' @rdname accessor_methods
 #' @export

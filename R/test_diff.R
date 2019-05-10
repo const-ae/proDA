@@ -229,7 +229,8 @@ test_diff <- function(fit, contrast,
 run_wald_parameter_test <- function(fit, contrast, alternative){
   dm <- design(fit)
   diff <- coefficients(fit) %*% contrast
-  diff_var <- feature_parameters(fit)$s2 * c(t(contrast) %*% solve(t(dm) %*% dm) %*% contrast)
+  diff_var <- vapply(coefficient_variance_matrices(fit), function(mat) c(t(contrast) %*% mat %*% contrast),
+                     FUN.VALUE = 0.0)
   diff_df <- feature_parameters(fit)$df
 
   t_stat <- diff / sqrt(diff_var)
@@ -285,7 +286,11 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
                deviance_full = NA, deviance_reduced = NA))
     }
 
-    beta_init <- c(mean(design(fit) %*% fit$coefficients[idx, ]), rep(0, times=ncol(red_model) - 1))
+    mean_approx <- mean(design(fit) %*% fit$coefficients[idx, ], na.rm=TRUE)
+    if(is.na(mean_approx)){
+      mean_approx <- 0
+    }
+    beta_init <- c(mean_approx, rep(0, times=ncol(red_model) - 1))
     red_res <- nlminb(start = c(beta_init), objective = function(beta){
        - objective_fnc(y, yo,
                        X = red_model,

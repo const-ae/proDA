@@ -14,6 +14,8 @@ test_that("all observed gives equal results", {
 
   fit <- pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA)
   expect_equal(fit$coefficients, coef(lm(y ~ X - 1)))
+  expect_equal(unname(fit$coef_variance_matrix), summary(lm(y ~ X - 1))$sigma^2 * (length(y) - ncol(X)) / length(y) *
+                 solve(t(X) %*% X))
 })
 
 test_that("some missing gives equal results", {
@@ -213,28 +215,26 @@ test_that("available information is correctly reflected", {
   y <- c(5, NA, NA, NA, NA)
   X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
   fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
-                       location_prior_mean = 0, location_prior_scale = 1)
+                              location_prior_mean = 0, location_prior_scale = 1)
   expect_true(all(!is.na(coefficients(fit_all_but_on_mis))))
   expect_true(!is.na(fit_all_but_on_mis$s2))
 
   # var moderation --> Everything is fine
-  # but if there is no obs for a cond, than beta = -Inf
-  warning("Without location moderation, un-identified coefficients are approx -Inf (eg. -7)",
-          ". This is not ideal and they should rather be set to NA.")
-  # y <- c(NA, NA, NA, NA)
-  # X <- cbind(c(1,1,0,0), c(0,0,1,1))
-  # fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
-  #                      variance_prior_scale = 0.1, variance_prior_df = 2)
-  # expect_true(all(is.na(coefficients(fit_all_mis))))
-  # expect_true(is.na(fit_all_mis$s2))
-  #
-  # y <- c(5, NA, NA, NA, NA)
-  # X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
-  # fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
-  #                             variance_prior_scale = 0.1, variance_prior_df = 2)
-  # expect_true(!is.na(coefficients(fit_all_but_on_mis)[1]))
-  # expect_true(all(is.na(coefficients(fit_all_but_on_mis)[2:3])))
-  # expect_true(! is.na(fit_all_but_on_mis$s2))
+  # but if there is no obs for a cond, than beta = NA
+  y <- c(NA, NA, NA, NA)
+  X <- cbind(c(1,1,0,0), c(0,0,1,1))
+  fit_all_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                       variance_prior_scale = 0.1, variance_prior_df = 2)
+  expect_true(all(is.na(coefficients(fit_all_mis))))
+  expect_true(is.na(fit_all_mis$s2))
+
+  y <- c(5, NA, NA, NA, NA)
+  X <- cbind(c(1,1,1,1, 1), c(0,0,1,1,0), c(0,0,0,0,1))
+  fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1,
+                              variance_prior_scale = 0.1, variance_prior_df = 2)
+  expect_true(!is.na(coefficients(fit_all_but_on_mis)[1]))
+  expect_true(all(is.na(coefficients(fit_all_but_on_mis)[2:3])))
+  expect_true(! is.na(fit_all_but_on_mis$s2))
 
   # No moderation. At least one observation.
   # but if there is no obs for a cond, than beta = -Inf
@@ -248,8 +248,8 @@ test_that("available information is correctly reflected", {
   X <- cbind(c(1,1,0,0, 0), c(0,0,1,1,0), c(0,0,0,0,1))
   fit_all_but_on_mis <- pd_lm(y ~ X - 1, dropout_curve_position = 0, dropout_curve_scale = -1)
   expect_true(!is.na(coefficients(fit_all_but_on_mis)[1]))
-  # expect_true(all(is.na(coefficients(fit_all_but_on_mis)[2:3])))
-  # expect_true(!is.na(fit_all_but_on_mis$s2))
+  expect_true(all(is.na(coefficients(fit_all_but_on_mis)[2:3])))
+  expect_true(!is.na(fit_all_but_on_mis$s2))
 
 })
 

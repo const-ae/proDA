@@ -22,6 +22,7 @@ proDAFit <- function(data, col_data,
                      dropout_curve_position, dropout_curve_scale,
                      feature_parameters,
                      coefficients,
+                     coef_var,
                      design_matrix, design_formula, reference_level,
                      location_prior_mean, location_prior_scale, location_prior_df,
                      variance_prior_scale, variance_prior_df,
@@ -57,8 +58,8 @@ proDAFit <- function(data, col_data,
   }
   dropout_df <- S4Vectors::DataFrame(dropout_curve_position, dropout_curve_scale)
   mcols(dropout_df) <- S4Vectors::DataFrame(type = "hyper_parameter", description =
-           c("The intensity where the chance to observe a protein is 50%",
-             "How broad the sigmoidal dropout curve is."))
+                                              c("The intensity where the chance to observe a protein is 50%",
+                                                "How broad the sigmoidal dropout curve is."))
   colData(se) <- cbind(colData(se), dropout_df)
 
 
@@ -68,7 +69,7 @@ proDAFit <- function(data, col_data,
   }
   feature_params_df <- S4Vectors::DataFrame(feature_parameters)
   mcols(feature_params_df) <- S4Vectors::DataFrame(type = "feature_parameter",
-                                        description = "")
+                                                   description = "")
   rowData(se) <- cbind(rowData(se), feature_params_df)
   if(! is.matrix(coefficients) ||
      nrow(coefficients) != nrow(se)){
@@ -78,6 +79,16 @@ proDAFit <- function(data, col_data,
   mcols(coefficients_df) <- S4Vectors::DataFrame(type = "coefficient",
                                         description = "The MAP estimate")
   rowData(se) <- cbind(rowData(se), coefficients_df)
+
+  if(! is.list(coef_var) ||
+     length(coef_var) != nrow(se)){
+    stop("coef_var must be a list with as many entries as rows in the data")
+  }
+  coef_var_df <- S4Vectors::DataFrame(coef_var = as(coef_var, "NumericList"))
+  mcols(coef_var_df) <- S4Vectors::DataFrame(type = "coefficient_variance",
+                                             description = "The covariance matrix of the MAP estimates")
+  rowData(se) <- cbind(rowData(se), coef_var_df)
+
 
   if(! is.matrix(design_matrix) || nrow(design_matrix) != ncol(se)){
     stop("design_matrix must be a matrix and the number of rows must match ",

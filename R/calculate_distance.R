@@ -40,7 +40,7 @@ setMethod("dist_approx", signature = "proDAFit", function(object,
   dist_approx_mean_var(Y = abundances(alt_fit),
                        Pred = predict(alt_fit),
                        X  = design(alt_fit),
-                       sigma2 = alt_fit$feature_parameters$s2,
+                       coef_var = coefficient_variance_matrices(alt_fit),
                        by_sample = by_sample)
 
 })
@@ -68,15 +68,16 @@ setMethod("dist_approx", signature = "ANY", function(object,
 
 
 
-dist_approx_mean_var <- function(Y, Pred, X, sigma2, by_sample = FALSE){
+dist_approx_mean_var <- function(Y, Pred, X, coef_var, by_sample = FALSE){
   stopifnot(ncol(Y) == ncol(Pred), nrow(Y) == nrow(Pred), ncol(Y) == nrow(X),
-            nrow(Y) == length(sigma2))
+            nrow(Y) == length(coef_var))
   Mu <- ifelse(! is.na(Y),
                Y,
                matrix(rowMeans(Pred), nrow=nrow(Y), ncol=ncol(Y)))
+
   Mu_var <- ifelse(! is.na(Y),
                    0,
-                   matrix(sigma2,ncol=1) %*% diag(X %*% solve(t(X) %*% X) %*% t(X)) )
+                   mply_dbl(coef_var, function(mat) diag(X %*% mat %*% t(X)), ncol = ncol(Y)))
 
   if(by_sample){
     Y <- t(Y)

@@ -113,6 +113,46 @@ test_that("pd_row_f_test works", {
 
 
 
+test_that("Wald test works as good limma", {
+
+  se <- generate_synthetic_data(n_proteins = 100, n_conditions = 4, dropout_curve_position = -100,
+                                return_summarized_experiment = TRUE)
+
+  fit <- proDA(se, ~ group, moderate_location = FALSE)
+  test_res <- test_diff(fit, "groupCondition_3")
+
+  dm <- design(fit)
+  lim_fit <- limma::lmFit(assay(se,1), design = dm)
+  lim_fit <- limma::contrasts.fit(lim_fit, limma::makeContrasts(groupCondition_3, levels = result_names(fit)))
+  lim_fit <- limma::eBayes(lim_fit)
+
+  test_lim <- limma::topTable(lim_fit, sort.by = "none", number = 100)
+  expect_gt(cor(test_res$avg_abundance, test_lim$AveExpr), 0.99)
+  expect_gt(cor(test_res$diff, test_lim$logFC), 0.99)
+  expect_gt(cor(test_res$pval, test_lim$P.Value), 0.99)
+
+})
+
+
+test_that("Wald test works with missing values", {
+
+  se <- generate_synthetic_data(n_proteins = 1000, n_conditions = 4, dropout_curve_position = 17,
+                                return_summarized_experiment = TRUE)
+
+  fit <- proDA(se, ~ group, moderate_location = TRUE)
+  test_res <- test_diff(fit, "groupCondition_3")
+
+  dm <- design(fit)
+  lim_fit <- limma::lmFit(assay(se,"full_observations"), design = dm)
+  lim_fit <- limma::contrasts.fit(lim_fit, limma::makeContrasts(groupCondition_3, levels = result_names(fit)))
+  lim_fit <- limma::eBayes(lim_fit)
+
+  test_lim <- limma::topTable(lim_fit, sort.by = "none", number = 1000)
+  expect_gt(cor(test_res$avg_abundance, test_lim$AveExpr), 0.9)
+  expect_gt(cor(test_res$diff, test_lim$logFC), 0.7)
+  expect_gt(cor(test_res$pval, test_lim$P.Value), 0.7)
+
+})
 
 
 

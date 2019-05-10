@@ -73,6 +73,7 @@ setMethod("predict", signature = "proDAFit", function(object, newdata, newdesign
   feat_data <- fit_feature_parameters(object, newdata, design)
   feat_df <- feat_data$feature_df
   coef_mat <- feat_data$coefficient_matrix
+  coef_var_list <- feat_data$coef_var_list
 
   new_fit_object <- proDAFit(newdata,
                       col_data = colData(object)[, is.na(mcols(colData(object))$type) |
@@ -81,6 +82,7 @@ setMethod("predict", signature = "proDAFit", function(object, newdata, newdesign
                       dropout_curve_scale = object$hyper_parameters$dropout_curve_scale,
                       feature_parameters = feat_df,
                       coefficients = coef_mat,
+                      coef_var = coef_var_list,
                       design_matrix = design,
                       design_formula = design_formula,
                       reference_level = reference_level(object),
@@ -124,14 +126,15 @@ fit_feature_parameters <- function(fit, newdata, design){
   }
 
   feat_df <- as.data.frame(mply_dbl(res_reg, function(f){
-    unlist(f[-1])
+    unlist(f[-c(1,2)])
   }, ncol = 4))
   # feat_df$rss <- vapply(res_unreg, function(x) x[["rss"]], 0.0)
   coef_mat <- mply_dbl(res_reg, function(f){
     f$coefficients
   }, ncol=ncol(design))
   colnames(coef_mat) <- names(res_reg[[1]]$coefficients)
-
+  coef_var_list <- lapply(res_reg, function(.x) .x$coef_variance_matrix)
   list(feature_df = feat_df,
-       coefficient_matrix = coef_mat)
+       coefficient_matrix = coef_mat,
+       coef_var_list = coef_var_list)
 }

@@ -37,6 +37,16 @@ setGeneric("feature_parameters", function(object, ...) standardGeneric("feature_
 #' @export
 setGeneric("coefficients", function(object, ...) standardGeneric("coefficients"))
 
+#' Get the coefficients
+#'
+#' @param object the object to get from
+#' @param ... additional arguments used by the concrete implementation
+#'
+#' @seealso \link{accessor_methods} for the implementation for a 'proDAFit' object
+#' @export
+setGeneric("coefficient_variance_matrices", function(object, ...) standardGeneric("coefficient_variance_matrices"))
+
+
 #' Get the reference level
 #'
 #' @param object the object to get from

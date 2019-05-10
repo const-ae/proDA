@@ -43,6 +43,7 @@ the \code{`$`} operator only exposes a limited set of functions
   \item design
   \item reference_level
   \item result_names
+  \item coefficient_variance_matrices
   \item colData
   \item rowData.
 }

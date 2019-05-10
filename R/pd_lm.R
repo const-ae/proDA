@@ -202,14 +202,19 @@ pd_lm.fit <- function(y, X,
   fit_beta <- rep(NA, p)
   names(fit_beta) <- colnames(X)
 
+  failed_result <- list(coefficients=rep(NA, p),
+                        coef_variance_matrix = matrix(NA, nrow=p, ncol=p),
+                        n_approx=NA, df=NA, s2=NA, n_obs = length(yo))
+
   if(all_observed && ! moderate_variance && ! moderate_location){
     # Run lm
     lm_res <- lm(yo ~ Xo - 1)
     fit_beta <- coefficients(lm_res)
     fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
+    coef_hessian <-  1/fit_sigma2 * (t(X) %*% X)
     fit_sigma2_var <- 2 * fit_sigma2^2 / n
   }else if(all_missing && ! moderate_variance){
-    return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, n_obs = length(yo)))
+    return(failed_result)
   }else if(method == "numeric"){
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
       beta <- par[beta_sel]
@@ -229,10 +234,11 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(failed_result)
     }
 
     fit_beta <- opt_res$par[beta_sel]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel,drop=FALSE]
     fit_sigma2 <- opt_res$par[p+1]
     fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
   }else if(method == "analytic_grad"){
@@ -265,10 +271,11 @@ pd_lm.fit <- function(y, X,
         warning(opt_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(failed_result)
     }
 
     fit_beta <- opt_res$par[beta_sel]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel,drop=FALSE]
     fit_sigma2 <- opt_res$par[p+1]
     fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
   }else if(method == "analytic_hessian"){
@@ -311,7 +318,7 @@ pd_lm.fit <- function(y, X,
         warning(nl_res$message, "\n")
         warning(y,"\n")
       }
-      return(list(coefficients=fit_beta, n_approx=NA, df=NA, s2=NA, n_obs = length(yo)))
+      return(failed_result)
     }
 
     fit_beta <- nl_res$par[beta_sel]
@@ -324,21 +331,27 @@ pd_lm.fit <- function(y, X,
                           location_prior_df, moderate_location, moderate_variance,
                           beta_sel, p)
     fit_sigma2_var <- 1/hessian[p+1, p+1]
+    coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   }
+  # Make hessian robust for inversion!
+  for(idx in which(diag(coef_hessian) < 1e-10)){
+    coef_hessian[idx, ] <- 1e-10
+    coef_hessian[, idx] <- 1e-10
+  }
+  Var_coef <- solve(coef_hessian)
 
   # Set estimates to NA if no reasonable inference
-  # zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
-  # coef_should_be_inf <- vapply(seq_len(ncol(Xo)), function(colidx){
-  #   sel <- Xm[, colidx] != 0
-  #   any(invprobit(fit_beta[colidx], rho[sel], zetastar[sel], oneminus = TRUE) <  1e-8)
-  # }, FUN.VALUE = FALSE)
-  # fit_beta[coef_should_be_inf] <- NA
-  # if(all(coef_should_be_inf)){
-  #   n_approx <- NA
-  #   df_approx <- NA
-  #   rss_approx <- NA
-  #   s2_approx <- NA
-  # }else{
+  coef_should_be_inf <- diag(Var_coef) > 1e6
+  for(idx in which(coef_should_be_inf)){
+    Var_coef[idx, idx] <- Inf
+  }
+  fit_beta[coef_should_be_inf] <- NA
+  if(all(coef_should_be_inf)){
+    n_approx <- NA
+    df_approx <- NA
+    rss_approx <- NA
+    s2_approx <- NA
+  }else{
     n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
     rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
     s2_approx <- rss_approx / (n_approx - p)
@@ -360,15 +373,19 @@ pd_lm.fit <- function(y, X,
         df_approx <- n_approx - p
       }
     }
-  # }
+  }
 
   if(moderate_variance){
     rss_approx <- NA
   }
 
+
   names(fit_beta) <- colnames(X)
+  colnames(Var_coef) <- colnames(X)
+  rownames(Var_coef) <- colnames(X)
 
   list(coefficients=fit_beta,
+       coef_variance_matrix = Var_coef,
        n_approx=n_approx, df=df_approx,
        s2=s2_approx,
        # rss = rss_approx,

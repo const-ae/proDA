@@ -220,27 +220,30 @@ proDA <- function(data, design=~ 1,
                                     verbose = verbose)
 
   feat_df <- as.data.frame(mply_dbl(fit_result$feature_parameters, function(f){
-    unlist(f[-1])
+    unlist(f[-c(1,2)])
   }, ncol = 4))
   coef_mat <- mply_dbl(fit_result$feature_parameters, function(f){
     f$coefficients
   }, ncol=ncol(model_matrix))
   colnames(coef_mat) <- names(fit_result$feature_parameters[[1]]$coefficients)
+  coef_var_list <- lapply(fit_result$feature_parameters, function(.x) .x$coef_variance_matrix)
+
 
   fit <- proDAFit(data[seq_len(n_subsample), ,drop=FALSE], col_data,
-           dropout_curve_position = fit_result$hyper_parameters$dropout_curve_position,
-           dropout_curve_scale = fit_result$hyper_parameters$dropout_curve_scale,
-           feature_parameters = feat_df,
-           coefficients = coef_mat,
-           design_matrix = model_matrix,
-           design_formula = design_formula,
-           reference_level = reference_level,
-           location_prior_mean = fit_result$hyper_parameters$location_prior_mean,
-           location_prior_scale = fit_result$hyper_parameters$location_prior_scale,
-           location_prior_df = location_prior_df,
-           variance_prior_scale = fit_result$hyper_parameters$variance_prior_scale,
-           variance_prior_df = fit_result$hyper_parameters$variance_prior_df,
-           convergence = fit_result$convergence, ...)
+                  dropout_curve_position = fit_result$hyper_parameters$dropout_curve_position,
+                  dropout_curve_scale = fit_result$hyper_parameters$dropout_curve_scale,
+                  feature_parameters = feat_df,
+                  coefficients = coef_mat,
+                  coef_var = coef_var_list,
+                  design_matrix = model_matrix,
+                  design_formula = design_formula,
+                  reference_level = reference_level,
+                  location_prior_mean = fit_result$hyper_parameters$location_prior_mean,
+                  location_prior_scale = fit_result$hyper_parameters$location_prior_scale,
+                  location_prior_df = location_prior_df,
+                  variance_prior_scale = fit_result$hyper_parameters$variance_prior_scale,
+                  variance_prior_df = fit_result$hyper_parameters$variance_prior_df,
+                  convergence = fit_result$convergence, ...)
 
   if(n_subsample != nrow(data)){
     sel <- seq_len(nrow(data) - n_subsample) + n_subsample
