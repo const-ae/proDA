@@ -302,7 +302,15 @@ test_that("parametrization does not influence result", {
 })
 
 
-
+test_that("Variance estimates are correct", {
+  y <- rnorm(2, mean=17, sd=0.3)
+  var(y)
+  res <- pd_lm(y ~ 1, dropout_curve_position = NA, dropout_curve_scale = NA,
+        variance_prior_scale = 0.05, variance_prior_df = 2)
+  res_lim <- limma:::.squeezeVar(var(y), df=length(y)-1, var.prior=0.05, df.prior=2)
+  expect_equal(res$s2, res_lim)
+  expect_equal(res$coef_variance_matrix[1,1], res_lim / length(y))
+})
 
 
 

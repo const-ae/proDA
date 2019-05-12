@@ -388,6 +388,8 @@ pd_lm.fit <- function(y, X,
     rss_approx <- NA
   }
 
+  # Correct Var_coef to make it unbiased
+  Var_coef <- Var_coef * (df_approx + p) / df_approx
 
   names(fit_beta) <- colnames(X)
   colnames(Var_coef) <- colnames(X)
@@ -410,7 +412,7 @@ objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, si
   }
   if(moderate_variance){
     val <- val +
-      extraDistr::dinvchisq(sigma2, df0, sqrt(tau20), log=TRUE) +
+      extraDistr::dinvchisq(sigma2, df0, tau20, log=TRUE) +
       log(sigma2)   # important to remove the implicit 1/sigma2 prior in the Inv-Chisq distr
   }
   val <- val +
@@ -432,7 +434,7 @@ grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
   dbeta_m <- t(Xm) %*% imr
 
   if(moderate_variance){
-    dsig2_p <- -(1 + df0/2) / sigma2 + df0 * sqrt(tau20) / (2 * sigma2^2) + 1/sigma2
+    dsig2_p <- -(1 + df0/2) / sigma2 + df0 * tau20 / (2 * sigma2^2) + 1/sigma2
   }else{
     dsig2_p <- 0
   }
@@ -457,7 +459,7 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     dbb_m <- - t(Xm) %*% diag(c((imr^2 + (Xm %*% beta - rho) / zetastar^2 * imr)), nrow(Xm)) %*% Xm
 
     if(moderate_variance){
-      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * sqrt(tau20) / (sigma2^3) - 1/sigma2^2
+      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20 / (sigma2^3) - 1/sigma2^2
     }else{
       dss_p <- 0
     }
