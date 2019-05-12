@@ -334,12 +334,21 @@ pd_lm.fit <- function(y, X,
     coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   }
   # Make hessian robust for inversion!
-  for(idx in which(diag(coef_hessian) < 1e-10)){
-    coef_hessian[idx, ] <- 1e-10
-    coef_hessian[, idx] <- 1e-10
+  very_small_entry <- which(diag(coef_hessian)  < 1e-10)
+  if(length(very_small_entry) == p){
+    # All entries of matrix are practically zero
+    Var_coef <- diag(Inf, nrow=p)
+  }else{
+    for(idx in very_small_entry){
+      coef_hessian[idx, ] <- 1e-10
+      coef_hessian[, idx] <- 1e-10
+    }
+    tryCatch({
+      Var_coef <- solve(coef_hessian)
+    }, error = function(err){
+      Var_coef <- diag(Inf, nrow=p)
+    })
   }
-  Var_coef <- solve(coef_hessian)
-
   # Set estimates to NA if no reasonable inference
   coef_should_be_inf <- diag(Var_coef) > 1e6
   for(idx in which(coef_should_be_inf)){
