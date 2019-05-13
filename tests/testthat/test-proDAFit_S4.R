@@ -16,7 +16,7 @@ test_that("proDAFit object construction works", {
 
   feat_params <- data.frame(n_approx = rgamma(20, 4),
                             df = 2,
-                            s2 = rchisq(20, df=2),
+                            s2 = extraDistr::rinvchisq(20, nu=2, tau=0.03),
                             n_obs = rpois(20, 8)
                             )
   coef_mat <- matrix(rnorm(40), nrow=20, ncol=2)

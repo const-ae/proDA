@@ -289,17 +289,20 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
               dropout_curve_scale =rep(NA, n_samples))
   })
   Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% t(model_matrix)
+  Pred_init_var <- mply_dbl(seq_len(nrow(Y)), function(i){
+    sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_init[[i]]$coef_variance_matrix %*% model_matrix[j,])
+  }, ncol=ncol(Y))
   s2_init <-  vapply(res_init, function(x) x[["s2"]], 0.0)
   df_init <- vapply(res_init, function(x) x[["df"]], 0.0)
   if(moderate_location){
-    lp <- location_prior(model_matrix, Pred = Pred_init, s2 = s2_init)
+    lp <- location_prior(model_matrix, Pred = Pred_init, Pred_var = Pred_init_var)
     mu0 <- lp$mu0
     sigma20 <- lp$sigma20
   }else{
     mu0 <- NA_real_
     sigma20 <- NA_real_
   }
-  dc <- dropout_curves(Y, model_matrix, Pred_init, s2_init)
+  dc <- dropout_curves(Y, model_matrix, Pred_init, Pred_init_var)
   rho <- dc$rho
   zetainv <- dc$zetainv
   if(moderate_variance){
@@ -340,18 +343,24 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %*% t(model_matrix)
     Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %*% t(model_matrix)
+    Pred_var_unreg <- mply_dbl(seq_len(nrow(Y)), function(i){
+      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_unreg[[i]]$coef_variance_matrix %*% model_matrix[j,])
+    }, ncol=ncol(Y))
+    Pred_var_reg <- mply_dbl(seq_len(nrow(Y)), function(i){
+      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_reg[[i]]$coef_variance_matrix %*% model_matrix[j,])
+    }, ncol=ncol(Y))
     s2_unreg <-  vapply(res_unreg, function(x) x[["s2"]], 0.0)
-    s2_reg <-  vapply(res_reg, function(x) x[["s2"]], 0.0)
     df_unreg <-vapply(res_unreg, function(x) x[["df"]], 0.0)
+
 
     if(moderate_location){
       lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                           mu0 = median( Pred_reg, na.rm=TRUE),
-                           s2 = s2_unreg)
+                           Pred_var = Pred_var_unreg,
+                           mu0 = median( Pred_reg, na.rm=TRUE))
       mu0 <- lp$mu0
       sigma20 <- lp$sigma20
     }
-    dc <- dropout_curves(Y, model_matrix, Pred_reg, s2_reg)
+    dc <- dropout_curves(Y, model_matrix, Pred_reg, Pred_var_reg)
     rho <- dc$rho
     zetainv <- dc$zetainv
     if(moderate_variance){
@@ -416,17 +425,14 @@ variance_prior <- function(s2, df){
 
 
 
-location_prior <- function(X, Pred, s2,
+location_prior <- function(X, Pred, Pred_var,
                            mu0 = median(Pred, na.rm=TRUE),
                            min_var = 0, max_var = 1e3){
-  if(any(s2 <= 0, na.rm=TRUE)){
-    stop(paste0("All s2 must be positive. ", paste0(which(s2 < 0), collapse=", "), " are not."))
-  }
 
   pred <- c(Pred)
   larger_than_mu0 <- which(pred > mu0)
   pred <- (pred - mu0)[larger_than_mu0]
-  pred_var <- c(s2 %*% t(sapply(seq_len(nrow(X)), function(i) t(X[i,]) %*% solve(t(X) %*% X) %*% X[i,])))[larger_than_mu0]
+  pred_var <- c(Pred_var)[larger_than_mu0]
 
   objective_fun <- function(A){
     sum((pred^2 - pred_var) / (2 * (A + pred_var)^2), na.rm=TRUE) / sum(1/(2 * (A + pred_var)^2), na.rm=TRUE) - A
@@ -445,12 +451,8 @@ location_prior <- function(X, Pred, s2,
 
 
 
-dropout_curves <- function(Y, X, Pred, s2){
-  if(any(s2 <= 0, na.rm=TRUE)){
-    stop(paste0("All s2 must be positive. ", paste0(which(s2 < 0), collapse=", "), " are not."))
-  }
+dropout_curves <- function(Y, X, Pred, Pred_var){
   n_samples <- nrow(X)
-  Pred_var <- s2 %*% t(sapply(seq_len(nrow(X)), function(i) t(X[i,]) %*% solve(t(X) %*% X) %*% X[i,]))
 
   mu0 <- median(Pred, na.rm=TRUE)
   sigma20 <- median((mu0 - Pred)^2, na.rm=TRUE)

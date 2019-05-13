@@ -333,6 +333,7 @@ pd_lm.fit <- function(y, X,
     fit_sigma2_var <- 1/hessian[p+1, p+1]
     coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   }
+
   # Make hessian robust for inversion!
   very_small_entry <- which(diag(coef_hessian)  < 1e-10)
   if(length(very_small_entry) == p){
@@ -346,6 +347,7 @@ pd_lm.fit <- function(y, X,
     tryCatch({
       Var_coef <- solve(coef_hessian)
     }, error = function(err){
+      warning(err)
       Var_coef <- diag(Inf, nrow=p)
     })
   }
@@ -389,8 +391,9 @@ pd_lm.fit <- function(y, X,
   }
 
   # Correct Var_coef to make it unbiased
-  Var_coef <- Var_coef * (df_approx + p) / df_approx
-
+  if(! is.infinite(df_approx)){
+    Var_coef <- Var_coef * (df_approx + p) / df_approx
+  }
   names(fit_beta) <- colnames(X)
   colnames(Var_coef) <- colnames(X)
   rownames(Var_coef) <- colnames(X)
