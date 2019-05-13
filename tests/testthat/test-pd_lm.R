@@ -14,7 +14,7 @@ test_that("all observed gives equal results", {
 
   fit <- pd_lm(y ~ X - 1, dropout_curve_position = NA, dropout_curve_scale = NA)
   expect_equal(fit$coefficients, coef(lm(y ~ X - 1)))
-  expect_equal(unname(fit$coef_variance_matrix), summary(lm(y ~ X - 1))$sigma^2 * (length(y) - ncol(X)) / length(y) *
+  expect_equal(unname(fit$coef_variance_matrix), summary(lm(y ~ X - 1))$sigma^2 *
                  solve(t(X) %*% X))
 })
 
