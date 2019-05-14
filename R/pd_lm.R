@@ -404,7 +404,7 @@ pd_lm.fit <- function(y, X,
 
   # Correct Var_coef to make it unbiased
   if(! is.infinite(df_approx)){
-    Var_coef <- Var_coef * (df_approx + p) / df_approx
+    Var_coef <- Var_coef * n / (n-p)
   }
   names(fit_beta) <- colnames(X)
   colnames(Var_coef) <- colnames(X)
