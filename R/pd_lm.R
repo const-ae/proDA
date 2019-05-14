@@ -390,6 +390,18 @@ pd_lm.fit <- function(y, X,
     rss_approx <- NA
   }
 
+  # Calculate correction factor for skew
+  # the skew means that the fit is bad on both sides. We only care about the
+  # right side, so we will calculate a factor that improves that one
+  zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
+  Correction_Factor <- calculate_skew_correction_factors(y, yo, X, Xm, Xo,
+                                      fit_beta, fit_sigma2, Var_coef, rho, zetastar,
+                                      location_prior_mean, location_prior_scale,
+                                      variance_prior_df, variance_prior_scale,
+                                      location_prior_df, moderate_location, moderate_variance,
+                                      out_factor = 8)
+  Var_coef <- Correction_Factor %*% Var_coef %*% Correction_Factor
+
   # Correct Var_coef to make it unbiased
   if(! is.infinite(df_approx)){
     Var_coef <- Var_coef * (df_approx + p) / df_approx
@@ -489,5 +501,55 @@ has_intercept <- function(X){
     all(X[, idx] == 1)
   }, FUN.VALUE = FALSE))
 
+}
+
+
+
+calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_sigma2, Var_coef, rho, zetastar,
+                                             mu0, sigma20, df0, tau20, location_prior_df,
+                                             moderate_location, moderate_variance, out_factor = 2){
+  res <- vapply(seq_along(fit_beta), function(idx){
+    offset <- proDA:::objective_fnc(y = y,
+                                    yo = yo,
+                                    X = X,
+                                    Xm = Xm,
+                                    Xo = Xo,
+                                    beta = fit_beta,
+                                    sigma2 = fit_sigma2,
+                                    rho = rho,
+                                    zetastar = zetastar,
+                                    mu0 = mu0,
+                                    sigma20 = sigma20,
+                                    df0 = df0,
+                                    tau20 = tau20,
+                                    location_prior_df = location_prior_df,
+                                    moderate_location = moderate_location,
+                                    moderate_variance = moderate_variance
+    )
+
+    beta_shift <- rep(0, length(fit_beta))
+    beta_shift[idx] <- sqrt(out_factor * Var_coef[idx, idx])
+
+    diff <- proDA:::objective_fnc(y = y,
+                                     yo = yo,
+                                     X = X,
+                                     Xm = Xm,
+                                     Xo = Xo,
+                                     beta = fit_beta + beta_shift,
+                                     sigma2 = fit_sigma2,
+                                     rho = rho,
+                                     zetastar = zetastar,
+                                     mu0 = mu0,
+                                     sigma20 = sigma20,
+                                     df0 = df0,
+                                     tau20 = tau20,
+                                     location_prior_df = location_prior_df,
+                                     moderate_location = moderate_location,
+                                     moderate_variance = moderate_variance)
+
+    (abs(diff - offset) / (out_factor / 2))^(-1)
+  }, FUN.VALUE = 0.0)
+
+  diag(sqrt(res), nrow=length(fit_beta))
 }
 
