@@ -397,7 +397,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
   list(hyper_parameters = last_round_params,
        convergence = convergence,
-       feature_parameters = res_reg)
+       feature_parameters = lapply(res_reg, function(x) x[c("coefficients", "coef_variance_matrix", "n_approx", "df", "s2", "n_obs")]))
 
 }
 

@@ -121,7 +121,7 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
     dropout_curve_scale <- rep(dropout_curve_scale, nrow(X))
   }
 
-  pd_lm.fit(y, X,
+  res <- pd_lm.fit(y, X,
             dropout_curve_position=dropout_curve_position,
             dropout_curve_scale=dropout_curve_scale,
             location_prior_mean = location_prior_mean,
@@ -131,6 +131,7 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
             location_prior_df = location_prior_df,
             method = method,
             verbose = verbose)
+  res[c("coefficients", "coef_variance_matrix", "n_approx", "df", "s2", "n_obs")]
 }
 
 
@@ -204,6 +205,7 @@ pd_lm.fit <- function(y, X,
 
   failed_result <- list(coefficients=rep(NA, p),
                         coef_variance_matrix = matrix(NA, nrow=p, ncol=p),
+                        correction_factor = matrix(NA, nrow=p, ncol=p),
                         n_approx=NA, df=NA, s2=NA, n_obs = length(yo))
 
   if(all_observed && ! moderate_variance && ! moderate_location){
@@ -412,6 +414,7 @@ pd_lm.fit <- function(y, X,
 
   list(coefficients=fit_beta,
        coef_variance_matrix = Var_coef,
+       correction_factor = Correction_Factor,
        n_approx=n_approx, df=df_approx,
        s2=s2_approx,
        # rss = rss_approx,
