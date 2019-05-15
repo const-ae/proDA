@@ -231,7 +231,7 @@ run_wald_parameter_test <- function(fit, contrast, alternative){
   diff <- coefficients(fit) %*% contrast
   diff_var <- vapply(coefficient_variance_matrices(fit), function(mat) c(t(contrast) %*% mat %*% contrast),
                      FUN.VALUE = 0.0)
-  diff_df <- feature_parameters(fit)$df
+  diff_df <- nrow(dm) - ncol(dm)
 
   t_stat <- diff / sqrt(diff_var)
   pval <- pt(t_stat, df=diff_df)
