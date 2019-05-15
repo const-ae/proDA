@@ -405,9 +405,9 @@ pd_lm.fit <- function(y, X,
   Var_coef <- Correction_Factor %*% Var_coef %*% Correction_Factor
 
   # Correct Var_coef to make it unbiased
-  if(! is.infinite(df_approx)){
-    Var_coef <- Var_coef * n / (n-p)
-  }
+  # if(! is.infinite(df_approx)){
+  #   Var_coef <- Var_coef * n / (n-p)
+  # }
   names(fit_beta) <- colnames(X)
   colnames(Var_coef) <- colnames(X)
   rownames(Var_coef) <- colnames(X)
