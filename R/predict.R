@@ -124,7 +124,7 @@ fit_feature_parameters <- function(fit, newdata, design){
   }else{
     res_reg <- res_unreg
   }
-
+  res_reg <- lapply(res_reg, function(x) x[c("coefficients", "coef_variance_matrix", "n_approx", "df", "s2", "n_obs")])
   feat_df <- as.data.frame(mply_dbl(res_reg, function(f){
     unlist(f[-c(1,2)])
   }, ncol = 4))
