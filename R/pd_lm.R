@@ -337,15 +337,9 @@ pd_lm.fit <- function(y, X,
   }
 
   Var_coef <- invert_hessian_matrix(coef_hessian, p)
-  # Set estimates to NA if no reasonable inference
-  coef_should_be_inf <- diag(Var_coef) > 1e6
-  for(idx in which(coef_should_be_inf)){
-    Var_coef[idx, idx] <- Inf
-  }
-  fit_beta[coef_should_be_inf] <- NA
 
   # Use fitted sigma2 and associated uncertainty to estimate df and unbiased sigma2
-  sigma2_params <- calculate_sigma2_parameters(coef_should_be_inf, fit_sigma2, fit_sigma2_var,
+  sigma2_params <- calculate_sigma2_parameters(fit_sigma2, fit_sigma2_var,
                                                variance_prior_scale, variance_prior_df,
                                                moderate_variance, n, p)
   n_approx <- sigma2_params$n_approx
@@ -376,7 +370,20 @@ pd_lm.fit <- function(y, X,
   Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
 
   # Apply correction factor to the unbiased Var_coef
-  # Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
+  Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
+
+
+  # Set estimates to NA if no reasonable inference
+  coef_should_be_inf <- diag(Var_coef) > 1e6
+  for(idx in which(coef_should_be_inf)){
+    Var_coef_unbiased[idx, idx] <- Inf
+  }
+  fit_beta[coef_should_be_inf] <- NA
+  if(all(coef_should_be_inf)){
+    n_approx <- NA
+    df_approx <- NA
+    s2_approx <- NA
+  }
 
   # Make everything pretty and return results
   names(fit_beta) <- colnames(X)
@@ -481,46 +488,61 @@ has_intercept <- function(X){
 calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_sigma2, Var_coef, rho, zetastar,
                                              mu0, sigma20, df0, tau20, location_prior_df,
                                              moderate_location, moderate_variance, out_factor = 2){
-  res <- vapply(seq_along(fit_beta), function(idx){
-    offset <- proDA:::objective_fnc(y = y,
-                                    yo = yo,
-                                    X = X,
-                                    Xm = Xm,
-                                    Xo = Xo,
-                                    beta = fit_beta,
-                                    sigma2 = fit_sigma2,
-                                    rho = rho,
-                                    zetastar = zetastar,
-                                    mu0 = mu0,
-                                    sigma20 = sigma20,
-                                    df0 = df0,
-                                    tau20 = tau20,
-                                    location_prior_df = location_prior_df,
-                                    moderate_location = moderate_location,
-                                    moderate_variance = moderate_variance
-    )
+  p <- length(fit_beta)
+  res <- vapply(seq_len(p), function(idx){
+    if(any(is.na(fit_beta))){
+      1
+    }else{
+      offset <- objective_fnc(y = y,
+                              yo = yo,
+                              X = X,
+                              Xm = Xm,
+                              Xo = Xo,
+                              beta = fit_beta,
+                              sigma2 = fit_sigma2,
+                              rho = rho,
+                              zetastar = zetastar,
+                              mu0 = mu0,
+                              sigma20 = sigma20,
+                              df0 = df0,
+                              tau20 = tau20,
+                              location_prior_df = location_prior_df,
+                              moderate_location = moderate_location,
+                              moderate_variance = moderate_variance)
 
-    beta_shift <- rep(0, length(fit_beta))
-    beta_shift[idx] <- sqrt(out_factor * Var_coef[idx, idx])
+      beta_shift <- rep(0, length(fit_beta))
+      # Need to adapt the variance for the conditioning
+      Mat_remain_inv <- tryCatch(solve(Var_coef[-idx, -idx,drop=FALSE]),
+                                 error = function(err){
+                                   matrix(NA, ncol=p-1, nrow=p-1)
+                                 })
+      var_coef_idx_corrected <- Var_coef[idx, idx ,drop=FALSE] -
+        Var_coef[idx, -idx,drop=FALSE] %*% Mat_remain_inv %*% Var_coef[-idx, idx,drop=FALSE]
+      if(is.na(var_coef_idx_corrected) || var_coef_idx_corrected < 0){
+        beta_shift[idx] <- NA
+      }else{
+        beta_shift[idx] <- sqrt(out_factor * var_coef_idx_corrected)
+      }
 
-    diff <- proDA:::objective_fnc(y = y,
-                                     yo = yo,
-                                     X = X,
-                                     Xm = Xm,
-                                     Xo = Xo,
-                                     beta = fit_beta + beta_shift,
-                                     sigma2 = fit_sigma2,
-                                     rho = rho,
-                                     zetastar = zetastar,
-                                     mu0 = mu0,
-                                     sigma20 = sigma20,
-                                     df0 = df0,
-                                     tau20 = tau20,
-                                     location_prior_df = location_prior_df,
-                                     moderate_location = moderate_location,
-                                     moderate_variance = moderate_variance)
+      diff <- objective_fnc(y = y,
+                            yo = yo,
+                            X = X,
+                            Xm = Xm,
+                            Xo = Xo,
+                            beta = fit_beta + beta_shift,
+                            sigma2 = fit_sigma2,
+                            rho = rho,
+                            zetastar = zetastar,
+                            mu0 = mu0,
+                            sigma20 = sigma20,
+                            df0 = df0,
+                            tau20 = tau20,
+                            location_prior_df = location_prior_df,
+                            moderate_location = moderate_location,
+                            moderate_variance = moderate_variance)
 
-    (abs(diff - offset) / (out_factor / 2))^(-1)
+      (abs(diff - offset) / (out_factor / 2))^(-1)
+    }
   }, FUN.VALUE = 0.0)
 
   diag(sqrt(res), nrow=length(fit_beta))
@@ -531,51 +553,46 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
 invert_hessian_matrix <- function(coef_hessian, p){
   # Make hessian robust for inversion!
   very_small_entry <- which(diag(coef_hessian)  < 1e-10)
+  Var_coef <- diag(Inf, nrow=p)
   if(length(very_small_entry) == p){
     # All entries of matrix are practically zero
     Var_coef <- diag(Inf, nrow=p)
   }else{
     for(idx in very_small_entry){
-      coef_hessian[idx, ] <- 1e-10
-      coef_hessian[, idx] <- 1e-10
+      coef_hessian[idx, idx] <- 1e-10
+      # coef_hessian[, idx] <- 1e-10
     }
     tryCatch({
       Var_coef <- solve(coef_hessian)
     }, error = function(err){
       warning(err)
-      Var_coef <- diag(Inf, nrow=p)
     })
   }
   Var_coef
 }
 
-calculate_sigma2_parameters <- function(coef_should_be_inf, fit_sigma2, fit_sigma2_var,
+calculate_sigma2_parameters <- function(fit_sigma2, fit_sigma2_var,
                                         variance_prior_scale, variance_prior_df,
                                         moderate_variance, n, p){
-  if(all(coef_should_be_inf)){
-    n_approx <- NA
-    df_approx <- NA
-    s2_approx <- NA
-  }else{
-    n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
-    rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
-    s2_approx <- rss_approx / (n_approx - p)
 
-    if(s2_approx < 0 || n_approx <= p){
-      df_approx <- 1e-3
-      s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
-      n_approx <- df_approx + p
-    }else{
-      if(moderate_variance){
-        n_approx <- n_approx - variance_prior_df
-        df_approx <- n_approx - p + variance_prior_df
-        if(df_approx > 30 * n && df_approx > 100){
-          df_approx <- Inf
-          s2_approx <- variance_prior_scale   # Check if this is correct
-        }
-      }else{
-        df_approx <- n_approx - p
+  n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
+  rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
+  s2_approx <- rss_approx / (n_approx - p)
+
+  if(s2_approx < 0 || n_approx <= p){
+    df_approx <- 1e-3
+    s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
+    n_approx <- df_approx + p
+  }else{
+    if(moderate_variance){
+      n_approx <- n_approx - variance_prior_df
+      df_approx <- n_approx - p + variance_prior_df
+      if(df_approx > 30 * n && df_approx > 100){
+        df_approx <- Inf
+        s2_approx <- variance_prior_scale   # Check if this is correct
       }
+    }else{
+      df_approx <- n_approx - p
     }
   }
   list(n_approx = n_approx, df_approx = df_approx, s2_approx = s2_approx)
