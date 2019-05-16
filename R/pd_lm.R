@@ -376,7 +376,7 @@ pd_lm.fit <- function(y, X,
   Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
 
   # Apply correction factor to the unbiased Var_coef
-  Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
+  # Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
 
   # Make everything pretty and return results
   names(fit_beta) <- colnames(X)
