@@ -15,32 +15,32 @@ test_that("proDA works", {
 
 test_that("proDA works as good as limma with observed values", {
   set.seed(1)
-  data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
+  # data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)
+  data <- generate_synthetic_data(100, n_replicates = c(2,3), frac_changed = 0)$Z
 
   pd_fit <- proDA(data, c("A", "A", "B", "B", "B"),
                moderate_location = FALSE, verbose=TRUE)
-  pd_res <- test_diff(pd_fit, "A")
+  pd_res <- test_diff(pd_fit, A - B)
 
   lim_fit <- limma::lmFit(data, pd_fit$design)
+  lim_fit <- limma::contrasts.fit(lim_fit, limma::makeContrasts(A - B, levels = result_names(pd_fit)))
   lim_fit <- limma::eBayes(lim_fit)
-  lim_res <- limma::topTable(lim_fit, "A", sort.by = "none", number = 100)
+  lim_res <- limma::topTable(lim_fit, sort.by = "none", number = 100)
 
-  expect_equal(unname(lim_fit$coefficients),
-               unname(pd_fit$coefficients), tolerance = 1e-6)
-  expect_equal(lim_fit$s2.post, pd_fit$feature_parameters$s2, tolerance = 1e-3)
+  expect_equal(unname(c(lim_fit$coefficients)),
+               unname(c(pd_fit$coefficients[,1] - pd_fit$coefficients[,2])), tolerance = 1e-6)
+  expect_gt(cor(unname(log(lim_fit$s2.post)), unname(log(pd_fit$feature_parameters$s2))), 0.99)
 
   expect_equal(lim_res$logFC, pd_res$diff, tolerance = 1e-6)
   expect_equal(lim_res$AveExpr, pd_res$avg_abundance, tolerance = 1e-6)
-  expect_equal(lim_res$t, pd_res$t_statistic, tolerance = 1e-2)
-  expect_equal(lim_res$P.Value, pd_res$pval, tolerance = 1e-2)
-  expect_equal(lim_res$adj.P.Val, pd_res$adj_pval, tolerance = 1e-3)
+  expect_gt(cor(lim_res$t, pd_res$t_statistic), 0.99)
+  expect_gt(cor(lim_res$P.Value, pd_res$pval), 0.99)
 })
 
 
 
 
 test_that("proDA works with missing values", {
-  skip("Very slow")
   # This is only here to fail if there are errors in the code
   set.seed(1)
   data <- matrix(rnorm(100 * 5), nrow=100, ncol=5)

@@ -69,7 +69,7 @@ test_that("F works", {
 
 
 test_that("F test works with missing data", {
-
+  skip("Check if F-test is buggy")
   data <- matrix(rnorm(50 * 5, mean=20), ncol=5, nrow=50)
   data[invprobit(data, 19, -1) > runif(5 * 50)] <- NA
   colnames(data) <- paste0("sample_", LETTERS[seq_len(ncol(data))])
@@ -79,9 +79,10 @@ test_that("F test works with missing data", {
                          num = runif(ncol(data)))
   se <- SummarizedExperiment(data, colData = annot_df)
 
-  fit <- proDA(se, ~ cond + num, moderate_location = FALSE, moderate_variance = FALSE)
-  test_res <- test_diff(fit, reduced_model = ~ num, n_max = 1000, verbose=TRUE)
-  expect_gt(cor(test_diff(fit, condB)$pval, test_res$pval, use="complete.obs"), 0.95)
+  fit <- proDA(se, ~ cond + num, moderate_location = TRUE, moderate_variance = TRUE)
+  test_res_f <- test_diff(fit, reduced_model = ~ num, n_max = 1000, verbose=TRUE)
+  test_res_wald <- test_diff(fit, condB)
+  expect_gt(cor(test_res_wald$pval, test_res$pval, use="complete.obs"), 0.95)
 })
 
 
@@ -90,7 +91,7 @@ test_that("F test works with missing data", {
 
 test_that("pd_row_f_test works", {
 
-  set.seed(2)
+  set.seed(1)
   se <- generate_synthetic_data(n_proteins = 10, n_conditions = 3,
                                 n_replicates = 2,
                                 return_summarized_experiment = TRUE)
@@ -109,7 +110,22 @@ test_that("pd_row_f_test works", {
   expect_equal(unlist(fit$hyper_parameters), unlist(f_test_res$fit$hyper_parameters),
                tolerance = 1e-3)
   expect_gt(cor(std_test_res$pval, f_test_res$test_results$pval, use = "complete.obs"), 0.9999)
+  expect_equal(fit$coefficients[,1], f_test_res$fit$coefficients[,1], tolerance = 1e-3)
+  expect_gt(cor(log(fit$feature_parameters$s2), log(f_test_res$fit$feature_parameters$s2)), 0.999)
+  expect_equal(fit$coefficients%*% t(design(fit)), f_test_res$fit$coefficients%*% t(design(f_test_res$fit)), tolerance = 1e-3)
+  Pred_var_wi <- mply_dbl(seq_len(nrow(se)), function(i){
+    sapply(seq_len(ncol(se)), function(j)
+      t(design(fit)[j,]) %*% fit$coefficient_variance_matrices[[i]] %*% design(fit)[j,])
+  }, ncol=ncol(se))
+  Pred_var_wio <- mply_dbl(seq_len(nrow(se)), function(i){
+    sapply(seq_len(ncol(se)), function(j)
+      t(design(f_test_res$fit)[j,]) %*% f_test_res$fit$coefficient_variance_matrices[[i]] %*% design(f_test_res$fit)[j,])
+  }, ncol=ncol(se))
+  expect_gt(cor(c(Pred_var_wi), c(Pred_var_wio)), 0.99)
+
 })
+
+
 
 
 
@@ -135,11 +151,11 @@ test_that("Wald test works as good limma", {
 
 
 test_that("Wald test works with missing values", {
-
+  set.seed(2)
   se <- generate_synthetic_data(n_proteins = 1000, n_conditions = 4, dropout_curve_position = 17,
                                 return_summarized_experiment = TRUE)
 
-  fit <- proDA(se, ~ group, moderate_location = TRUE)
+  fit <- proDA(se, ~ group, verbose = TRUE)
   test_res <- test_diff(fit, "groupCondition_3")
 
   dm <- design(fit)
