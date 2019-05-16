@@ -158,7 +158,11 @@ proDA <- function(data, design=~ 1,
   if(is.matrix(design)){
     model_matrix <- design
     design_formula <- NULL
-  }else if((is.vector(design) || is.factor(design)) && length(design) == n_samples){
+  }else if((is.vector(design) || is.factor(design))){
+    if(length(design) != n_samples){
+      stop(paste0("The specified design vector length (", length(design), ") does not match ",
+                  "the number of samples: ", n_samples))
+    }
     model_matrix <- convert_chr_vec_to_model_matrix(design, reference_level)
     design_formula <- NULL
   }else if(inherits(design,"formula")){
