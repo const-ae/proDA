@@ -336,61 +336,21 @@ pd_lm.fit <- function(y, X,
     coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   }
 
-  # Make hessian robust for inversion!
-  very_small_entry <- which(diag(coef_hessian)  < 1e-10)
-  if(length(very_small_entry) == p){
-    # All entries of matrix are practically zero
-    Var_coef <- diag(Inf, nrow=p)
-  }else{
-    for(idx in very_small_entry){
-      coef_hessian[idx, ] <- 1e-10
-      coef_hessian[, idx] <- 1e-10
-    }
-    tryCatch({
-      Var_coef <- solve(coef_hessian)
-    }, error = function(err){
-      warning(err)
-      Var_coef <- diag(Inf, nrow=p)
-    })
-  }
+  Var_coef <- invert_hessian_matrix(coef_hessian, p)
   # Set estimates to NA if no reasonable inference
   coef_should_be_inf <- diag(Var_coef) > 1e6
   for(idx in which(coef_should_be_inf)){
     Var_coef[idx, idx] <- Inf
   }
   fit_beta[coef_should_be_inf] <- NA
-  if(all(coef_should_be_inf)){
-    n_approx <- NA
-    df_approx <- NA
-    rss_approx <- NA
-    s2_approx <- NA
-  }else{
-    n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
-    rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
-    s2_approx <- rss_approx / (n_approx - p)
 
-    if(s2_approx < 0 || n_approx <= p){
-      df_approx <- 1e-3
-      s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
-      n_approx <- df_approx + p
-      rss_approx <- s2_approx * df_approx
-    }else{
-      if(moderate_variance){
-        n_approx <- n_approx - variance_prior_df
-        df_approx <- n_approx - p + variance_prior_df
-        if(df_approx > 30 * n && df_approx > 100){
-          df_approx <- Inf
-          s2_approx <- variance_prior_scale   # Check if this is correct
-        }
-      }else{
-        df_approx <- n_approx - p
-      }
-    }
-  }
-
-  if(moderate_variance){
-    rss_approx <- NA
-  }
+  # Use fitted sigma2 and associated uncertainty to estimate df and unbiased sigma2
+  sigma2_params <- calculate_sigma2_parameters(coef_should_be_inf, fit_sigma2, fit_sigma2_var,
+                                               variance_prior_scale, variance_prior_df,
+                                               moderate_variance, n, p)
+  n_approx <- sigma2_params$n_approx
+  df_approx <- sigma2_params$df_approx
+  s2_approx <- sigma2_params$s2_approx
 
   # Calculate correction factor for skew
   # the skew means that the fit is bad on both sides. We only care about the
@@ -402,22 +362,32 @@ pd_lm.fit <- function(y, X,
                                       variance_prior_df, variance_prior_scale,
                                       location_prior_df, moderate_location, moderate_variance,
                                       out_factor = 8)
-  Var_coef <- Correction_Factor %*% Var_coef %*% Correction_Factor
+
 
   # Correct Var_coef to make it unbiased
-  # if(! is.infinite(df_approx)){
-  #   Var_coef <- Var_coef * n / (n-p)
-  # }
+  # Plugging unbiased s2_approx into Hessian calculation
+  hessian <- - hess_fnc(y, yo, X, Xm, Xo,
+                        fit_beta, s2_approx, rho, zetastar,
+                        location_prior_mean, location_prior_scale,
+                        variance_prior_df, variance_prior_scale,
+                        location_prior_df, moderate_location, moderate_variance,
+                        beta_sel, p)
+  coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
+  Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
+
+  # Apply correction factor to the unbiased Var_coef
+  Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
+
+  # Make everything pretty and return results
   names(fit_beta) <- colnames(X)
-  colnames(Var_coef) <- colnames(X)
-  rownames(Var_coef) <- colnames(X)
+  colnames(Var_coef_unbiased) <- colnames(X)
+  rownames(Var_coef_unbiased) <- colnames(X)
 
   list(coefficients=fit_beta,
-       coef_variance_matrix = Var_coef,
+       coef_variance_matrix = Var_coef_unbiased,
        correction_factor = Correction_Factor,
        n_approx=n_approx, df=df_approx,
        s2=s2_approx,
-       # rss = rss_approx,
        n_obs = length(yo))
 
 }
@@ -554,5 +524,60 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
   }, FUN.VALUE = 0.0)
 
   diag(sqrt(res), nrow=length(fit_beta))
+}
+
+
+
+invert_hessian_matrix <- function(coef_hessian, p){
+  # Make hessian robust for inversion!
+  very_small_entry <- which(diag(coef_hessian)  < 1e-10)
+  if(length(very_small_entry) == p){
+    # All entries of matrix are practically zero
+    Var_coef <- diag(Inf, nrow=p)
+  }else{
+    for(idx in very_small_entry){
+      coef_hessian[idx, ] <- 1e-10
+      coef_hessian[, idx] <- 1e-10
+    }
+    tryCatch({
+      Var_coef <- solve(coef_hessian)
+    }, error = function(err){
+      warning(err)
+      Var_coef <- diag(Inf, nrow=p)
+    })
+  }
+  Var_coef
+}
+
+calculate_sigma2_parameters <- function(coef_should_be_inf, fit_sigma2, fit_sigma2_var,
+                                        variance_prior_scale, variance_prior_df,
+                                        moderate_variance, n, p){
+  if(all(coef_should_be_inf)){
+    n_approx <- NA
+    df_approx <- NA
+    s2_approx <- NA
+  }else{
+    n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
+    rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
+    s2_approx <- rss_approx / (n_approx - p)
+
+    if(s2_approx < 0 || n_approx <= p){
+      df_approx <- 1e-3
+      s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
+      n_approx <- df_approx + p
+    }else{
+      if(moderate_variance){
+        n_approx <- n_approx - variance_prior_df
+        df_approx <- n_approx - p + variance_prior_df
+        if(df_approx > 30 * n && df_approx > 100){
+          df_approx <- Inf
+          s2_approx <- variance_prior_scale   # Check if this is correct
+        }
+      }else{
+        df_approx <- n_approx - p
+      }
+    }
+  }
+  list(n_approx = n_approx, df_approx = df_approx, s2_approx = s2_approx)
 }
 
