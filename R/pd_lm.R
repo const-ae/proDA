@@ -581,8 +581,8 @@ calculate_sigma2_parameters <- function(fit_sigma2, fit_sigma2_var,
 
   if(s2_approx < 0 || n_approx <= p){
     df_approx <- 1e-3
-    s2_approx <- sqrt(fit_sigma2_var / df_approx^2 * (df_approx + 2)^2 * (df_approx + 2) / 2)
     n_approx <- df_approx + p
+    s2_approx <-  sqrt(fit_sigma2_var * (n_approx)^3/ (2 * df_approx^2))
   }else{
     if(moderate_variance){
       n_approx <- n_approx - variance_prior_df
