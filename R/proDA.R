@@ -345,13 +345,13 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
       res_reg <- res_unreg
     }
 
-    Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %*% t(model_matrix)
-    Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %*% t(model_matrix)
+    Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
+    Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
     Pred_var_unreg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_unreg[[i]]$coef_variance_matrix %*% model_matrix[j,])
+      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %zero_dom_mat_mult% res_unreg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,])
     }, ncol=ncol(Y))
     Pred_var_reg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_reg[[i]]$coef_variance_matrix %*% model_matrix[j,])
+      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %zero_dom_mat_mult% res_reg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,])
     }, ncol=ncol(Y))
     s2_unreg <-  vapply(res_unreg, function(x) x[["s2"]], 0.0)
     df_unreg <-vapply(res_unreg, function(x) x[["df"]], 0.0)

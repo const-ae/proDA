@@ -76,7 +76,7 @@ dist_approx_mean_var <- function(Y, Pred, X, coef_var, by_sample = FALSE){
                Pred)
 
   Pred_var <- mply_dbl(seq_len(nrow(Y)), function(i){
-    sapply(seq_len(nrow(X)), function(j) t(X[j,]) %*% coef_var[[i]] %*% X[j,])
+    sapply(seq_len(nrow(X)), function(j) t(X[j,])  %zero_dom_mat_mult% coef_var[[i]]  %zero_dom_mat_mult% X[j,])
   }, ncol=ncol(Y))
   Mu_var <- ifelse(! is.na(Y),
                    0,
