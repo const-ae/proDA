@@ -214,7 +214,7 @@ proDA <- function(data, design=~ 1,
 
 
 
-  sub_sample_mat <- data_mat[seq_len(n_subsample), ,drop=FALSE]
+  sub_sample_mat <- data_mat[seq_len(min(nrow(data_mat), n_subsample)), ,drop=FALSE]
   fit_result <- fit_parameters_loop(sub_sample_mat, model_matrix,
                                     location_prior_df = location_prior_df,
                                     moderate_location = moderate_location,
