@@ -299,7 +299,11 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   s2_init <-  vapply(res_init, function(x) x[["s2"]], 0.0)
   df_init <- vapply(res_init, function(x) x[["df"]], 0.0)
   if(moderate_location){
-    lp <- location_prior(model_matrix, Pred = Pred_init, Pred_var = Pred_init_var)
+    lp <- location_prior(model_matrix,
+                   Pred_reg = Pred_init,
+                   Pred_unreg = Pred_init,
+                   Pred_var_reg = Pred_init_var,
+                   Pred_var_unreg = Pred_init_var)
     mu0 <- lp$mu0
     sigma20 <- lp$sigma20
   }else{
@@ -358,9 +362,11 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
 
     if(moderate_location){
-      lp <- location_prior(model_matrix, Pred = Pred_unreg,
-                           Pred_var = Pred_var_unreg,
-                           mu0 = median( Pred_reg, na.rm=TRUE))
+      lp <- location_prior(model_matrix,
+                           Pred_reg = Pred_reg,
+                           Pred_unreg = Pred_unreg,
+                           Pred_var_reg = Pred_var_reg,
+                           Pred_var_unreg = Pred_var_unreg)
       mu0 <- lp$mu0
       sigma20 <- lp$sigma20
     }
@@ -429,14 +435,16 @@ variance_prior <- function(s2, df){
 
 
 
-location_prior <- function(X, Pred, Pred_var,
-                           mu0 = median(Pred, na.rm=TRUE),
+location_prior <- function(X, Pred_reg, Pred_unreg,
+                           Pred_var_reg, Pred_var_unreg,
                            min_var = 0, max_var = 1e3){
-
-  pred <- c(Pred)
-  larger_than_mu0 <- which(pred > mu0)
+  mu0 = mean(Pred_reg, trim=0.2, na.rm=TRUE)
+  # Fill up missing values above mu0 with regularized estimates
+  pred <- ifelse(is.na(c(Pred_unreg)), c(Pred_reg), c(Pred_unreg))
+  larger_than_mu0 <- which(c(Pred_reg) > mu0)
   pred <- (pred - mu0)[larger_than_mu0]
-  pred_var <- c(Pred_var)[larger_than_mu0]
+  pred_var <- ifelse(is.na(c(Pred_unreg)), c(Pred_var_reg), c(Pred_var_unreg))
+  pred_var <- pred_var[larger_than_mu0]
 
   objective_fun <- function(A){
     sum((pred^2 - pred_var) / (2 * (A + pred_var)^2), na.rm=TRUE) / sum(1/(2 * (A + pred_var)^2), na.rm=TRUE) - A
@@ -458,8 +466,8 @@ location_prior <- function(X, Pred, Pred_var,
 dropout_curves <- function(Y, X, Pred, Pred_var){
   n_samples <- nrow(X)
 
-  mu0 <- median(Pred, na.rm=TRUE)
-  sigma20 <- median((mu0 - Pred)^2, na.rm=TRUE)
+  mu0 <- mean(Pred, trim=0.2, na.rm=TRUE)
+  sigma20 <- mean((mu0 - Pred)^2, trim=0.2, na.rm=TRUE)
   if(sigma20 == 0){
     sigma20 <- 5 # Not ideal. But what else can I do...
   }
@@ -483,7 +491,12 @@ dropout_curves <- function(Y, X, Pred, Pred_var){
         -val
       })
       if(opt_res$convergence != 0){
-        warning("Dropout curve estimation did not properly converge")
+        if(abs(opt_res$par[2]) > 1e4 && abs(opt_res$par[1] - min(yo))){
+          # Do nothing, because it simply converged to the extreme case of a hard limit just be
+          # below the smallest observation
+        }else{
+          warning("Dropout curve estimation did not properly converge")
+        }
       }
       rho[colidx] <- opt_res$par[1]
       zetainv[colidx] <- if(abs(opt_res$par[2]) > 1e4){
