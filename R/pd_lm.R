@@ -368,13 +368,8 @@ pd_lm.fit <- function(y, X,
                         beta_sel, p)
   if(any(diag(hessian) < 0)){
     # This is bad....
-    # Fix by reverting to original hessian, which is not ideal, but what can I do...
-    hessian <- - hess_fnc(y, yo, X, Xm, Xo,
-                          fit_beta, fit_sigma2, rho, zetastar,
-                          location_prior_mean, location_prior_scale,
-                          variance_prior_df, variance_prior_scale,
-                          location_prior_df, moderate_location, moderate_variance,
-                          beta_sel, p)
+    # Set hessian to zero, so that the variances become infinite
+    hessian <- matrix(0, nrow=p+1, ncol=p+1)
   }
   coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
