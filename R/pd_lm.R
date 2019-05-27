@@ -366,12 +366,12 @@ pd_lm.fit <- function(y, X,
                         variance_prior_df, variance_prior_scale,
                         location_prior_df, moderate_location, moderate_variance,
                         beta_sel, p)
-  if(any(diag(hessian) < 0)){
+  coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
+  if(any(diag(coef_hessian) < 0)){
     # This is bad....
     # Set hessian to zero, so that the variances become infinite
-    hessian <- matrix(0, nrow=p+1, ncol=p+1)
+    coef_hessian <- matrix(0, nrow=p, ncol=p)
   }
-  coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
 
   # Apply correction factor to the unbiased Var_coef
