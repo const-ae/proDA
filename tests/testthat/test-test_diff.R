@@ -69,7 +69,6 @@ test_that("F works", {
 
 
 test_that("F test works with missing data", {
-  skip("Check if F-test is buggy")
   data <- matrix(rnorm(50 * 5, mean=20), ncol=5, nrow=50)
   data[invprobit(data, 19, -1) > runif(5 * 50)] <- NA
   colnames(data) <- paste0("sample_", LETTERS[seq_len(ncol(data))])
@@ -80,9 +79,9 @@ test_that("F test works with missing data", {
   se <- SummarizedExperiment(data, colData = annot_df)
 
   fit <- proDA(se, ~ cond + num, moderate_location = TRUE, moderate_variance = TRUE)
-  test_res_f <- test_diff(fit, reduced_model = ~ num, n_max = 1000, verbose=TRUE)
+  test_res_f <- test_diff(fit, reduced_model = ~ num + 1, n_max = 1000, verbose=TRUE)
   test_res_wald <- test_diff(fit, condB)
-  expect_gt(cor(test_res_wald$pval, test_res$pval, use="complete.obs"), 0.95)
+  expect_gt(cor(test_res_wald$pval, test_res_f$pval, use="complete.obs"), 0.95)
 })
 
 

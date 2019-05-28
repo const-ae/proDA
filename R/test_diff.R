@@ -268,7 +268,6 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
   # using the reduced model
   res_mat <- mply_dbl(seq_len(nrow(fit)), function(idx){
 
-    # if(idx == 1 || idx == 4 || idx == 15 || idx == 35) browser()
     full_model <- design(fit)
     y <- fit$abundances[idx, ]
     yo <- y[! is.na(y)]
@@ -279,19 +278,42 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
     sigma2 <- fit$feature_parameters$s2[idx]
     zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
     df_full <- fit$feature_parameters$df[idx]
-
     if(is.na(sigma2)){
       return(c(f_statistic = NA, pval = NA,
                df1 = ncol(full_model) - ncol(red_model), df2 = df_full,
                deviance_full = NA, deviance_reduced = NA))
     }
 
-    mean_approx <- mean(design(fit) %*% fit$coefficients[idx, ], na.rm=TRUE)
-    if(is.na(mean_approx)){
-      mean_approx <- 0
+    nl_res_full <- nlminb(start = fit$coefficients[idx, ], objective = function(beta){
+      - objective_fnc(y, yo,
+                      X = full_model,
+                      Xm = full_model[is.na(y), , drop=FALSE],
+                      Xo = full_model[!is.na(y), , drop=FALSE],
+                      beta, sigma2, rho, zetastar,
+                      location_prior_mean, location_prior_scale,
+                      variance_prior_df, variance_prior_scale,
+                      location_prior_df, moderate_location, moderate_variance)
+    })
+    if(nl_res_full$convergence >= 2){
+      if(verbose){
+        warning("Model didn't not properly converge\n")
+        warning(nl_res_full$message, "\n")
+        warning(y,"\n")
+      }
+      lik_full <- NA
+    }else{
+      lik_full <- nl_res_full$objective
     }
-    beta_init <- c(mean_approx, rep(0, times=ncol(red_model) - 1))
-    red_res <- nlminb(start = c(beta_init), objective = function(beta){
+
+
+    beta_init <- vapply(colnames(red_model), function(n){
+      if(is.na(nl_res_full$par[n])){
+        0
+      }else{
+        nl_res_full$par[n]
+      }
+    }, FUN.VALUE = 0.0)
+    red_res <- nlminb(start = beta_init, objective = function(beta){
        - objective_fnc(y, yo,
                        X = red_model,
                        Xm = red_model[is.na(y), , drop=FALSE],
@@ -311,16 +333,6 @@ run_nested_model_comparison <- function(fit, red_model, verbose=FALSE){
     }else{
       lik_red <- red_res$objective
     }
-
-    lik_full <- - objective_fnc(y, yo,
-                                X = full_model,
-                                Xm = full_model[is.na(y), , drop=FALSE],
-                                Xo = full_model[!is.na(y), , drop=FALSE],
-                                beta = fit$coefficients[idx, ],
-                                sigma2, rho, zetastar,
-                                location_prior_mean, location_prior_scale,
-                                variance_prior_df, variance_prior_scale,
-                                location_prior_df, moderate_location, moderate_variance)
 
     deviance_red <- lik_red * 2 * sigma2
     deviance_full <- lik_full * 2 * sigma2
