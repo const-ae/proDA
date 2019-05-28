@@ -555,7 +555,7 @@ convert_chr_vec_to_model_matrix <- function(design, reference_level){
 convert_formula_to_model_matrix <- function(formula, col_data, reference_level=NULL){
   if(! is.null(reference_level)){
     has_ref_level <- vapply(col_data, function(x){
-      any(x == reference_level)
+      any(!is.na(x) & x == reference_level)
     }, FUN.VALUE = FALSE)
     if(all(has_ref_level == FALSE)){
       stop("None of the columns contains the specified reference_level.")
