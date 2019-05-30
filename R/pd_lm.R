@@ -335,6 +335,9 @@ pd_lm.fit <- function(y, X,
     fit_sigma2_var <- 1/hessian[p+1, p+1]
     coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
   }
+  if(fit_sigma2_var < 0){
+    return(failed_result)
+  }
 
   Var_coef <- invert_hessian_matrix(coef_hessian, p)
 
@@ -556,17 +559,18 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
 
 
 invert_hessian_matrix <- function(coef_hessian, p){
+  Var_coef <- diag(Inf, nrow=p)
   # Make hessian robust for inversion!
   very_small_entry <- which(diag(coef_hessian)  < 1e-10)
-  Var_coef <- diag(Inf, nrow=p)
   if(length(very_small_entry) == p){
     # All entries of matrix are practically zero
     Var_coef <- diag(Inf, nrow=p)
   }else{
     for(idx in very_small_entry){
       coef_hessian[idx, idx] <- 1e-10
-      # coef_hessian[, idx] <- 1e-10
     }
+    # Reduce all very large numbers in the table
+    coef_hessian[coef_hessian > 1e10] <- 1e10
     tryCatch({
       Var_coef <- solve(coef_hessian)
     }, error = function(err){
