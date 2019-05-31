@@ -11,8 +11,17 @@ hyper_parameters(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a list with the values for each fitted hyper-parameter
+}
 \description{
 Get the hyper parameters
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  hyper_parameters(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

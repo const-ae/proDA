@@ -349,8 +349,15 @@ test_res
 This walkthrough ends with the identification which proteins are differentially abundant. But for
 a real dataset, now the actual analysis only just begins. A list of significant proteins is hardly
 ever a publishable result, we need to make sense what the underlying biological mechanisms are. The
-precise question that should be asked very much dependent on the biological problem, but some
-helpful tool are gene ontology (GO) term analysis, set enrichment tests, and 
+precise question that should be asked very much dependent on the biological problem.
+
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
 
 
 

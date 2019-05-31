@@ -108,8 +108,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #' @examples
 #'
 #' # Quick start
+#'
+#' # Import the proDA package if you haven't already done so
+#' # library(proDA)
 #' set.seed(1)
-#' library(proDA)
 #' syn_data <- generate_synthetic_data(n_proteins = 10)
 #' fit <- proDA(syn_data$Y, design = syn_data$groups)
 #' fit
@@ -295,7 +297,9 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   })
   Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% t(model_matrix)
   Pred_init_var <- mply_dbl(seq_len(nrow(Y)), function(i){
-    sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %*% res_init[[i]]$coef_variance_matrix %*% model_matrix[j,])
+    vapply(seq_len(nrow(model_matrix)), function(j)
+      t(model_matrix[j,]) %*% res_init[[i]]$coef_variance_matrix %*% model_matrix[j,],
+      FUN.VALUE = 0.0)
   }, ncol=ncol(Y))
   s2_init <-  vapply(res_init, function(x) x[["s2"]], 0.0)
   df_init <- vapply(res_init, function(x) x[["df"]], 0.0)
@@ -355,10 +359,14 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
     Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
     Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
     Pred_var_unreg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %zero_dom_mat_mult% res_unreg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,])
+      vapply(seq_len(nrow(model_matrix)), function(j)
+        t(model_matrix[j,]) %zero_dom_mat_mult% res_unreg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,],
+        FUN.VALUE = 0.0)
     }, ncol=ncol(Y))
     Pred_var_reg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      sapply(seq_len(nrow(model_matrix)), function(j) t(model_matrix[j,]) %zero_dom_mat_mult% res_reg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,])
+      vapply(seq_len(nrow(model_matrix)), function(j)
+        t(model_matrix[j,]) %zero_dom_mat_mult% res_reg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,],
+        FUN.VALUE = 0.0)
     }, ncol=ncol(Y))
     s2_unreg <-  vapply(res_unreg, function(x) x[["s2"]], 0.0)
     df_unreg <-vapply(res_unreg, function(x) x[["df"]], 0.0)

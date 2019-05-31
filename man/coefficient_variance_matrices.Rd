@@ -11,8 +11,18 @@ coefficient_variance_matrices(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a list with as many entries as rows in the data. Each element is
+  a p*p matrix
+}
 \description{
 Get the coefficients
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  coefficient_variance_matrices(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

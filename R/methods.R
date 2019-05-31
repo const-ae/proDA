@@ -12,6 +12,8 @@
 #'   to get the formula that was used to create the linear model.
 #'   If no formula was used \code{NULL} is returned.
 #'
+#' @return See the documentation of the generics to find out what each method returns
+#'
 #' @name accessor_methods
 NULL
 

@@ -97,8 +97,10 @@ observed intensities.
 \examples{
 
 # Quick start
+
+# Import the proDA package if you haven't already done so
+# library(proDA)
 set.seed(1)
-library(proDA)
 syn_data <- generate_synthetic_data(n_proteins = 10)
 fit <- proDA(syn_data$Y, design = syn_data$groups)
 fit

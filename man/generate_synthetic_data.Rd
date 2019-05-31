@@ -70,3 +70,10 @@ a list with the following elements
 \description{
 Generate a dataset according to the probabilistic dropout model
 }
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  names(syn_data)
+  se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
+  se
+
+}

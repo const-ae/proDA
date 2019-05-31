@@ -11,8 +11,17 @@ convergence(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a list with information on the convergence
+}
 \description{
 Get the convergence information
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  convergence(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

@@ -11,8 +11,17 @@ coefficients(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a numeric matrix of size `nrow(fit) * p`
+}
 \description{
 Get the coefficients
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  coefficients(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

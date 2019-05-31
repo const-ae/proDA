@@ -1,7 +1,7 @@
 Package: proDA
 Type: Package
 Title: Differential Abundance Analysis of Label-Free Mass Spectrometry Data
-Version: 0.0.0.9000
+Version: 0.99.0
 Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre")),
              person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", role="ths"))
 Description: Account for missing values in label-free mass spectrometry data 
@@ -37,4 +37,6 @@ Imports:
     extraDistr
 URL: https://github.com/const-ae/proDA
 BugReports: https://github.com/const-ae/proDA/issues
+biocViews: Proteomics, MassSpectrometry, DifferentialExpression,
+    Bayesian, Regression, Software, Normalization, QualityControl
 VignetteBuilder: knitr

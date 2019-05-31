@@ -11,8 +11,17 @@ reference_level(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a string
+}
 \description{
 Get the reference level
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  reference_level(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

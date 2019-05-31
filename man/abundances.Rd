@@ -11,8 +11,17 @@ abundances(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+the original matrix that was fitted
+}
 \description{
 Get the abundance matrix
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  abundances(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

@@ -49,6 +49,12 @@
 #'   if \code{return_summarized_experiment} is \code{FALSE}. Otherwise
 #'   returns a \code{SummarizedExperiment} with the same information.
 #'
+#' @examples
+#'   syn_data <- generate_synthetic_data(n_proteins = 10)
+#'   names(syn_data)
+#'   se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
+#'   se
+#'
 #' @export
 generate_synthetic_data <- function(n_proteins, n_conditions = 2,
                                     n_replicates = 3,

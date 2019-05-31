@@ -11,8 +11,17 @@ feature_parameters(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a data.frame with information on each fit
+}
 \description{
 Get the feature parameters
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  feature_parameters(fit)
+
 }
 \seealso{
 \link{accessor_methods} for the implementation for a 'proDAFit' object

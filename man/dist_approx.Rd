@@ -11,8 +11,18 @@ dist_approx(object, ...)
 
 \item{...}{additional arguments used by the concrete implementation}
 }
+\value{
+a list with two elements: `mean` and `sd` both are formally
+  of class "dist"
+}
 \description{
 Calculate an approximate distance for 'object'
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  dist_approx(fit)
+
 }
 \seealso{
 \code{\link[stats]{dist}} for the base R function and

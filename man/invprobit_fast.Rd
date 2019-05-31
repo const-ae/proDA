@@ -6,6 +6,9 @@
 \usage{
 invprobit_fast(x, rho, zeta, log = FALSE, oneminus = FALSE)
 }
+\value{
+a numeric vector of \code{length(x)}
+}
 \description{
 Same thing as invprobit, but without the parameter validation
 }

@@ -6,6 +6,14 @@
 \usage{
 X \%zero_dom_mat_mult\% Y
 }
+\arguments{
+\item{X}{a matrix of size `n*m`}
+
+\item{Y}{a matrix of size `m*p`}
+}
+\value{
+a matrix of size `n*p`
+}
 \description{
 Helper function that makes sure that NA * 0 = 0 in matrix multiply
 }

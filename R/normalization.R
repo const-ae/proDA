@@ -13,11 +13,17 @@
 #'
 #' @param X a matrix of proteins and samples
 #' @return the normalized matrix
+#'
+#' @examples
+#'   syn_data <- generate_synthetic_data(n_proteins = 10)
+#'   normalized_data <- median_normalization(syn_data$Y)
+#'   normalized_data
+#'
 #' @export
 median_normalization <- function(X){
   stopifnot(length(dim(X)) == 2)
   Xnorm <- X
-  for(idx in 1:ncol(X)){
+  for(idx in seq_len(ncol(X))){
     Xnorm[, idx] <- X[, idx, drop=FALSE] -
       median(X[, idx, drop=FALSE] - rowMeans(X, na.rm=TRUE), na.rm=TRUE )
   }

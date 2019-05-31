@@ -36,6 +36,9 @@
 to get the formula that was used to create the linear model.
 If no formula was used \code{NULL} is returned.}
 }
+\value{
+See the documentation of the generics to find out what each method returns
+}
 \description{
 The functions listed below can all be accessed using the
 fluent dollar notation (ie. \code{fit$abundances[1:3,1:3]}) without

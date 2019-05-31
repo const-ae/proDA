@@ -28,3 +28,9 @@ on the assumption that a majority of the rows did not change.
 \code{SummarizedExperiment}
 }}
 
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  normalized_data <- median_normalization(syn_data$Y)
+  normalized_data
+
+}
