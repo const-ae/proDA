@@ -290,7 +290,8 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   res_init <- lapply(seq_len(nrow(Y)), function(i){
     pd_lm.fit(Y_compl[i, ], model_matrix,
               dropout_curve_position = rep(NA, n_samples),
-              dropout_curve_scale =rep(NA, n_samples))
+              dropout_curve_scale =rep(NA, n_samples),
+              verbose=verbose)
   })
   Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% t(model_matrix)
   Pred_init_var <- mply_dbl(seq_len(nrow(Y)), function(i){
@@ -335,7 +336,8 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
 
     res_unreg <- lapply(seq_len(nrow(Y)), function(i){
       pd_lm.fit(Y[i, ], model_matrix,
-                dropout_curve_position = rho, dropout_curve_scale = 1/zetainv)
+                dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
+                verbose=verbose)
     })
     if(moderate_location || moderate_variance){
       res_reg <- lapply(seq_len(nrow(Y)), function(i){
@@ -343,7 +345,8 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
                   dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
                   location_prior_mean = mu0, location_prior_scale = sigma20,
                   variance_prior_scale = tau20, variance_prior_df = 1/df0_inv,
-                  location_prior_df = location_prior_df)
+                  location_prior_df = location_prior_df,
+                  verbose=verbose)
       })
     }else{
       res_reg <- res_unreg

@@ -231,11 +231,6 @@ pd_lm.fit <- function(y, X,
     },
        method = "Nelder-Mead", hessian = TRUE)
     if(opt_res$convergence != 0){
-      if(verbose){
-        warning("Model didn't not properly converge\n")
-        warning(opt_res$message, "\n")
-        warning(y,"\n")
-      }
       return(failed_result)
     }
 
@@ -268,11 +263,6 @@ pd_lm.fit <- function(y, X,
                  location_prior_df, moderate_location, moderate_variance)
     }, method = "BFGS", hessian=TRUE)
     if(opt_res$convergence != 0){
-      if(verbose){
-        warning("Model didn't not properly converge\n")
-        warning(opt_res$message, "\n")
-        warning(y,"\n")
-      }
       return(failed_result)
     }
 
@@ -315,11 +305,6 @@ pd_lm.fit <- function(y, X,
                     beta_sel, p)
        }, lower= c(rep(-Inf, length(beta_init)), 0))
     if(nl_res$convergence != 0){
-      if(verbose){
-        warning("Model didn't not properly converge\n")
-        warning(nl_res$message, "\n")
-        warning(y,"\n")
-      }
       return(failed_result)
     }
 
@@ -339,7 +324,7 @@ pd_lm.fit <- function(y, X,
     return(failed_result)
   }
 
-  Var_coef <- invert_hessian_matrix(coef_hessian, p)
+  Var_coef <- invert_hessian_matrix(coef_hessian, p, verbose)
 
   # Use fitted sigma2 and associated uncertainty to estimate df and unbiased sigma2
   sigma2_params <- calculate_sigma2_parameters(fit_sigma2, fit_sigma2_var,
@@ -375,7 +360,7 @@ pd_lm.fit <- function(y, X,
     # Set hessian to zero, so that the variances become infinite
     coef_hessian <- matrix(0, nrow=p, ncol=p)
   }
-  Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p)
+  Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p, verbose)
 
   # Apply correction factor to the unbiased Var_coef
   Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
@@ -558,7 +543,7 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
 
 
 
-invert_hessian_matrix <- function(coef_hessian, p){
+invert_hessian_matrix <- function(coef_hessian, p, verbose = FALSE){
   Var_coef <- diag(Inf, nrow=p)
   # Make hessian robust for inversion!
   very_small_entry <- which(diag(coef_hessian)  < 1e-10)
@@ -574,7 +559,9 @@ invert_hessian_matrix <- function(coef_hessian, p){
     tryCatch({
       Var_coef <- solve(coef_hessian)
     }, error = function(err){
-      warning(err)
+      if(verbose){
+        warning(err)
+      }
     })
   }
   Var_coef
