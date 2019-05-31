@@ -15,10 +15,21 @@ LazyData: true
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,
+    MSnbase,
+    dplyr,
+    stringr,
+    readr,
+    tidyr,
+    tibble,
     limma,
+    DEP,
     numDeriv,
-    pheatmap
+    pheatmap,
+    knitr,
+    rmarkdown
 Imports: 
+    stats,
+    utils,
     methods,
     BiocGenerics,
     SummarizedExperiment,
@@ -26,3 +37,4 @@ Imports:
     extraDistr
 URL: https://github.com/const-ae/proDA
 BugReports: https://github.com/const-ae/proDA/issues
+VignetteBuilder: knitr
