@@ -10,7 +10,7 @@
 #' @name proDA_package
 NULL
 
-#' @import stats methods
+#' @import utils stats methods
 #' @importFrom SummarizedExperiment SummarizedExperiment rowData rowData<-
 #'   colData colData<- mcols mcols<- assay assay<- assayNames assayNames<-
 #'   assays assays<- rbind cbind

@@ -79,7 +79,7 @@ msply_dbl <- function(x, FUN, ...){
 
 #' Helper function that makes sure that NA * 0 = 0 in matrix multiply
 #'
-#' @internal
+#' @keywords internal
 `%zero_dom_mat_mult%` <- function(X, Y){
   X[is.infinite(X)] <- NA
   Y[is.infinite(Y)] <- NA
