@@ -51,8 +51,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #' 'proDA' penalizes predicted intensities that strain far from the other
 #' observed intensities.
 #'
-#' @param data a matrix like object (\code{matrix()} or
-#'   \code{SummarizedExperiment()}) with the one column per
+#' @param data a matrix like object (\code{matrix()},
+#'   \code{SummarizedExperiment()}, or anything that can be cast to
+#'   \code{SummarizedExperiment()} (eg. MSnSet, eSet, ...)) with the
+#'   one column per
 #'   sample and one row per protein. Missing values should be
 #'   coded \code{NA}.
 #' @param design a specification of the experimental design that
@@ -150,8 +152,17 @@ proDA <- function(data, design=~ 1,
                   epsilon = 1e-3,
                   verbose=FALSE, ...){
 
+
   # Validate Data
-  stopifnot(is.matrix(data) || is(data, "SummarizedExperiment"))
+  if(! is.matrix(data) && !is(data, "SummarizedExperiment")){
+    # Check if data can be cast to SummarizedExperiment otherwise throw error
+    if(canCoerce(data, "SummarizedExperiment")){
+      data <- as(data, "SummarizedExperiment")
+    }else{
+      stop("Cannot handle data of class", class(data), ". It must be of type",
+           "matrix or it should be possible to cast it to SummarizedExperiment")
+    }
+  }
   n_samples <- ncol(data)
   n_rows <- nrow(data)
 
@@ -198,7 +209,7 @@ proDA <- function(data, design=~ 1,
       data <- log2(data)
     }
     data_mat <- data
-  }else if(inherits(data, "SummarizedExperiment")){
+  }else if(is(data, "SummarizedExperiment")){
     if(any(! is.na(assay(data)) & assay(data) == 0)){
       warning(paste0("The data contains", sum(! is.na(assay(data)) & assay(data) == 0) ," exact zeros. ",
                      "Replacing them with 'NA's."))
