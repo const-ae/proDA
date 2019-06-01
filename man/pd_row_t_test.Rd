@@ -75,7 +75,7 @@ functions.
 }
 \details{
 The \code{pd_row_t_test} is not acutally doing a t-test, but rather
-a Wald test. But, as the two are closely related and term t-test is ≈
+a Wald test. But, as the two are closely related and term t-test is
 more widely understood, we choose to use that name.
 }
 \examples{
