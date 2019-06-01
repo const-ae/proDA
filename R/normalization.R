@@ -3,6 +3,12 @@
 
 
 
+
+
+
+setGeneric("median_normalization", function(X, ...) standardGeneric("median_normalization"))
+
+
 #' Column wise median normalization of the data matrix
 #'
 #' The method calculates for each sample the median change (i.e. the difference
@@ -20,27 +26,27 @@
 #'   normalized_data
 #'
 #' @export
-median_normalization <- function(X){
-  stopifnot(length(dim(X)) == 2)
-  Xnorm <- X
-  for(idx in seq_len(ncol(X))){
-    Xnorm[, idx] <- X[, idx, drop=FALSE] -
-      median(X[, idx, drop=FALSE] - rowMeans(X, na.rm=TRUE), na.rm=TRUE )
-  }
-  Xnorm
-}
-
-
-setGeneric("median_normalization")
-
-#' @describeIn median_normalization S4 method of \code{median_normalization} for
-#'   \code{SummarizedExperiment}
 setMethod("median_normalization",
-          c(X = "SummarizedExperiment"),
+          c(X = "ANY"),
           function(X){
-            new_assay <- median_normalization(SummarizedExperiment::assay(X))
-            SummarizedExperiment::assay(X) <- new_assay
-            X
+            if(is.matrix(X)){
+              stopifnot(length(dim(X)) == 2)
+              Xnorm <- X
+              for(idx in seq_len(ncol(X))){
+                Xnorm[, idx] <- X[, idx, drop=FALSE] -
+                  median(X[, idx, drop=FALSE] - rowMeans(X, na.rm=TRUE), na.rm=TRUE )
+              }
+              Xnorm
+            }else if(is(X, "SummarizedExperiment")){
+              new_assay <- median_normalization(SummarizedExperiment::assay(X))
+              SummarizedExperiment::assay(X) <- new_assay
+              X
+            }else if(canCoerce(X, "SummarizedExperiment")){
+              se <- as(X, "SummarizedExperiment")
+              se_norm <- median_normalization(se)
+              as(se_norm, class(X)[1])
+            }else{
+              stop("Cannot handle argument X of type", class(X))
+            }
           })
-
 

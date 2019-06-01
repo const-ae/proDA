@@ -11,8 +11,10 @@ proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
   verbose = FALSE, ...)
 }
 \arguments{
-\item{data}{a matrix like object (\code{matrix()} or
-\code{SummarizedExperiment()}) with the one column per
+\item{data}{a matrix like object (\code{matrix()},
+\code{SummarizedExperiment()}, or anything that can be cast to
+\code{SummarizedExperiment()} (eg. MSnSet, eSet, ...)) with the
+one column per
 sample and one row per protein. Missing values should be
 coded \code{NA}.}
 
