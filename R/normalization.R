@@ -4,11 +4,6 @@
 
 
 
-
-
-setGeneric("median_normalization", function(X, ...) standardGeneric("median_normalization"))
-
-
 #' Column wise median normalization of the data matrix
 #'
 #' The method calculates for each sample the median change (i.e. the difference
@@ -17,7 +12,7 @@ setGeneric("median_normalization", function(X, ...) standardGeneric("median_norm
 #' on the assumption that a majority of the rows did not change.
 #'
 #'
-#' @param X a matrix of proteins and samples
+#' @param X a matrix or SummarizedExperiment of proteins and samples
 #' @return the normalized matrix
 #'
 #' @examples
@@ -26,27 +21,25 @@ setGeneric("median_normalization", function(X, ...) standardGeneric("median_norm
 #'   normalized_data
 #'
 #' @export
-setMethod("median_normalization",
-          c(X = "ANY"),
-          function(X){
-            if(is.matrix(X)){
-              stopifnot(length(dim(X)) == 2)
-              Xnorm <- X
-              for(idx in seq_len(ncol(X))){
-                Xnorm[, idx] <- X[, idx, drop=FALSE] -
-                  median(X[, idx, drop=FALSE] - rowMeans(X, na.rm=TRUE), na.rm=TRUE )
-              }
-              Xnorm
-            }else if(is(X, "SummarizedExperiment")){
-              new_assay <- median_normalization(SummarizedExperiment::assay(X))
-              SummarizedExperiment::assay(X) <- new_assay
-              X
-            }else if(canCoerce(X, "SummarizedExperiment")){
-              se <- as(X, "SummarizedExperiment")
-              se_norm <- median_normalization(se)
-              as(se_norm, class(X)[1])
-            }else{
-              stop("Cannot handle argument X of type", class(X))
-            }
-          })
+median_normalization <- function(X){
+  if(is.matrix(X)){
+    stopifnot(length(dim(X)) == 2)
+    Xnorm <- X
+    for(idx in seq_len(ncol(X))){
+      Xnorm[, idx] <- X[, idx, drop=FALSE] -
+        median(X[, idx, drop=FALSE] - rowMeans(X, na.rm=TRUE), na.rm=TRUE )
+    }
+    Xnorm
+  }else if(is(X, "SummarizedExperiment")){
+    new_assay <- median_normalization(SummarizedExperiment::assay(X))
+    SummarizedExperiment::assay(X) <- new_assay
+    X
+  }else if(canCoerce(X, "SummarizedExperiment")){
+    se <- as(X, "SummarizedExperiment")
+    se_norm <- median_normalization(se)
+    as(se_norm, class(X)[1])
+  }else{
+    stop("Cannot handle argument X of type", class(X))
+  }
+}
 
