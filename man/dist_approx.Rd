@@ -26,6 +26,6 @@ Calculate an approximate distance for 'object'
 }
 \seealso{
 \code{\link[stats]{dist}} for the base R function and
-  \code{\link[proDA:dist_approx,proDAFit-method]{dist_approx()}} concrete implementation
+  \code{\link[=dist_approx_impl]{dist_approx()}} concrete implementation
   for 'proDAFit' objects
 }

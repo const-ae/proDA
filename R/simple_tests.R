@@ -35,7 +35,7 @@
 #'
 #' @seealso \code{\link{proDA}} and \code{\link{test_diff}} for more
 #'   flexible versions. The  function was inspired
-#'   by the \code{\link[genefilter]{rowttests}} function in the genefilter
+#'   by the \code{\link[genefilter]{rowFtests}} function in the genefilter
 #'   package.
 #'
 #'

@@ -33,7 +33,7 @@ the t-test / contrast test. Default: \code{"two.sided"}}
 
 \item{pval_adjust_method}{a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
-It must match the options in \code{\link[stats]{p.adjust.methods}}.
+It must match the options in \code{\link[stats]{p.adjust}}.
 Default: \code{"BH"}}
 
 \item{location_prior_df}{the number of degrees of freedom used
@@ -116,6 +116,6 @@ more widely understood, we choose to use that name.
 \seealso{
 \code{\link{proDA}} and \code{\link{test_diff}} for more
   flexible versions. The  function was inspired
-  by the \code{\link[genefilter]{rowttests}} function in the genefilter
+  by the \code{\link[genefilter]{rowFtests}} function in the genefilter
   package.
 }

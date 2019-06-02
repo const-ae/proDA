@@ -42,7 +42,7 @@
 #'   the t-test / contrast test. Default: \code{"two.sided"}
 #' @param pval_adjust_method a string the indicates the method
 #'   that is used to adjust the p-value for the multiple testing.
-#'   It must match the options in \code{\link[stats]{p.adjust.methods}}.
+#'   It must match the options in \code{\link[stats]{p.adjust}}.
 #'   Default: \code{"BH"}
 #' @param sort_by a string that specifies the column that is used
 #'   to sort the resulting data.frame. Default: \code{NULL} which
