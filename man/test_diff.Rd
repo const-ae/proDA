@@ -85,7 +85,7 @@ Both functions return a \code{data.frame} with one row per protein
     \item{n_obs}{the number of samples a protein was observed in}
   }
 
-  \cr\cr
+
   The F-test returns a data.frame with the following columns
   \describe{
     \item{name}{the name of the protein, extracted from the rowname of
