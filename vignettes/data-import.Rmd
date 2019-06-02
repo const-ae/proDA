@@ -244,7 +244,7 @@ I first load the full data file
 # I do that here for the Reverse column.
 full_data <- read_tsv(
     system.file("extdata/proteinGroups.txt", 
-                package = "proDD", mustWork = TRUE),
+                package = "proDA", mustWork = TRUE),
     col_types = cols(Reverse = col_character())
 )
 
@@ -339,7 +339,7 @@ library(DEP)
 
 full_data <- read.delim(
     system.file("extdata/proteinGroups.txt", 
-                package = "proDD", mustWork = TRUE),
+                package = "proDA", mustWork = TRUE),
     stringsAsFactors = FALSE
 )
 
