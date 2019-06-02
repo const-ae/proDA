@@ -137,6 +137,30 @@ test_that("fit works with SummarizedExperiment object", {
 
 })
 
+# test_that("fit works with MSnSet", {
+#   library(MSnbase)
+#
+#   syn_data <- generate_synthetic_data(n_proteins = 20)
+#
+#   annotation_df <- data.frame(group = syn_data$groups)
+#   rownames(annotation_df) <- colnames(syn_data$Y)
+#
+#   fData <- data.frame(true_mean1 = syn_data$t_mu[,1],
+#                       true_mean2 = syn_data$t_mu[,2],
+#                       changed= syn_data$changed)
+#   rownames(fData) <- rownames(syn_data$Y)
+#   ms <- MSnSet(syn_data$Y, pData=AnnotatedDataFrame(annotation_df),
+#                fData=AnnotatedDataFrame(fData))
+#
+#   expect_equal(median_normalization(syn_data$Y), exprs(median_normalization(ms)))
+#   expect_equal(median_normalization(syn_data$Y), assay(median_normalization(as(ms, "SummarizedExperiment"))))
+#
+#
+#   fit <- proDA(ms, ~ group, verbose=TRUE)
+#
+# })
+
+
 
 
 test_that("subsampling works", {
