@@ -70,7 +70,7 @@ the more likely it is to miss the value." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.0</span>
       </span>
     </div>
 
@@ -84,6 +84,21 @@ the more likely it is to miss the value." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Introduction.html">Introduction</a>
+    </li>
+    <li>
+      <a href="../articles/data-import.html">Proteomics Data Import</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -217,16 +232,16 @@ messages. Default: <code>FALSE</code>.</p></td>
 #&gt; 
 #&gt; Coefficients:
 #&gt; (Intercept)  
-#&gt;       19.41  
+#&gt;        20.3  
 #&gt; </div><div class='input'>  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
         <span class='kw'>dropout_curve_position</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
         <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</div><div class='output co'>#&gt; $coefficients
 #&gt; Intercept 
-#&gt;   19.4068 
+#&gt;   20.3031 
 #&gt; 
 #&gt; $coef_variance_matrix
-#&gt;           Intercept
-#&gt; Intercept  0.329624
+#&gt;            Intercept
+#&gt; Intercept 0.06796885
 #&gt; 
 #&gt; $n_approx
 #&gt; [1] 5
@@ -235,7 +250,7 @@ messages. Default: <code>FALSE</code>.</p></td>
 #&gt; [1] 4
 #&gt; 
 #&gt; $s2
-#&gt; [1] 1.64812
+#&gt; [1] 0.3398442
 #&gt; 
 #&gt; $n_obs
 #&gt; [1] 5
@@ -257,7 +272,7 @@ messages. Default: <code>FALSE</code>.</p></td>
 #&gt; 
 #&gt; $coef_variance_matrix
 #&gt;           Intercept
-#&gt; Intercept   1.64721
+#&gt; Intercept  3.400309
 #&gt; 
 #&gt; $n_approx
 #&gt; [1] 1.451011
@@ -283,20 +298,20 @@ messages. Default: <code>FALSE</code>.</p></td>
         <span class='kw'>variance_prior_scale</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
         <span class='kw'>variance_prior_df</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; $coefficients
 #&gt; Intercept 
-#&gt;  17.74922 
+#&gt;  18.77828 
 #&gt; 
 #&gt; $coef_variance_matrix
 #&gt;           Intercept
-#&gt; Intercept  1.289469
+#&gt; Intercept 0.3879792
 #&gt; 
 #&gt; $n_approx
-#&gt; [1] 0.3413858
+#&gt; [1] 0.07104773
 #&gt; 
 #&gt; $df
-#&gt; [1] 1.341386
+#&gt; [1] 1.071048
 #&gt; 
 #&gt; $s2
-#&gt; [1] 0.5048977
+#&gt; [1] 0.1897697
 #&gt; 
 #&gt; $n_obs
 #&gt; [1] 0

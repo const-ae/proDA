@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get numeric vector with the count of the replicate for each element — as_replicate • proDA</title>
+<title>Helper function that makes sure that NA * 0 = 0 in matrix multiply — %zero_dom_mat_mult% • proDA</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,9 @@
 
 
 
-<meta property="og:title" content="Get numeric vector with the count of the replicate for each element — as_replicate" />
+<meta property="og:title" content="Helper function that makes sure that NA * 0 = 0 in matrix multiply — %zero_dom_mat_mult%" />
 
-<meta property="og:description" content="For a vector with repeated values return a vector where each element
-is the count how often the element was observed previously" />
+<meta property="og:description" content="Helper function that makes sure that NA * 0 = 0 in matrix multiply" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -115,42 +114,37 @@ is the count how often the element was observed previously" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get numeric vector with the count of the replicate for each element</h1>
-    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/generate_synthetic_data.R'><code>R/generate_synthetic_data.R</code></a></small>
-    <div class="hidden name"><code>as_replicate.Rd</code></div>
+    <h1>Helper function that makes sure that NA * 0 = 0 in matrix multiply</h1>
+    <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/util.R'><code>R/util.R</code></a></small>
+    <div class="hidden name"><code>grapes-zero_dom_mat_mult-grapes.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>For a vector with repeated values return a vector where each element
-is the count how often the element was observed previously</p>
+    <p>Helper function that makes sure that NA * 0 = 0 in matrix multiply</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>as_replicate</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='no'>X</span> <span class='kw'>%zero_dom_mat_mult%</span> <span class='no'>Y</span></pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a vector with repeated elements</p></td>
+      <th>X</th>
+      <td><p>a matrix of size `n*m`</p></td>
+    </tr>
+    <tr>
+      <th>Y</th>
+      <td><p>a matrix of size `m*p`</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>numeric vector</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://www.rdocumentation.org/packages/base/topics/order'>order</a></code>, <code><a href='https://www.rdocumentation.org/packages/base/topics/rank'>rank</a></code></p></div>
+    <p>a matrix of size `n*p`</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>  <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"b"</span>, <span class='st'>"d"</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/all'>all</a></span>(<span class='kw pkg'>proDA</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/proDA/topics/as_replicate'>as_replicate</a></span>(<span class='no'>x</span>) <span class='kw'>==</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>1</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -158,11 +152,7 @@ is the count how often the element was observed previously</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

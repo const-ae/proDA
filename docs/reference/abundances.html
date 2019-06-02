@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.0</span>
       </span>
     </div>
 
@@ -77,6 +77,21 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Introduction.html">Introduction</a>
+    </li>
+    <li>
+      <a href="../articles/data-import.html">Proteomics Data Import</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -125,19 +140,53 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>the original matrix that was fitted</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='accessor_methods.html'>accessor_methods</a> for the implementation for a 'proDAFit' object</p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+  <span class='fu'>abundances</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;            Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; protein_1             NA            NA      17.39441            NA
+#&gt; protein_2       21.44783      22.04568      21.58932      21.27364
+#&gt; protein_3       21.99514      23.82042      21.65555      24.77057
+#&gt; protein_4       19.69809      20.02652      20.83321      19.85557
+#&gt; protein_5             NA      18.14249            NA      18.18695
+#&gt; protein_6       20.20171      19.54966      20.01480            NA
+#&gt; protein_7       18.35542      18.45723            NA      18.15738
+#&gt; protein_8       16.73948            NA            NA            NA
+#&gt; protein_9       21.83534      21.72478      22.65959      22.81777
+#&gt; protein_10      20.77706      20.84517      20.77847      23.65964
+#&gt;            Condition_2-2 Condition_2-3
+#&gt; protein_1             NA      17.32600
+#&gt; protein_2       21.58395      21.70533
+#&gt; protein_3       24.34303      21.34003
+#&gt; protein_4       19.76298      19.74544
+#&gt; protein_5             NA      18.18038
+#&gt; protein_6             NA      19.88450
+#&gt; protein_7       18.59377      18.40095
+#&gt; protein_8             NA            NA
+#&gt; protein_9       22.40100      22.61339
+#&gt; protein_10      23.74005      23.59049</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

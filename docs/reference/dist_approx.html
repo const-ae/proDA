@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.0</span>
       </span>
     </div>
 
@@ -77,6 +77,21 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Introduction.html">Introduction</a>
+    </li>
+    <li>
+      <a href="../articles/data-import.html">Proteomics Data Import</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -125,6 +140,11 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list with two elements: `mean` and `sd` both are formally
+  of class "dist"</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://www.rdocumentation.org/packages/stats/topics/dist'>dist</a></code> for the base R function and
@@ -132,14 +152,50 @@
   for 'proDAFit' objects</p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+  <span class='fu'>dist_approx</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; $mean
+#&gt;               Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; Condition_1-2      3.550396                                          
+#&gt; Condition_1-3      3.220159      3.997129                            
+#&gt; Condition_2-1      4.082020      6.157535      3.211768              
+#&gt; Condition_2-2      6.171415      6.283051      3.667542      4.090773
+#&gt; Condition_2-3      3.898560      3.914124      1.814973      3.353170
+#&gt;               Condition_2-2
+#&gt; Condition_1-2              
+#&gt; Condition_1-3              
+#&gt; Condition_2-1              
+#&gt; Condition_2-2              
+#&gt; Condition_2-3      3.093479
+#&gt; 
+#&gt; $sd
+#&gt;               Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; Condition_1-2   0.007429345                                          
+#&gt; Condition_1-3   0.004576400   0.029358751                            
+#&gt; Condition_2-1   0.046039262   0.009365659   0.022936328              
+#&gt; Condition_2-2   0.002387902   0.005589874   0.007578752   0.014348514
+#&gt; Condition_2-3   0.184761229   0.411100930   0.097856225   0.265559177
+#&gt;               Condition_2-2
+#&gt; Condition_1-2              
+#&gt; Condition_1-3              
+#&gt; Condition_2-1              
+#&gt; Condition_2-2              
+#&gt; Condition_2-3   0.292300229
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
