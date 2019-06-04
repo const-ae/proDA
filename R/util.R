@@ -16,6 +16,23 @@
 #' @param ... additional arguments to FUN
 #'
 #' @return a matrix of size \code{length(x) x ncol}
+#'
+#'
+#' @examples
+#'   # Behaves similar to sapply(), but it always returns a matrix
+#'   t(sapply(1:5, function(i) c(i - i/3, i, i + i/3)))
+#'   mply_dbl(1:5, function(i) c(i - i/3, i, i + i/3), ncol=3)
+#'
+#'   # Which can avoid some bad surprises
+#'   t(sapply(1:5, identity))
+#'   mply_dbl(1:5, identity)
+#'
+#'
+#'   # Works also with matrix input
+#'   mat <- matrix(1:20, ncol=4)
+#'   mat
+#'   msply_dbl(mat, function(i) rep(i, each=2))
+#'
 mply_dbl <- function(x, FUN, ncol=1, ...){
   if(is.vector(x)){
     res <- vapply(x, FUN, FUN.VALUE=rep(0.0, times=ncol), ...)

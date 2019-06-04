@@ -2,7 +2,7 @@
 % Please edit documentation in R/proDA.R
 \name{proDA}
 \alias{proDA}
-\title{Main function to determine the hyper and protein parameters}
+\title{Main function to fit the probabilistic dropout model}
 \usage{
 proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
   data_is_log_transformed = TRUE, moderate_location = TRUE,
@@ -13,10 +13,10 @@ proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
 \arguments{
 \item{data}{a matrix like object (\code{matrix()},
 \code{SummarizedExperiment()}, or anything that can be cast to
-\code{SummarizedExperiment()} (eg. MSnSet, eSet, ...)) with the
+\code{SummarizedExperiment()} (eg. `MSnSet`, `eSet`, ...)) with
 one column per
 sample and one row per protein. Missing values should be
-coded \code{NA}.}
+coded as \code{NA}.}
 
 \item{design}{a specification of the experimental design that
 is used to fit the linear model. It can be a \code{model.matrix()}
@@ -41,9 +41,9 @@ spectrometry experiments have a linear mean-variance relation.
 This is undesirable and can be removed by working on the log
 scale. The easiest way to find out if the data is already log-
 transformed is to see if the intensities are in the range of
-0 to 100 in which case they are transformed or if they rather
-are between 1e5 to 1e12, in which case they need to be
-transformed. Default: \code{TRUE}}
+`0` to `100` in which case they are transformed or if they rather
+are between `1e5` to `1e12`, in which case they are not.
+Default: \code{TRUE}}
 
 \item{moderate_location, moderate_variance}{boolean values
 to indicate if the location and the variances are
@@ -65,8 +65,8 @@ to converge to the hyper-parameter estimates. Default:
 \item{epsilon}{if the remaining error is smaller than \code{epsilon}
 the model has converged. Default: \code{1e-3}}
 
-\item{verbose}{boolean that signals if the method prints informative
-messages. Default: \code{FALSE}}
+\item{verbose}{boolean that signals if the method prints messages
+during the fitting. Default: \code{FALSE}}
 
 \item{...}{additional parameters for the construction of the
 'proDAFit' object}
@@ -76,6 +76,8 @@ An object of class 'proDAFit'. The object contains information
   on the hyper-parameters and feature parameters, the convergence,
   the experimental design etc. Internally, it is a sub-class of
   \code{SummarizedExperiment} which means the object is subsettable.
+  The `$`-operator is overloaded for this object to make it easy to
+  discover applicable functions.
 }
 \description{
 The function fits a linear probabilistic dropout model and infers
@@ -89,7 +91,7 @@ By default, the method is moderating the locations and the variance
 of each protein estimate. The variance moderation is fairly standard
 in high-throughput experiments and can boost the power to detect
 differentially abundant proteins. The location moderation is important
-to handle extreme cases where in one conditio a protein is not observed
+to handle the edge case where in one condition a protein is not observed
 in any sample. In addition it can help to get more precise estimates
 of the difference between conditions. Unlike 'DESeq2', which moderates
 the coefficient estimates (ie. the "betas") to be centered around zero,

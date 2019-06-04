@@ -20,7 +20,7 @@ specify the \code{formula}}
 \item{subset}{an optional selection vector for data to subset it}
 
 \item{dropout_curve_position}{the value where the chance to
-observe a value is 50%. Can either be a single value that is
+observe a value is 50\%. Can either be a single value that is
 repeated for each row or a vector with one element for each
 row. Not optional.}
 
@@ -56,6 +56,8 @@ messages. Default: \code{FALSE}.}
 a list with the following entries
   \describe{
     \item{coefficients}{a named vector with the fitted values}
+    \item{coef_variance_matrix}{a \code{p*p} matrix with the variance associated
+      with each coefficient estimate}
     \item{n_approx}{the estimated "size" of the data set (n_hat - variance_prior_df)}
     \item{df}{the estimated degrees of freedom (n_hat - p)}
     \item{s2}{the estimated unbiased variance}

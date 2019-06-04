@@ -45,8 +45,22 @@ the \code{`$`} operator only exposes a limited set of functions
   \item result_names
   \item coefficient_variance_matrices
   \item colData
-  \item rowData.
+  \item rowData
 }
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+
+  # The two styles are identical
+  design(fit)
+  fit$design
+
+  # More functions
+  fit$abundances
+
+
+
 }
 \seealso{
 \link{accessor_methods} for more documentation on the

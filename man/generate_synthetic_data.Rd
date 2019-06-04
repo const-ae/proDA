@@ -24,7 +24,7 @@ Can either be a single number or a vector with
 differ between the conditions. Default: 0.1}
 
 \item{dropout_curve_position}{the point where the chance
-to observe a value is 50%. Can be a single number or
+to observe a value is 50\%. Can be a single number or
 a vector of \code{length(dropout_curve_position) == n_conditions * n_replicates}.
 Default: 18.5}
 
@@ -42,7 +42,7 @@ condition means (\code{t_mu}) scatter. Default: 20 and 4}
 Chi-squared distribution used as a prior for the
 variances. Default: 0.05 and 2}
 
-\item{effect_size}{the standard deviation that used to draw
+\item{effect_size}{the standard deviation that is used to draw
 different values for the \code{frac_changed} part of the
 proteins. Default: 2}
 
@@ -57,11 +57,11 @@ a list with the following elements
     \item{Z}{the intensity matrix before dropping out values}
     \item{t_mu}{a matrix with \code{n_proteins} rows and
        \code{n_conditions} columns that contains the underlying
-       means for each protein.}
-    \item{t_sigma2}{a vector with the true variance for each
-       protein.}
+       means for each protein}
+    \item{t_sigma2}{a vector with the true variances for each
+       protein}
     \item{changed}{a vector with boolean values if the
-       protein is actually changed.}
+       protein is actually changed}
     \item{group}{the group structure mapping samples to conditions}
   }
   if \code{return_summarized_experiment} is \code{FALSE}. Otherwise
@@ -73,7 +73,11 @@ Generate a dataset according to the probabilistic dropout model
 \examples{
   syn_data <- generate_synthetic_data(n_proteins = 10)
   names(syn_data)
+  head(syn_data$Y)
+
+  # Returning a SummarizedExperiment
   se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
   se
+  head(assay(se))
 
 }

@@ -4,7 +4,7 @@
 \name{test_diff}
 \alias{test_diff}
 \alias{result_names,proDAFit-method}
-\title{Identify significant coefficients}
+\title{Identify differentially abundant proteins}
 \usage{
 test_diff(fit, contrast, reduced_model = ~1,
   alternative = c("two.sided", "greater", "less"),
@@ -24,17 +24,19 @@ linear combination of them. The contrast is always compared
 against zero. Thus, to find out if two coefficients differ
 use \code{coef1 - coef2}.}
 
-\item{reduced_model}{The fit with an alternative model (nested
-in the original model) is compared with the original model
-using an F-test. This is useful if not just an individual
-coefficient should be tested, but the effect of including
-a combination of covariates. If neither a \code{contrast}, nor
+\item{reduced_model}{If you don't want to test an individual
+coefficient, you can can specify a reduced model and compare
+it with the original model using an F-test. This is useful
+to find out how a set of parameters affect the goodness of
+the fit. If neither a \code{contrast}, nor
 a \code{reduced_model} is specified, by default a comparison
-with an intercept model is done. Default: \code{~ 1}.}
+with an intercept model (ie. just the average across conditions)
+is done. Default: \code{~ 1}.}
 
 \item{alternative}{a string that decides how the
 hypothesis test is done. This parameter is only relevant for
-the t-test / contrast test. Default: \code{"two.sided"}}
+the Wald-test specified using the `contrast` argument.
+Default: \code{"two.sided"}}
 
 \item{pval_adjust_method}{a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
@@ -55,11 +57,14 @@ Default: \code{Inf}}
 messages. Default: \code{FALSE}.}
 }
 \value{
-Both functions return a \code{data.frame} with one row per protein
-  with the key parameters of the statistical test.
+The `result_names()` function returns a character vector.
+
+  The `test_diff()` function returns a \code{data.frame} with one row per protein
+  with the key parameters of the statistical test. Depending what kind of test
+  (Wald or F test) the content of the `data.frame` differs.
 
   The Wald test, which can considered equivalent to a t-test, returns
-  a data.frame with the following columns:
+  a `data.frame` with the following columns:
   \describe{
     \item{name}{the name of the protein, extracted from the rowname of
       the input matrix}
@@ -76,7 +81,7 @@ Both functions return a \code{data.frame} with one row per protein
       of available information for estimating the \code{se}. They
       are the sum of the number of samples the protein was observed
       in, the amount of information contained in the missing values,
-      and the estimated df from the variance prior.}
+      and the degrees of freedom of the variance prior.}
     \item{avg_abundance}{the estimate of the average abundance of
       the protein across all samples.}
     \item{n_approx}{the approximated information available for estimating
@@ -86,7 +91,7 @@ Both functions return a \code{data.frame} with one row per protein
   }
 
 
-  The F-test returns a data.frame with the following columns
+  The F-test returns a `data.frame` with the following columns
   \describe{
     \item{name}{the name of the protein, extracted from the rowname of
       the input matrix}
@@ -102,7 +107,7 @@ Both functions return a \code{data.frame} with one row per protein
       of available information for estimating the \code{se}. They
       are the sum of the number of samples the protein was observed
       in, the amount of information contained in the missing values,
-      and the estimated df from the variance prior.}
+      and the degrees of freedom of the variance prior.}
     \item{avg_abundance}{the estimate of the average abundance of
       the protein across all samples.}
     \item{n_approx}{the information available for estimating
@@ -112,7 +117,7 @@ Both functions return a \code{data.frame} with one row per protein
   }
 }
 \description{
-The function is used to test coefficients of a 'proDAFit'
+The `test_diff()` function is used to test coefficients of a 'proDAFit'
 object. It provides a Wald test to test individual
 coefficients and a likelihood ratio F-test to compare the
 original model with a reduced model. The \code{result_names}

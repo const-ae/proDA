@@ -31,7 +31,7 @@
 #'   \item result_names
 #'   \item coefficient_variance_matrices
 #'   \item colData
-#'   \item rowData.
+#'   \item rowData
 #' }
 #'
 #' @param x an object of class 'proDAFit' produced by \code{proDA()}
@@ -41,6 +41,19 @@
 #' @param pattern the regex pattern that is provided by the IDE
 #'
 #' @return whatever the function called \code{name} returns.
+#'
+#' @examples
+#'   syn_data <- generate_synthetic_data(n_proteins = 10)
+#'   fit <- proDA(syn_data$Y, design = syn_data$groups)
+#'
+#'   # The two styles are identical
+#'   design(fit)
+#'   fit$design
+#'
+#'   # More functions
+#'   fit$abundances
+#'
+#'
 #'
 #' @seealso \link{accessor_methods} for more documentation on the
 #'   accessor functions.

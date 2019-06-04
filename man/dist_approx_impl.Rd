@@ -29,7 +29,7 @@ between the samples (`by_sample = TRUE`) or between the proteins
 sure that the results are not biased for the expected result.
 Default: `TRUE`}
 
-\item{...}{additional argument to \code{proDA()} in case object is a
+\item{...}{additional arguments to \code{proDA()} in case object is a
 \code{SummarizedExperiment} or a \code{matrix}}
 }
 \value{
@@ -42,4 +42,10 @@ taking into account the missing values and the associated uncertainty.
 Because with missing value no single deterministic distance can be
 calculated two objects are returned: the mean and the associated
 standard deviation of the distance estimates.
+}
+\examples{
+  syn_data <- generate_synthetic_data(n_proteins = 10)
+  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  dist_approx(fit)
+
 }

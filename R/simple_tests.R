@@ -64,7 +64,7 @@
 #'   t.test(x, y)
 #'   summary(lm(c(x, y) ~ cond,
 #'              data = data.frame(cond = c(rep("x", 5),
-#'                                         rep("y", 5)))))$coef[2,]
+#'                                         rep("y", 5)))))$coefficients[2,]
 #'   pd_row_t_test(matrix(x, nrow=1), matrix(y, nrow=1),
 #'                 moderate_location = FALSE,
 #'                 moderate_variance = FALSE)

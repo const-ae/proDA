@@ -32,7 +32,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 
 
 
-#' Main function to determine the hyper and protein parameters
+#' Main function to fit the probabilistic dropout model
 #'
 #' The function fits a linear probabilistic dropout model and infers
 #' the hyper-parameters for the location prior, the variance prior,
@@ -44,7 +44,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #' of each protein estimate. The variance moderation is fairly standard
 #' in high-throughput experiments and can boost the power to detect
 #' differentially abundant proteins. The location moderation is important
-#' to handle extreme cases where in one conditio a protein is not observed
+#' to handle the edge case where in one condition a protein is not observed
 #' in any sample. In addition it can help to get more precise estimates
 #' of the difference between conditions. Unlike 'DESeq2', which moderates
 #' the coefficient estimates (ie. the "betas") to be centered around zero,
@@ -53,10 +53,10 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #'
 #' @param data a matrix like object (\code{matrix()},
 #'   \code{SummarizedExperiment()}, or anything that can be cast to
-#'   \code{SummarizedExperiment()} (eg. MSnSet, eSet, ...)) with the
+#'   \code{SummarizedExperiment()} (eg. `MSnSet`, `eSet`, ...)) with
 #'   one column per
 #'   sample and one row per protein. Missing values should be
-#'   coded \code{NA}.
+#'   coded as \code{NA}.
 #' @param design a specification of the experimental design that
 #'   is used to fit the linear model. It can be a \code{model.matrix()}
 #'   with one row for each sample and one column for each
@@ -77,9 +77,9 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #'   This is undesirable and can be removed by working on the log
 #'   scale. The easiest way to find out if the data is already log-
 #'   transformed is to see if the intensities are in the range of
-#'   0 to 100 in which case they are transformed or if they rather
-#'   are between 1e5 to 1e12, in which case they need to be
-#'   transformed. Default: \code{TRUE}
+#'   `0` to `100` in which case they are transformed or if they rather
+#'   are between `1e5` to `1e12`, in which case they are not.
+#'   Default: \code{TRUE}
 #' @param moderate_location,moderate_variance boolean values
 #'   to indicate if the location and the variances are
 #'   moderated. Default: \code{TRUE}
@@ -95,8 +95,8 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #'   \code{20}
 #' @param epsilon if the remaining error is smaller than \code{epsilon}
 #'   the model has converged. Default: \code{1e-3}
-#' @param verbose boolean that signals if the method prints informative
-#'   messages. Default: \code{FALSE}
+#' @param verbose boolean that signals if the method prints messages
+#'   during the fitting. Default: \code{FALSE}
 #' @param ... additional parameters for the construction of the
 #'   'proDAFit' object
 #'
@@ -105,6 +105,8 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #'   on the hyper-parameters and feature parameters, the convergence,
 #'   the experimental design etc. Internally, it is a sub-class of
 #'   \code{SummarizedExperiment} which means the object is subsettable.
+#'   The `$`-operator is overloaded for this object to make it easy to
+#'   discover applicable functions.
 #'
 #'
 #' @examples

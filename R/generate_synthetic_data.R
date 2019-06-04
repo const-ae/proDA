@@ -10,7 +10,7 @@
 #' @param frac_changed the fraction of proteins that actually
 #'   differ between the conditions. Default: 0.1
 #' @param dropout_curve_position the point where the chance
-#'   to observe a value is 50%. Can be a single number or
+#'   to observe a value is 50\%. Can be a single number or
 #'   a vector of \code{length(dropout_curve_position) == n_conditions * n_replicates}.
 #'   Default: 18.5
 #' @param dropout_curve_scale The width of the dropout curve.
@@ -26,7 +26,7 @@
 #'    the scale and the degrees of freedom of the inverse
 #'    Chi-squared distribution used as a prior for the
 #'    variances. Default: 0.05 and 2
-#' @param effect_size the standard deviation that used to draw
+#' @param effect_size the standard deviation that is used to draw
 #'   different values for the \code{frac_changed} part of the
 #'   proteins. Default: 2
 #' @param return_summarized_experiment a boolean indicator if
@@ -39,11 +39,11 @@
 #'     \item{Z}{the intensity matrix before dropping out values}
 #'     \item{t_mu}{a matrix with \code{n_proteins} rows and
 #'        \code{n_conditions} columns that contains the underlying
-#'        means for each protein.}
-#'     \item{t_sigma2}{a vector with the true variance for each
-#'        protein.}
+#'        means for each protein}
+#'     \item{t_sigma2}{a vector with the true variances for each
+#'        protein}
 #'     \item{changed}{a vector with boolean values if the
-#'        protein is actually changed.}
+#'        protein is actually changed}
 #'     \item{group}{the group structure mapping samples to conditions}
 #'   }
 #'   if \code{return_summarized_experiment} is \code{FALSE}. Otherwise
@@ -52,8 +52,12 @@
 #' @examples
 #'   syn_data <- generate_synthetic_data(n_proteins = 10)
 #'   names(syn_data)
+#'   head(syn_data$Y)
+#'
+#'   # Returning a SummarizedExperiment
 #'   se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
 #'   se
+#'   head(assay(se))
 #'
 #' @export
 generate_synthetic_data <- function(n_proteins, n_conditions = 2,

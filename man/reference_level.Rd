@@ -19,7 +19,7 @@ Get the reference level
 }
 \examples{
   syn_data <- generate_synthetic_data(n_proteins = 10)
-  fit <- proDA(syn_data$Y, design = syn_data$groups)
+  fit <- proDA(syn_data$Y, design = syn_data$groups, reference_level = "Condition_1")
   reference_level(fit)
 
 }

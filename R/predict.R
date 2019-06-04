@@ -5,8 +5,8 @@
 #' (\code{type = "response"}) without missing values according to the
 #' linear probabilistic dropout model, fitted with \code{proDA()}. Or, it
 #' can predict the feature parameters for additional proteins given their
-#' abundances including missing values after estimating the hyper-
-#' parameters on a dataset with the same sample structure
+#' abundances including missing values after estimating the hyper-parameters
+#' on a dataset with the same sample structure
 #' (\code{type = "feature_parameters"}).
 #'
 #' \strong{Note:} this method behaves a little different from what one might

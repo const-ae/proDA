@@ -16,13 +16,17 @@
 #' @param blind fit an intercept model for the missing values to make
 #'   sure that the results are not biased for the expected result.
 #'   Default: `TRUE`
-#' @param ... additional argument to \code{proDA()} in case object is a
+#' @param ... additional arguments to \code{proDA()} in case object is a
 #'   \code{SummarizedExperiment} or a \code{matrix}
 #'
 #'
 #' @return a list with two elements: `mean` and `sd` both are formally
 #'   of class "dist"
 #'
+#' @examples
+#'   syn_data <- generate_synthetic_data(n_proteins = 10)
+#'   fit <- proDA(syn_data$Y, design = syn_data$groups)
+#'   dist_approx(fit)
 #'
 #' @name dist_approx_impl
 #' @aliases dist_approx,proDAFit-method

@@ -29,7 +29,8 @@ moderated. Default: \code{TRUE}}
 
 \item{alternative}{a string that decides how the
 hypothesis test is done. This parameter is only relevant for
-the t-test / contrast test. Default: \code{"two.sided"}}
+the Wald-test specified using the `contrast` argument.
+Default: \code{"two.sided"}}
 
 \item{pval_adjust_method}{a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
@@ -51,8 +52,8 @@ the model has converged. Default: \code{1e-3}}
 data.frame with the hypothesis test results, the fit from
 \code{proDA()} is returned. Default: \code{FALSE}}
 
-\item{verbose}{boolean that signals if the method prints informative
-messages. Default: \code{FALSE}}
+\item{verbose}{boolean that signals if the method prints messages
+during the fitting. Default: \code{FALSE}}
 
 \item{groups}{a factor or character vector with that assignes the
 columns of \code{X} to different conditions. This parameter is
@@ -103,7 +104,7 @@ more widely understood, we choose to use that name.
   t.test(x, y)
   summary(lm(c(x, y) ~ cond,
              data = data.frame(cond = c(rep("x", 5),
-                                        rep("y", 5)))))$coef[2,]
+                                        rep("y", 5)))))$coefficients[2,]
   pd_row_t_test(matrix(x, nrow=1), matrix(y, nrow=1),
                 moderate_location = FALSE,
                 moderate_variance = FALSE)
