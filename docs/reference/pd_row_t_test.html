@@ -65,7 +65,7 @@ functions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -163,13 +163,14 @@ moderated. Default: <code>TRUE</code></p></td>
       <th>alternative</th>
       <td><p>a string that decides how the
 hypothesis test is done. This parameter is only relevant for
-the t-test / contrast test. Default: <code>"two.sided"</code></p></td>
+the Wald-test specified using the `contrast` argument.
+Default: <code>"two.sided"</code></p></td>
     </tr>
     <tr>
       <th>pval_adjust_method</th>
       <td><p>a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
-It must match the options in <code><a href='https://www.rdocumentation.org/packages/stats/topics/p.adjust'>p.adjust.methods</a></code>.
+It must match the options in <code><a href='https://www.rdocumentation.org/packages/stats/topics/p.adjust'>p.adjust</a></code>.
 Default: <code>"BH"</code></p></td>
     </tr>
     <tr>
@@ -197,8 +198,8 @@ data.frame with the hypothesis test results, the fit from
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>boolean that signals if the method prints informative
-messages. Default: <code>FALSE</code></p></td>
+      <td><p>boolean that signals if the method prints messages
+during the fitting. Default: <code>FALSE</code></p></td>
     </tr>
     <tr>
       <th>groups</th>
@@ -228,7 +229,7 @@ more widely understood, we choose to use that name.</p>
 
     <div class='dont-index'><p><code><a href='proDA.html'>proDA</a></code> and <code><a href='test_diff.html'>test_diff</a></code> for more
   flexible versions. The  function was inspired
-  by the <code><a href='https://www.rdocumentation.org/packages/genefilter/topics/rowFtests'>rowttests</a></code> function in the genefilter
+  by the <code><a href='https://www.rdocumentation.org/packages/genefilter/topics/rowFtests'>rowFtests</a></code> function in the genefilter
   package.</p></div>
     
 
@@ -239,53 +240,53 @@ more widely understood, we choose to use that name.</p>
 
   <span class='co'># Comparing two datasets</span>
   <span class='fu'>pd_row_t_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>)</div><div class='output co'>#&gt;    name      pval  adj_pval        diff t_statistic        se df avg_abundance
-#&gt; 1     1 0.9717134 0.9718566 -0.01069420 -0.03726813 0.2869529  5  0.0879573189
-#&gt; 2     2 0.8789066 0.9718566  0.04573239  0.16031754 0.2852613  5  0.0677787793
-#&gt; 3     3 0.9654456 0.9718566 -0.01291091 -0.04553224 0.2835554  5  0.0711428256
-#&gt; 4     4 0.8156346 0.9718566 -0.07150091 -0.24576382 0.2909334  5  0.1114186933
-#&gt; 5     5        NA        NA          NA          NA        NA  5            NA
-#&gt; 6     6 0.9472993 0.9718566  0.01953687  0.06948186 0.2811795  5  0.0515140600
-#&gt; 7     7 0.9718566 0.9718566  0.01097429  0.03707932 0.2959681  5  0.1215490241
-#&gt; 8     8 0.7716905 0.9718566 -0.09102689 -0.30634159 0.2971418  5  0.1360018294
-#&gt; 9     9 0.7409478 0.9718566 -0.09575188 -0.34950692 0.2739628  5  0.0008229996
-#&gt; 10   10 0.8316209 0.9718566 -0.06195591 -0.22400225 0.2765861  5  0.0295052072
+#&gt; 1     1 0.6318223 0.9610461 -0.17403899 -0.50990336 0.3413176  5    0.08441427
+#&gt; 2     2 0.8537999 0.9610461  0.06719201  0.19401537 0.3463231  5    0.09955047
+#&gt; 3     3 0.7060897 0.9610461  0.14086471  0.39939698 0.3526935  5    0.11559041
+#&gt; 4     4 0.2003586 0.9610461 -0.52457621 -1.47448765 0.3557685  5    0.06480774
+#&gt; 5     5 0.6111559 0.9610461  0.18858601  0.54189668 0.3480110  5    0.06870236
+#&gt; 6     6 0.2694543 0.9610461  0.52366491  1.24158862 0.4217701  5    0.20250791
+#&gt; 7     7 0.7403208 0.9610461  0.11750324  0.35039495 0.3353451  5   -0.01569756
+#&gt; 8     8 0.5919206 0.9610461  0.20569825  0.57224953 0.3594555  5    0.12727617
+#&gt; 9     9 0.8981846 0.9610461  0.04831160  0.13459189 0.3589489  5    0.17334037
+#&gt; 10   10 0.9610461 0.9610461  0.01774168  0.05133534 0.3456036  5    0.10621068
 #&gt;    n_approx n_obs
 #&gt; 1  7.000000     7
 #&gt; 2  7.000000     7
-#&gt; 3  7.000021     7
-#&gt; 4  7.000086     7
-#&gt; 5        NA     7
+#&gt; 3  7.000000     7
+#&gt; 4  7.000000     7
+#&gt; 5  7.000000     7
 #&gt; 6  7.000000     7
 #&gt; 7  7.000000     7
 #&gt; 8  7.000000     7
 #&gt; 9  7.000000     7
-#&gt; 10 7.000000     7</div><div class='input'>
+#&gt; 10 7.000026     7</div><div class='input'>
   <span class='co'># Comparing multiple datasets</span>
-  <span class='fu'>pd_row_f_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)</div><div class='output co'>#&gt;    name      pval  adj_pval f_statistic df1 df2 avg_abundance n_approx n_obs
-#&gt; 1     1 0.9954189 0.9989838 0.004591606   2 Inf    0.07319044        9     9
-#&gt; 2     2        NA        NA          NA   2  NA            NA       NA     9
-#&gt; 3     3 0.9940074 0.9989838 0.006010640   2 Inf    0.06930352        9     9
-#&gt; 4     4 0.9894503 0.9989838 0.010605771   2 Inf    0.07716949        9     9
-#&gt; 5     5 0.9738045 0.9989838 0.026544761   2 Inf    0.07363987        9     9
-#&gt; 6     6 0.9989838 0.9989838 0.001016693   2 Inf    0.06051511        9     9
-#&gt; 7     7 0.9961467 0.9989838 0.003860781   2 Inf    0.07643498        9     9
-#&gt; 8     8 0.9496261 0.9989838 0.051686959   2 Inf    0.07461905        9     9
-#&gt; 9     9 0.9633848 0.9989838 0.037302319   2 Inf    0.05451577        9     9
-#&gt; 10   10 0.9873769 0.9989838 0.012703432   2 Inf    0.05264584        9     9</div><div class='input'>
+  <span class='fu'>pd_row_f_test</span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)</div><div class='output co'>#&gt;    name      pval adj_pval f_statistic df1 df2 avg_abundance n_approx n_obs
+#&gt; 1     1 0.9164410 0.988259  0.08725759   2 Inf  0.0682202255 9.000001     9
+#&gt; 2     2 0.9882590 0.988259  0.01181043   2 Inf  0.0688035749 9.000000     9
+#&gt; 3     3 0.9497317 0.988259  0.05157570   2 Inf  0.0761795645 9.000000     9
+#&gt; 4     4 0.5218571 0.988259  0.65036152   2 Inf  0.0558458728 9.000000     9
+#&gt; 5     5 0.9119464 0.988259  0.09217410   2 Inf  0.0549571863 9.000009     9
+#&gt; 6     6 0.5125471 0.988259  0.66836272   2 Inf  0.1003033936 9.000000     9
+#&gt; 7     7 0.9333549 0.988259  0.06896978   2 Inf  0.0002559956 9.000000     9
+#&gt; 8     8 0.8167696 0.988259  0.20239824   2 Inf  0.1039868599 9.000021     9
+#&gt; 9     9 0.7983868 0.988259  0.22516214   2 Inf  0.0712991005 9.000000     9
+#&gt; 10   10 0.8886323 0.988259  0.11807171   2 Inf  0.0477848046 9.000000     9</div><div class='input'>
   <span class='co'># Alternative</span>
   <span class='no'>data_comb</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cbind'>cbind</a></span>(<span class='no'>data1</span>, <span class='no'>data2</span>, <span class='no'>data3</span>)
   <span class='fu'>pd_row_f_test</span>(<span class='no'>data_comb</span>,
-     <span class='kw'>groups</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"A"</span>,<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"B"</span>, <span class='fl'>4</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"C"</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt;    name      pval  adj_pval f_statistic df1 df2 avg_abundance n_approx n_obs
-#&gt; 1     1 0.9954189 0.9989838 0.004591606   2 Inf    0.07319044        9     9
-#&gt; 2     2        NA        NA          NA   2  NA            NA       NA     9
-#&gt; 3     3 0.9940074 0.9989838 0.006010640   2 Inf    0.06930352        9     9
-#&gt; 4     4 0.9894503 0.9989838 0.010605771   2 Inf    0.07716949        9     9
-#&gt; 5     5 0.9738045 0.9989838 0.026544761   2 Inf    0.07363987        9     9
-#&gt; 6     6 0.9989838 0.9989838 0.001016693   2 Inf    0.06051511        9     9
-#&gt; 7     7 0.9961467 0.9989838 0.003860781   2 Inf    0.07643498        9     9
-#&gt; 8     8 0.9496261 0.9989838 0.051686959   2 Inf    0.07461905        9     9
-#&gt; 9     9 0.9633848 0.9989838 0.037302319   2 Inf    0.05451577        9     9
-#&gt; 10   10 0.9873769 0.9989838 0.012703432   2 Inf    0.05264584        9     9</div><div class='input'>
+     <span class='kw'>groups</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"A"</span>,<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"B"</span>, <span class='fl'>4</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"C"</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt;    name      pval adj_pval f_statistic df1 df2 avg_abundance n_approx n_obs
+#&gt; 1     1 0.9164410 0.988259  0.08725759   2 Inf  0.0682202255 9.000001     9
+#&gt; 2     2 0.9882590 0.988259  0.01181043   2 Inf  0.0688035749 9.000000     9
+#&gt; 3     3 0.9497317 0.988259  0.05157570   2 Inf  0.0761795645 9.000000     9
+#&gt; 4     4 0.5218571 0.988259  0.65036152   2 Inf  0.0558458728 9.000000     9
+#&gt; 5     5 0.9119464 0.988259  0.09217410   2 Inf  0.0549571863 9.000009     9
+#&gt; 6     6 0.5125471 0.988259  0.66836272   2 Inf  0.1003033936 9.000000     9
+#&gt; 7     7 0.9333549 0.988259  0.06896978   2 Inf  0.0002559956 9.000000     9
+#&gt; 8     8 0.8167696 0.988259  0.20239824   2 Inf  0.1039868599 9.000021     9
+#&gt; 9     9 0.7983868 0.988259  0.22516214   2 Inf  0.0712991005 9.000000     9
+#&gt; 10   10 0.8886323 0.988259  0.11807171   2 Inf  0.0477848046 9.000000     9</div><div class='input'>
   <span class='co'># t.test, lm, pd_row_t_test, and pd_row_f_test are</span>
   <span class='co'># approximately equivalent on fully observed data</span>
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Random'>set.seed</a></span>(<span class='fl'>1</span>)
@@ -305,7 +306,7 @@ more widely understood, we choose to use that name.</p>
 #&gt; 0.1292699 0.4351357 
 #&gt; </div><div class='input'>  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/lm'>lm</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='no'>x</span>, <span class='no'>y</span>) ~ <span class='no'>cond</span>,
              <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>cond</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"x"</span>, <span class='fl'>5</span>),
-                                        <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"y"</span>, <span class='fl'>5</span>)))))$<span class='no'>coef</span>[<span class='fl'>2</span>,]</div><div class='output co'>#&gt; <span class='warning'>Warning: partial match of 'coef' to 'coefficients'</span></div><div class='output co'>#&gt;   Estimate Std. Error    t value   Pr(&gt;|t|) 
+                                        <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"y"</span>, <span class='fl'>5</span>)))))$<span class='no'>coefficients</span>[<span class='fl'>2</span>,]</div><div class='output co'>#&gt;   Estimate Std. Error    t value   Pr(&gt;|t|) 
 #&gt;  0.3058658  0.5236289  0.5841270  0.5752316 </div><div class='input'>  <span class='fu'>pd_row_t_test</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>x</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='no'>y</span>, <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>1</span>),
                 <span class='kw'>moderate_location</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
                 <span class='kw'>moderate_variance</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;   name      pval  adj_pval       diff t_statistic        se df avg_abundance

@@ -67,7 +67,7 @@ standard deviation of the distance estimates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -167,7 +167,7 @@ Default: `TRUE`</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional argument to <code><a href='proDA.html'>proDA()</a></code> in case object is a
+      <td><p>additional arguments to <code><a href='proDA.html'>proDA()</a></code> in case object is a
 <code>SummarizedExperiment</code> or a <code>matrix</code></p></td>
     </tr>
     </table>
@@ -178,6 +178,38 @@ Default: `TRUE`</p></td>
   of class "dist"</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+  <span class='fu'><a href='dist_approx.html'>dist_approx</a></span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; $mean
+#&gt;               Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; Condition_1-2     1.2614914                                          
+#&gt; Condition_1-3     1.6110766     1.0339449                            
+#&gt; Condition_2-1     1.3363061     1.1169807     1.3232710              
+#&gt; Condition_2-2     1.1440841     1.1504494     1.5303490     0.8213760
+#&gt; Condition_2-3     1.8384305     1.3043910     1.4120349     0.8771074
+#&gt;               Condition_2-2
+#&gt; Condition_1-2              
+#&gt; Condition_1-3              
+#&gt; Condition_2-1              
+#&gt; Condition_2-2              
+#&gt; Condition_2-3     1.2686123
+#&gt; 
+#&gt; $sd
+#&gt;               Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; Condition_1-2    0.23213632                                          
+#&gt; Condition_1-3    0.19907003    0.11545470                            
+#&gt; Condition_2-1    0.21904456    0.10778416    0.08917388              
+#&gt; Condition_2-2    0.10700289    0.10893890    0.08067709    0.15235000
+#&gt; Condition_2-3    0.04613067    0.13383849    0.12178759    0.19598264
+#&gt;               Condition_2-2
+#&gt; Condition_1-2              
+#&gt; Condition_1-3              
+#&gt; Condition_2-1              
+#&gt; Condition_2-2              
+#&gt; Condition_2-3    0.05927223
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -185,7 +217,9 @@ Default: `TRUE`</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

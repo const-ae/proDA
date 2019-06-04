@@ -70,7 +70,7 @@ the more likely it is to miss the value." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -165,7 +165,7 @@ specify the <code>formula</code></p></td>
     <tr>
       <th>dropout_curve_position</th>
       <td><p>the value where the chance to
-observe a value is 50<!-- %. Can either be a single value that is -->
+observe a value is 50%. Can either be a single value that is
 repeated for each row or a vector with one element for each
 row. Not optional.</p></td>
     </tr>
@@ -215,6 +215,8 @@ messages. Default: <code>FALSE</code>.</p></td>
 
     <p>a list with the following entries</p><dl class='dl-horizontal'>
     <dt>coefficients</dt><dd><p>a named vector with the fitted values</p></dd>
+    <dt>coef_variance_matrix</dt><dd><p>a <code>p*p</code> matrix with the variance associated
+      with each coefficient estimate</p></dd>
     <dt>n_approx</dt><dd><p>the estimated "size" of the data set (n_hat - variance_prior_df)</p></dd>
     <dt>df</dt><dd><p>the estimated degrees of freedom (n_hat - p)</p></dd>
     <dt>s2</dt><dd><p>the estimated unbiased variance</p></dd>
@@ -232,16 +234,16 @@ messages. Default: <code>FALSE</code>.</p></td>
 #&gt; 
 #&gt; Coefficients:
 #&gt; (Intercept)  
-#&gt;        20.3  
+#&gt;       20.02  
 #&gt; </div><div class='input'>  <span class='fu'>pd_lm</span>(<span class='no'>y</span> ~ <span class='fl'>1</span>,
         <span class='kw'>dropout_curve_position</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
         <span class='kw'>dropout_curve_scale</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</div><div class='output co'>#&gt; $coefficients
 #&gt; Intercept 
-#&gt;   20.3031 
+#&gt;  20.02302 
 #&gt; 
 #&gt; $coef_variance_matrix
-#&gt;            Intercept
-#&gt; Intercept 0.06796885
+#&gt;           Intercept
+#&gt; Intercept 0.2259314
 #&gt; 
 #&gt; $n_approx
 #&gt; [1] 5
@@ -250,7 +252,7 @@ messages. Default: <code>FALSE</code>.</p></td>
 #&gt; [1] 4
 #&gt; 
 #&gt; $s2
-#&gt; [1] 0.3398442
+#&gt; [1] 1.129657
 #&gt; 
 #&gt; $n_obs
 #&gt; [1] 5

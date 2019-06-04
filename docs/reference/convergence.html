@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -153,13 +153,13 @@
     <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
   <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
   <span class='fu'>convergence</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt; $successful
-#&gt; [1] TRUE
+#&gt; [1] FALSE
 #&gt; 
 #&gt; $iterations
-#&gt; [1] 4
+#&gt; [1] 20
 #&gt; 
 #&gt; $error
-#&gt; [1] 5.929768e-05
+#&gt; [1] 0.03051609
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Identify significant coefficients — test_diff • proDA</title>
+<title>Identify differentially abundant proteins — test_diff • proDA</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Identify significant coefficients — test_diff" />
+<meta property="og:title" content="Identify differentially abundant proteins — test_diff" />
 
-<meta property="og:description" content="The function is used to test coefficients of a 'proDAFit'
+<meta property="og:description" content="The `test_diff()` function is used to test coefficients of a 'proDAFit'
 object. It provides a Wald test to test individual
 coefficients and a likelihood ratio F-test to compare the
 original model with a reduced model. The result_names
@@ -68,7 +68,7 @@ available for testing." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -119,14 +119,14 @@ available for testing." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Identify significant coefficients</h1>
+    <h1>Identify differentially abundant proteins</h1>
     <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/test_diff.R'><code>R/test_diff.R</code></a></small>
     <div class="hidden name"><code>test_diff.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>The function is used to test coefficients of a 'proDAFit'
+    <p>The `test_diff()` function is used to test coefficients of a 'proDAFit'
 object. It provides a Wald test to test individual
 coefficients and a likelihood ratio F-test to compare the
 original model with a reduced model. The <code>result_names</code>
@@ -162,25 +162,27 @@ use <code>coef1 - coef2</code>.</p></td>
     </tr>
     <tr>
       <th>reduced_model</th>
-      <td><p>The fit with an alternative model (nested
-in the original model) is compared with the original model
-using an F-test. This is useful if not just an individual
-coefficient should be tested, but the effect of including
-a combination of covariates. If neither a <code>contrast</code>, nor
+      <td><p>If you don't want to test an individual
+coefficient, you can can specify a reduced model and compare
+it with the original model using an F-test. This is useful
+to find out how a set of parameters affect the goodness of
+the fit. If neither a <code>contrast</code>, nor
 a <code>reduced_model</code> is specified, by default a comparison
-with an intercept model is done. Default: <code>~ 1</code>.</p></td>
+with an intercept model (ie. just the average across conditions)
+is done. Default: <code>~ 1</code>.</p></td>
     </tr>
     <tr>
       <th>alternative</th>
       <td><p>a string that decides how the
 hypothesis test is done. This parameter is only relevant for
-the t-test / contrast test. Default: <code>"two.sided"</code></p></td>
+the Wald-test specified using the `contrast` argument.
+Default: <code>"two.sided"</code></p></td>
     </tr>
     <tr>
       <th>pval_adjust_method</th>
       <td><p>a string the indicates the method
 that is used to adjust the p-value for the multiple testing.
-It must match the options in <code><a href='https://www.rdocumentation.org/packages/stats/topics/p.adjust'>p.adjust.methods</a></code>.
+It must match the options in <code><a href='https://www.rdocumentation.org/packages/stats/topics/p.adjust'>p.adjust</a></code>.
 Default: <code>"BH"</code></p></td>
     </tr>
     <tr>
@@ -208,10 +210,12 @@ messages. Default: <code>FALSE</code>.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Both functions return a <code>data.frame</code> with one row per protein
-  with the key parameters of the statistical test.</p>
+    <p>The `result_names()` function returns a character vector.</p>
+<p>The `test_diff()` function returns a <code>data.frame</code> with one row per protein
+  with the key parameters of the statistical test. Depending what kind of test
+  (Wald or F test) the content of the `data.frame` differs.</p>
 <p>The Wald test, which can considered equivalent to a t-test, returns
-  a data.frame with the following columns:</p><dl class='dl-horizontal'>
+  a `data.frame` with the following columns:</p><dl class='dl-horizontal'>
     <dt>name</dt><dd><p>the name of the protein, extracted from the rowname of
       the input matrix</p></dd>
     <dt>pval</dt><dd><p>the p-value of the statistical test</p></dd>
@@ -227,7 +231,7 @@ messages. Default: <code>FALSE</code>.</p></td>
       of available information for estimating the <code>se</code>. They
       are the sum of the number of samples the protein was observed
       in, the amount of information contained in the missing values,
-      and the estimated df from the variance prior.</p></dd>
+      and the degrees of freedom of the variance prior.</p></dd>
     <dt>avg_abundance</dt><dd><p>the estimate of the average abundance of
       the protein across all samples.</p></dd>
     <dt>n_approx</dt><dd><p>the approximated information available for estimating
@@ -237,7 +241,7 @@ messages. Default: <code>FALSE</code>.</p></td>
   </dl>
 
 
-<p>The F-test returns a data.frame with the following columns</p><dl class='dl-horizontal'>
+<p>The F-test returns a `data.frame` with the following columns</p><dl class='dl-horizontal'>
     <dt>name</dt><dd><p>the name of the protein, extracted from the rowname of
       the input matrix</p></dd>
     <dt>pval</dt><dd><p>the p-value of the statistical test</p></dd>
@@ -252,7 +256,7 @@ messages. Default: <code>FALSE</code>.</p></td>
       of available information for estimating the <code>se</code>. They
       are the sum of the number of samples the protein was observed
       in, the amount of information contained in the missing values,
-      and the estimated df from the variance prior.</p></dd>
+      and the degrees of freedom of the variance prior.</p></dd>
     <dt>avg_abundance</dt><dd><p>the estimate of the average abundance of
       the protein across all samples.</p></dd>
     <dt>n_approx</dt><dd><p>the information available for estimating

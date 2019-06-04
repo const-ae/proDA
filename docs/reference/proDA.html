@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Main function to determine the hyper and protein parameters — proDA • proDA</title>
+<title>Main function to fit the probabilistic dropout model — proDA • proDA</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Main function to determine the hyper and protein parameters — proDA" />
+<meta property="og:title" content="Main function to fit the probabilistic dropout model — proDA" />
 
 <meta property="og:description" content="The function fits a linear probabilistic dropout model and infers
 the hyper-parameters for the location prior, the variance prior,
@@ -67,7 +67,7 @@ associated uncertainty." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@ associated uncertainty." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Main function to determine the hyper and protein parameters</h1>
+    <h1>Main function to fit the probabilistic dropout model</h1>
     <small class="dont-index">Source: <a href='https://github.com/const-ae/proDA/blob/master/R/proDA.R'><code>R/proDA.R</code></a></small>
     <div class="hidden name"><code>proDA.Rd</code></div>
     </div>
@@ -146,10 +146,10 @@ associated uncertainty.</p>
       <th>data</th>
       <td><p>a matrix like object (<code><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix()</a></code>,
 <code>SummarizedExperiment()</code>, or anything that can be cast to
-<code>SummarizedExperiment()</code> (eg. MSnSet, eSet, ...)) with the
+<code>SummarizedExperiment()</code> (eg. `MSnSet`, `eSet`, ...)) with
 one column per
 sample and one row per protein. Missing values should be
-coded <code>NA</code>.</p></td>
+coded as <code>NA</code>.</p></td>
     </tr>
     <tr>
       <th>design</th>
@@ -182,9 +182,9 @@ spectrometry experiments have a linear mean-variance relation.
 This is undesirable and can be removed by working on the log
 scale. The easiest way to find out if the data is already log-
 transformed is to see if the intensities are in the range of
-0 to 100 in which case they are transformed or if they rather
-are between 1e5 to 1e12, in which case they need to be
-transformed. Default: <code>TRUE</code></p></td>
+`0` to `100` in which case they are transformed or if they rather
+are between `1e5` to `1e12`, in which case they are not.
+Default: <code>TRUE</code></p></td>
     </tr>
     <tr>
       <th>moderate_location, moderate_variance</th>
@@ -218,8 +218,8 @@ the model has converged. Default: <code>1e-3</code></p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>boolean that signals if the method prints informative
-messages. Default: <code>FALSE</code></p></td>
+      <td><p>boolean that signals if the method prints messages
+during the fitting. Default: <code>FALSE</code></p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -233,7 +233,9 @@ messages. Default: <code>FALSE</code></p></td>
     <p>An object of class 'proDAFit'. The object contains information
   on the hyper-parameters and feature parameters, the convergence,
   the experimental design etc. Internally, it is a sub-class of
-  <code>SummarizedExperiment</code> which means the object is subsettable.</p>
+  <code>SummarizedExperiment</code> which means the object is subsettable.
+  The `$`-operator is overloaded for this object to make it easy to
+  discover applicable functions.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -241,7 +243,7 @@ messages. Default: <code>FALSE</code></p></td>
 of each protein estimate. The variance moderation is fairly standard
 in high-throughput experiments and can boost the power to detect
 differentially abundant proteins. The location moderation is important
-to handle extreme cases where in one conditio a protein is not observed
+to handle the edge case where in one condition a protein is not observed
 in any sample. In addition it can help to get more precise estimates
 of the difference between conditions. Unlike 'DESeq2', which moderates
 the coefficient estimates (ie. the "betas") to be centered around zero,

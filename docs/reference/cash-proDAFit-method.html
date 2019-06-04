@@ -48,7 +48,7 @@ reference_level
 result_names
 coefficient_variance_matrices
 colData
-rowData.
+rowData
 " />
 <meta name="twitter:card" content="summary" />
 
@@ -80,7 +80,7 @@ rowData.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -154,7 +154,7 @@ the <code>`$`</code> operator only exposes a limited set of functions</p><ul>
 <li><p>result_names</p></li>
 <li><p>coefficient_variance_matrices</p></li>
 <li><p>colData</p></li>
-<li><p>rowData.</p></li>
+<li><p>rowData</p></li>
 </ul>
     
     </div>
@@ -200,6 +200,62 @@ object is not allowed</p></td>
   accessor functions.</p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='generate_synthetic_data.html'>generate_synthetic_data</a></span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+  <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='proDA.html'>proDA</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>design</span> <span class='kw'>=</span> <span class='no'>syn_data</span>$<span class='no'>groups</span>)
+
+  <span class='co'># The two styles are identical</span>
+  <span class='fu'>design</span>(<span class='no'>fit</span>)</div><div class='output co'>#&gt;               Condition_1 Condition_2
+#&gt; Condition_1-1           1           0
+#&gt; Condition_1-2           1           0
+#&gt; Condition_1-3           1           0
+#&gt; Condition_2-1           0           1
+#&gt; Condition_2-2           0           1
+#&gt; Condition_2-3           0           1
+#&gt; attr(,"assign")
+#&gt; [1] 1 1
+#&gt; attr(,"contrasts")
+#&gt; attr(,"contrasts")$x_
+#&gt; [1] "contr.treatment"
+#&gt; </div><div class='input'>  <span class='no'>fit</span>$<span class='no'>design</span></div><div class='output co'>#&gt;               Condition_1 Condition_2
+#&gt; Condition_1-1           1           0
+#&gt; Condition_1-2           1           0
+#&gt; Condition_1-3           1           0
+#&gt; Condition_2-1           0           1
+#&gt; Condition_2-2           0           1
+#&gt; Condition_2-3           0           1
+#&gt; attr(,"assign")
+#&gt; [1] 1 1
+#&gt; attr(,"contrasts")
+#&gt; attr(,"contrasts")$x_
+#&gt; [1] "contr.treatment"
+#&gt; </div><div class='input'>
+  <span class='co'># More functions</span>
+  <span class='no'>fit</span>$<span class='no'>abundances</span></div><div class='output co'>#&gt;            Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1
+#&gt; protein_1       24.07919      23.42556      23.94491      24.21937
+#&gt; protein_2       18.61085      18.18919            NA            NA
+#&gt; protein_3             NA            NA            NA            NA
+#&gt; protein_4             NA      18.35705      17.45826            NA
+#&gt; protein_5       21.94793      20.08355      24.01483      21.14165
+#&gt; protein_6       23.71996      24.34934      24.07880      23.33419
+#&gt; protein_7             NA            NA      17.72383      18.07316
+#&gt; protein_8       21.88006      21.28270      21.53463      21.96805
+#&gt; protein_9       20.88883      21.35111      21.41965      21.15165
+#&gt; protein_10            NA            NA            NA            NA
+#&gt;            Condition_2-2 Condition_2-3
+#&gt; protein_1       23.50432      24.27628
+#&gt; protein_2       18.65685            NA
+#&gt; protein_3             NA            NA
+#&gt; protein_4             NA            NA
+#&gt; protein_5       21.54833      21.39306
+#&gt; protein_6       24.23279      23.77613
+#&gt; protein_7             NA            NA
+#&gt; protein_8       21.56534      21.77661
+#&gt; protein_9       21.78433      21.05557
+#&gt; protein_10            NA            NA</div><div class='input'>
+
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -209,7 +265,9 @@ object is not allowed</p></td>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

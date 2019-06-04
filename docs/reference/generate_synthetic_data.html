@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
       </span>
     </div>
 
@@ -157,7 +157,7 @@ differ between the conditions. Default: 0.1</p></td>
     <tr>
       <th>dropout_curve_position</th>
       <td><p>the point where the chance
-to observe a value is 50<!-- %. Can be a single number or -->
+to observe a value is 50%. Can be a single number or
 a vector of <code>length(dropout_curve_position) == n_conditions * n_replicates</code>.
 Default: 18.5</p></td>
     </tr>
@@ -183,7 +183,7 @@ variances. Default: 0.05 and 2</p></td>
     </tr>
     <tr>
       <th>effect_size</th>
-      <td><p>the standard deviation that used to draw
+      <td><p>the standard deviation that is used to draw
 different values for the <code>frac_changed</code> part of the
 proteins. Default: 2</p></td>
     </tr>
@@ -202,11 +202,11 @@ object instead of a list. Default: <code>FALSE</code></p></td>
     <dt>Z</dt><dd><p>the intensity matrix before dropping out values</p></dd>
     <dt>t_mu</dt><dd><p>a matrix with <code>n_proteins</code> rows and
        <code>n_conditions</code> columns that contains the underlying
-       means for each protein.</p></dd>
-    <dt>t_sigma2</dt><dd><p>a vector with the true variance for each
-       protein.</p></dd>
+       means for each protein</p></dd>
+    <dt>t_sigma2</dt><dd><p>a vector with the true variances for each
+       protein</p></dd>
     <dt>changed</dt><dd><p>a vector with boolean values if the
-       protein is actually changed.</p></dd>
+       protein is actually changed</p></dd>
     <dt>group</dt><dd><p>the group structure mapping samples to conditions</p></dd>
   </dl><p>if <code>return_summarized_experiment</code> is <code>FALSE</code>. Otherwise
   returns a <code>SummarizedExperiment</code> with the same information.</p>
@@ -214,7 +214,22 @@ object instead of a list. Default: <code>FALSE</code></p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>  <span class='no'>syn_data</span> <span class='kw'>&lt;-</span> <span class='fu'>generate_synthetic_data</span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>syn_data</span>)</div><div class='output co'>#&gt; [1] "Y"        "Z"        "t_mu"     "t_sigma2" "changed"  "groups"  </div><div class='input'>  <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'>generate_synthetic_data</span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>return_summarized_experiment</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>syn_data</span>)</div><div class='output co'>#&gt; [1] "Y"        "Z"        "t_mu"     "t_sigma2" "changed"  "groups"  </div><div class='input'>  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>)</div><div class='output co'>#&gt;           Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1 Condition_2-2
+#&gt; protein_1            NA            NA            NA            NA      17.50241
+#&gt; protein_2            NA            NA            NA            NA            NA
+#&gt; protein_3            NA            NA      18.07870            NA            NA
+#&gt; protein_4      20.73936      20.79656      20.71465      20.78360      20.43842
+#&gt; protein_5      20.93270      20.41703      20.42440      20.59114      20.46230
+#&gt; protein_6            NA            NA      17.75419            NA            NA
+#&gt;           Condition_2-3
+#&gt; protein_1            NA
+#&gt; protein_2            NA
+#&gt; protein_3            NA
+#&gt; protein_4      20.29244
+#&gt; protein_5      20.47756
+#&gt; protein_6      17.80422</div><div class='input'>
+  <span class='co'># Returning a SummarizedExperiment</span>
+  <span class='no'>se</span> <span class='kw'>&lt;-</span> <span class='fu'>generate_synthetic_data</span>(<span class='kw'>n_proteins</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>return_summarized_experiment</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
   <span class='no'>se</span></div><div class='output co'>#&gt; class: SummarizedExperiment 
 #&gt; dim: 10 6 
 #&gt; metadata(0):
@@ -224,7 +239,20 @@ object instead of a list. Default: <code>FALSE</code></p></td>
 #&gt; colnames(6): Condition_1-1 Condition_1-2 ... Condition_2-2
 #&gt;   Condition_2-3
 #&gt; colData names(3): group true_dropout_curve_position
-#&gt;   true_dropout_curve_scale</div><div class='input'>
+#&gt;   true_dropout_curve_scale</div><div class='input'>  <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='kw pkg'>SummarizedExperiment</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SummarizedExperiment/topics/SummarizedExperiment-class'>assay</a></span>(<span class='no'>se</span>))</div><div class='output co'>#&gt;           Condition_1-1 Condition_1-2 Condition_1-3 Condition_2-1 Condition_2-2
+#&gt; protein_1      23.63188      24.56854      23.95489      23.77380      23.66998
+#&gt; protein_2            NA            NA            NA            NA      18.23310
+#&gt; protein_3      18.87651            NA            NA      19.06291            NA
+#&gt; protein_4      20.45522      20.11678      20.15111      20.71967      20.53295
+#&gt; protein_5      19.59775      19.40209      19.47563      19.31781      19.53988
+#&gt; protein_6      21.03080      20.46508      20.49290      21.05010      20.65255
+#&gt;           Condition_2-3
+#&gt; protein_1      23.51429
+#&gt; protein_2      18.24830
+#&gt; protein_3            NA
+#&gt; protein_4      20.54349
+#&gt; protein_5      19.95840
+#&gt; protein_6      20.94089</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
