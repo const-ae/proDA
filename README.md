@@ -69,7 +69,7 @@ syn_dataset$Y[1:5, ]
 #> protein_4      25.44209      25.15151      25.38142      25.22754      24.95229      24.97185
 #> protein_5      23.46724      23.15808      23.21357      23.29562      23.25999      23.57925
 
-# Assign the samples to the two conditions
+# Assignment of the samples to the two conditions
 syn_dataset$groups
 #> [1] Condition_1 Condition_1 Condition_1 Condition_2 Condition_2 Condition_2
 #> Levels: Condition_1 Condition_2
@@ -96,13 +96,13 @@ and `dist_approx()`.
 
 `proDA` is an R package that implements a powerful probabilistic dropout
 model to identify differentially abundant proteins. The package was
-designed specifically with label-free mass spectrometry data in mind,
-which poses the challenge of many missing values.
+specifically designed for label-free mass spectrometry data and in
+particular how to handle the many many missing values.
 
 But all this is useless if you cannot load your data and get it into a
-shape that is useable. In the next section, I will give an example how
-to load the abundance matrix and bring it into a useful form. The steps
-that I will go through are
+shape that is useable. In the next section, I will explain how to load
+the abundance matrix and bring it into a useful form. The steps that I
+will go through are
 
 1.  Load the `proteinGroups.txt` MaxQuant output table
 2.  Extract the intensity columns and create the abundance matrix
@@ -152,8 +152,7 @@ contain the measured intensities.
 
 ``` r
 # I use a regular expression (regex) to select the intensity columns
-intensity_colnames <- colnames(maxquant_protein_table)[grepl("^LFQ\\.intensity\\.",
-                                                             colnames(maxquant_protein_table))]
+intensity_colnames <- grep("^LFQ\\.intensity\\.", colnames(maxquant_protein_table), value=TRUE)
 head(intensity_colnames)
 #> [1] "LFQ.intensity.CG1407.01" "LFQ.intensity.CG1407.02" "LFQ.intensity.CG1407.03"
 #> [4] "LFQ.intensity.CG4676.01" "LFQ.intensity.CG4676.02" "LFQ.intensity.CG4676.03"
@@ -250,10 +249,10 @@ samples A to B, A to C, B to C and so on.
 
 The base R `dist()` function can not handle input data that contains
 missing values, so we might be tempted to just replace the missing
-values with some other and calculate the distance on the completed
-dataset. But choosing a good replacement value is challenging and can
-also be misleading because the samples with many missing values would be
-considered too close.
+values with some realistic numbers and calculate the distance on the
+completed dataset. But choosing a good replacement value is challenging
+and can also be misleading because the samples with many missing values
+would be considered too close.
 
 Instead `proDA` provides the `dist_approx()` function that takes either
 a fitted model (ie. the output from `proDA()`) or a simple matrix (for
@@ -277,15 +276,18 @@ cell.
 # install.packages("pheatmap")
 sel <- c(1:3,  # CG1407
          7:9,  # CG59163
-         22:24)# Cg6618
+         22:24)# CG6618
 
 plot_mat <- as.matrix(da$mean)[sel, sel]
+# Remove diagonal elements, so that the colorscale is not distorted
 plot_mat[diag(9) == 1] <- NA
+# 95% conf interval is approx `sd * 1.96`
 uncertainty <- matrix(paste0(" ± ",round(as.matrix(da$sd * 1.96)[sel, sel], 1)), nrow=9)
 pheatmap::pheatmap(plot_mat, 
                    cluster_rows = FALSE, cluster_cols = FALSE,
                    display_numbers= uncertainty,
                    number_color = "black")
+#> Warning: partial match of 'just' to 'justification'
 ```
 
 <img src="man/figures/README-sample_dist-1.png" width="60%" style="display: block; margin: auto;" />
@@ -295,10 +297,11 @@ pheatmap::pheatmap(plot_mat,
 In the next step, we will fit the actual linear probabilistic dropoout
 model to the normalized data. But before we start, I will create a
 data.frame that contains some additional information on each sample, in
-particular to which condition that sample belongs.
+particular to which condition that sample
+belongs.
 
 ``` r
-
+# The best way to create this data.frame depends on the column naming scheme
 sample_info_df <- data.frame(name = colnames(normalized_abundance_matrix),
                              stringsAsFactors = FALSE)
 sample_info_df$condition <- substr(sample_info_df$name, 1, nchar(sample_info_df$name)  - 3)
@@ -390,6 +393,7 @@ samples.
 # This chunk only works if pheatmap is installed
 # install.packages("pheatmap")
 pheatmap::pheatmap(dist_approx(fit[1:20, 1:3], by_sample = FALSE)$mean)
+#> Warning: partial match of 'just' to 'justification'
 ```
 
 <img src="man/figures/README-protein_dist-1.png" width="60%" style="display: block; margin: auto;" />
@@ -402,14 +406,15 @@ function takes first the fit object produced by `proDA()` and a contrast
 argument. This can either be a string or an expression if we want to
 test more complex combinations. For example `conditionCG1407 -
 (conditionCG6017 + conditionCG5880) / 2` would test for the difference
-between CG1407 and the average between CG6017 and CG5880.
+between CG1407 and the average of CG6017 and CG5880.
 
-Alternatively `test_diff()` also supports likelihood ratio F-tests,
-instead of the `contrast` argument the `reduced_model` argument is
-specified.
+Alternatively `test_diff()` also supports likelihood ratio F-tests. In
+that case instead of the `contrast` argument specify the `reduced_model`
+argument.
 
 ``` r
 # Test which proteins differ between condition CG1407 and S2R
+# S2R is the default contrast, because it was specified as the `reference_level`
 test_res <- test_diff(fit, "conditionCG1407")
 test_res
 #> # A tibble: 122 x 10
@@ -431,9 +436,10 @@ test_res
 This walkthrough ends with the identification which proteins are
 differentially abundant. But for a real dataset, now the actual analysis
 only just begins. A list of significant proteins is hardly ever a
-publishable result, we need to make sense what the underlying biological
-mechanisms are. The precise question that should be asked very much
-dependent on the biological problem.
+publishable result, one often needs to make sense what the relevant
+underlying biological mechanisms are. But for this problem other tools
+are necessary, which depend on the precise question associated with the
+biological problem at hand.
 
 # Session Info
 
@@ -457,7 +463,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] proDA_0.0.0.9000
+#> [1] proDA_0.99.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Rcpp_1.0.1                  RColorBrewer_1.1-2          pillar_1.3.1               
