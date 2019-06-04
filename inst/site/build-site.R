@@ -15,7 +15,7 @@ swap_render_fun <- function() {
 
     out <- rmarkdown::html_document(
       toc = toc,
-      toc_depth = pkg$meta$toc$depth %||% 2,
+      toc_depth = rlang::`%||%`(pkg$meta$toc$depth, 2),
       self_contained = FALSE,
       theme = NULL,
       template = template$path,
