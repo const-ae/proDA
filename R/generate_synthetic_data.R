@@ -57,7 +57,7 @@
 #'   # Returning a SummarizedExperiment
 #'   se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
 #'   se
-#'   head(assay(se))
+#'   head(SummarizedExperiment::assay(se))
 #'
 #' @export
 generate_synthetic_data <- function(n_proteins, n_conditions = 2,

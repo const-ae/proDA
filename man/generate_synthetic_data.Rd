@@ -78,6 +78,6 @@ Generate a dataset according to the probabilistic dropout model
   # Returning a SummarizedExperiment
   se <- generate_synthetic_data(n_proteins = 10, return_summarized_experiment = TRUE)
   se
-  head(assay(se))
+  head(SummarizedExperiment::assay(se))
 
 }
