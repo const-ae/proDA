@@ -28,7 +28,7 @@ just have to adapt the column names.
 ## MaxQuant File Overview
 
 MaxQuant is a popular tool for identifying, integrating, and combining MS peaks
-to derive peptide and protein intensities. MaxQuant produces serveral output
+to derive peptide and protein intensities. MaxQuant produces several output
 files including **proteinGroups.txt**. It is usually a tab separated table with 
 a lot of different columns, which can make it difficult to not get overwhelmed
 with information. 
@@ -221,7 +221,7 @@ The [tidyverse](https://www.tidyverse.org/) is a set of coherent R packages
 that provide many useful functions
 for common data analysis tasks. It replicates many of the functionalities 
 already available in base R packages, but learns from its mistakes and avoids 
-some of the suprising behaviors. For example strings are never automatically
+some of the surprising behaviors. For example strings are never automatically
 converted to factors. Another popular feature in the tidyverse is the pipe 
 operator (`%>%`) that makes it easy to chain complex transformations.
 

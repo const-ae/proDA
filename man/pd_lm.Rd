@@ -69,7 +69,7 @@ The function works similar to the classical \code{\link[stats]{lm}}
 but with special handling of \code{NA}'s. Whereas \code{lm} usually
 just ignores response value that are missing, \code{pd_lm} applies
 a probabilistic dropout model, that assumes that missing values
-occur because of the dropout cuve. The dropout curve describes for
+occur because of the dropout curve. The dropout curve describes for
 each position the chance that that a value is missed. A negative
 \code{dropout_curve_scale} means that the lower the intensity was,
 the more likely it is to miss the value.

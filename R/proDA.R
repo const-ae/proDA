@@ -60,7 +60,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("Condition1", "Condition
 #' @param design a specification of the experimental design that
 #'   is used to fit the linear model. It can be a \code{model.matrix()}
 #'   with one row for each sample and one column for each
-#'   coefficient. It can also be a formula with the entries refering
+#'   coefficient. It can also be a formula with the entries referring
 #'   to global objects, columns in the \code{col_data} argument or
 #'   columns in the \code{colData(data)} if data is a
 #'   \code{SummarizedExperiment}. Thirdly, it can be a vector that

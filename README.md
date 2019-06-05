@@ -110,7 +110,7 @@ will go through are
 4.  Normalize the data using `median_normalization()`
 5.  Inspect sample structure with a heatmap of the distance matrix
     (`dist_approx()`)
-6.  Fit the probabilisitc dropout model with `proDA()`
+6.  Fit the probabilistic dropout model with `proDA()`
 7.  Identify differentially abundant proteins with `test_diff()`
 
 ### Load Data
@@ -268,7 +268,7 @@ da <- dist_approx(normalized_abundance_matrix)
 
 `dist_approx()` returns two elements the `mean` of the estimate and the
 associated `sd`. In the next step I will plot the heatmap for three
-differnet conditions, adding the 95% confidence interval as text to each
+different conditions, adding the 95% confidence interval as text to each
 cell.
 
 ``` r
@@ -294,7 +294,7 @@ pheatmap::pheatmap(plot_mat,
 
 ### Fit the Probabilistic Dropout Model
 
-In the next step, we will fit the actual linear probabilistic dropoout
+In the next step, we will fit the actual linear probabilistic dropout
 model to the normalized data. But before we start, I will create a
 data.frame that contains some additional information on each sample, in
 particular to which condition that sample

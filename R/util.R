@@ -2,7 +2,7 @@
 
 #' apply function that always returns a numeric matrix
 #'
-#' The function is modelled after `vapply`, but always returns a matrix
+#' The function is modeled after `vapply`, but always returns a matrix
 #' with one row for each iteration. You need to provide the number
 #' of elements each function call produces beforehand (i.e. the number of
 #' resulting columns). For a more flexible version where you don't need to

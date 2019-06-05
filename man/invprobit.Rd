@@ -25,7 +25,7 @@ a numeric vector of \code{length(x)}.
 \description{
 Calculate the values of the sigmoidal function that is defined by the
 cumulative normal distribution function (\code{\link{pnorm}}). This
-method provides a convient wrapper for the \code{pnorm} that automatically
+method provides a convenient wrapper for the \code{pnorm} that automatically
 handles negative zeta and is more consistent in its naming.
 }
 \examples{
