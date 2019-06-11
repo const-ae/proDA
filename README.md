@@ -24,6 +24,14 @@ samples and the associated uncertainty, without the intermediate
 imputation step. `proDA` supports full linear models with variance and
 location moderation.
 
+For full details, please see our **preprint**:
+
+Constantin Ahlmann-Eltze and Simon Anders: *proDA: Probabilistic Dropout
+Analysis for Identifying Differentially Abundant Proteins in Label-Free
+Mass Spectrometry*.
+[biorXiv 661496](http://www.biorxiv.org/content/10.1101/661496v1) (Jun
+2019)
+
 ## Installation
 
 You can install the development version from
