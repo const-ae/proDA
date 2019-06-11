@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.5</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@
 <div id="maxquant-file-overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#maxquant-file-overview" class="anchor"></a>MaxQuant File Overview</h2>
-<p>MaxQuant is a popular tool for identifying, integrating, and combining MS peaks to derive peptide and protein intensities. MaxQuant produces serveral output files including <strong>proteinGroups.txt</strong>. It is usually a tab separated table with a lot of different columns, which can make it difficult to not get overwhelmed with information.</p>
+<p>MaxQuant is a popular tool for identifying, integrating, and combining MS peaks to derive peptide and protein intensities. MaxQuant produces several output files including <strong>proteinGroups.txt</strong>. It is usually a tab separated table with a lot of different columns, which can make it difficult to not get overwhelmed with information.</p>
 <p>The most important columns that every proteinGroups.txt file contains are</p>
 <ul>
 <li><p><em>Protein IDs</em>: a semicolon delimited text listing all protein identifiers that match an identified set of peptides. Most of the time this is just a single protein, but sometimes proteins are so similar to each other because of gene duplication that it was not possible to distinguish them.</p></li>
@@ -246,7 +246,7 @@
 <div id="tidyverse" class="section level1">
 <h1 class="hasAnchor">
 <a href="#tidyverse" class="anchor"></a>Tidyverse</h1>
-<p>The <a href="https://www.tidyverse.org/">tidyverse</a> is a set of coherent R packages that provide many useful functions for common data analysis tasks. It replicates many of the functionalities already available in base R packages, but learns from its mistakes and avoids some of the suprising behaviors. For example strings are never automatically converted to factors. Another popular feature in the tidyverse is the pipe operator (<code>%&gt;%</code>) that makes it easy to chain complex transformations.</p>
+<p>The <a href="https://www.tidyverse.org/">tidyverse</a> is a set of coherent R packages that provide many useful functions for common data analysis tasks. It replicates many of the functionalities already available in base R packages, but learns from its mistakes and avoids some of the surprising behaviors. For example strings are never automatically converted to factors. Another popular feature in the tidyverse is the pipe operator (<code>%&gt;%</code>) that makes it easy to chain complex transformations.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringr)</a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)</a>
