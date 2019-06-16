@@ -58,20 +58,37 @@ Constantin Ahlmann-Eltze and Simon Anders: *proDA: Probabilistic Dropout Analysi
 
 ## Installation
 
-You can install the development version from [GitHub](https://github.com/const-ae/proDA) with:
+proDA is implemented as an [R](https://cran.r-project.org/) package.
+
+You can install the current development version from
+[GitHub](https://github.com/const-ae/proDA) by typing the follwoing 
+two commands in R:
 
 ``` r
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("const-ae/proDA")
 ```
 
-The pkgdown documentation for the package is available on https://const-ae.github.io/proDA/reference
+Notes:
 
+- If you have already installed "devtools" previously, you can omit the first line.
 
-In the following section, I will give a very brief overview on the main functionality
-of the `proDA` package. New users are advised to directly go to section two,
-where I give a complete walkthrough and explain in detail, what steps are necessary
-for the analysis of label-free mass spectrometry data.
+- We have tested proDA on all three major platforms (Windows, Linux, MacOS).
+
+- The submission of proDA to [Bioconductor](https://www.bioconductor.org/) is pending. Once it is accepted, 
+regular releases will be available from the Bioconductor package repository.
+
+- The pkgdown documentation for the package is available on
+<https://const-ae.github.io/proDA/reference>
+
+---
+
+In the following section, I will give a very brief overview on the main
+functionality of the `proDA` package, aimed at experienced R users. 
+New users are advised to skip this "quickstart" and to go directly
+to section two, where I give a complete walkthrough and explain in
+detail, what steps are necessary for the analysis of label-free mass
+spectrometry data.
 
 ## Quickstart
 
