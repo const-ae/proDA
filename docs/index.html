@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.3</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.5</span>
       </span>
     </div>
 
@@ -95,6 +95,8 @@
 <!-- badges: end -->
 <p>The goal of <code>proDA</code> is to identify differentially abundant proteins in label-free mass spectrometry data. The main challenge of this data are the many missing values. The missing values don’t occur randomly but especially at low intensities. This means that they cannot just be ignored. Existing methods have mostly focused on replacing the missing values with some reasonable number (“imputation”) and then run classical methods. But imputation is problematic because it obscures the amount of available information. Which in turn can lead to over-confident predictions.</p>
 <p><code>proDA</code> on the other hand does not impute missing values, but constructs a probabilistic dropout model. For each sample it fits a sigmoidal dropout curve. This information can then be used to infer means across samples and the associated uncertainty, without the intermediate imputation step. <code>proDA</code> supports full linear models with variance and location moderation.</p>
+<p>For full details, please see our <strong>preprint</strong>:</p>
+<p>Constantin Ahlmann-Eltze and Simon Anders: <em>proDA: Probabilistic Dropout Analysis for Identifying Differentially Abundant Proteins in Label-Free Mass Spectrometry</em>. <a href="http://www.biorxiv.org/content/10.1101/661496v1">biorXiv 661496</a> (Jun 2019)</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -159,7 +161,7 @@
 <li>Normalize the data using <code><a href="reference/median_normalization.html">median_normalization()</a></code>
 </li>
 <li>Inspect sample structure with a heatmap of the distance matrix (<code><a href="reference/dist_approx.html">dist_approx()</a></code>)</li>
-<li>Fit the probabilisitc dropout model with <code><a href="reference/proDA.html">proDA()</a></code>
+<li>Fit the probabilistic dropout model with <code><a href="reference/proDA.html">proDA()</a></code>
 </li>
 <li>Identify differentially abundant proteins with <code><a href="reference/test_diff.html">test_diff()</a></code>
 </li>
@@ -229,7 +231,7 @@
 <p>The base R <code><a href="https://www.rdocumentation.org/packages/stats/topics/dist">dist()</a></code> function can not handle input data that contains missing values, so we might be tempted to just replace the missing values with some realistic numbers and calculate the distance on the completed dataset. But choosing a good replacement value is challenging and can also be misleading because the samples with many missing values would be considered too close.</p>
 <p>Instead <code>proDA</code> provides the <code><a href="reference/dist_approx.html">dist_approx()</a></code> function that takes either a fitted model (ie. the output from <code><a href="reference/proDA.html">proDA()</a></code>) or a simple matrix (for which it internally calls <code><a href="reference/proDA.html">proDA()</a></code>) and estimates the expected distance without imputing the missing values. In addition, it reports the associated uncertainty with every estimate. The estimates for samples with many missing values will be uncertain, allowing the data analyst to discount them.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">da &lt;-<span class="st"> </span><span class="kw"><a href="reference/dist_approx.html">dist_approx</a></span>(normalized_abundance_matrix)</a></code></pre></div>
-<p><code><a href="reference/dist_approx.html">dist_approx()</a></code> returns two elements the <code>mean</code> of the estimate and the associated <code>sd</code>. In the next step I will plot the heatmap for three differnet conditions, adding the 95% confidence interval as text to each cell.</p>
+<p><code><a href="reference/dist_approx.html">dist_approx()</a></code> returns two elements the <code>mean</code> of the estimate and the associated <code>sd</code>. In the next step I will plot the heatmap for three different conditions, adding the 95% confidence interval as text to each cell.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># This chunk only works if pheatmap is installed</span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="co"># install.packages("pheatmap")</span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">sel &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,  <span class="co"># CG1407</span></a>
@@ -250,7 +252,7 @@
 <div id="fit-the-probabilistic-dropout-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fit-the-probabilistic-dropout-model" class="anchor"></a>Fit the Probabilistic Dropout Model</h3>
-<p>In the next step, we will fit the actual linear probabilistic dropoout model to the normalized data. But before we start, I will create a data.frame that contains some additional information on each sample, in particular to which condition that sample belongs.</p>
+<p>In the next step, we will fit the actual linear probabilistic dropout model to the normalized data. But before we start, I will create a data.frame that contains some additional information on each sample, in particular to which condition that sample belongs.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># The best way to create this data.frame depends on the column naming scheme</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2">sample_info_df &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">name =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(normalized_abundance_matrix),</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3">                             <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
