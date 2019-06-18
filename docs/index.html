@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.5</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.7</span>
       </span>
     </div>
 
@@ -100,11 +100,19 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version from <a href="https://github.com/const-ae/proDA">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
+<p>proDA is implemented as an <a href="https://cran.r-project.org/">R</a> package.</p>
+<p>You can install the current development version from <a href="https://github.com/const-ae/proDA">GitHub</a> by typing the follwoing two commands in R:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"const-ae/proDA"</span>)</a></code></pre></div>
-<p>The pkgdown documentation for the package is available on <a href="https://const-ae.github.io/proDA/reference" class="uri">https://const-ae.github.io/proDA/reference</a></p>
-<p>In the following section, I will give a very brief overview on the main functionality of the <code>proDA</code> package. New users are advised to directly go to section two, where I give a complete walkthrough and explain in detail, what steps are necessary for the analysis of label-free mass spectrometry data.</p>
+<p>Notes:</p>
+<ul>
+<li><p>If you have already installed “devtools” previously, you can omit the first line.</p></li>
+<li><p>We have tested proDA on all three major platforms (Windows, Linux, MacOS).</p></li>
+<li><p>The submission of proDA to <a href="https://www.bioconductor.org/">Bioconductor</a> is pending. Once it is accepted, regular releases will be available from the Bioconductor package repository.</p></li>
+<li><p>The pkgdown documentation for the package is available on <a href="https://const-ae.github.io/proDA/reference" class="uri">https://const-ae.github.io/proDA/reference</a></p></li>
+</ul>
+<hr>
+<p>In the following section, I will give a very brief overview on the main functionality of the <code>proDA</code> package, aimed at experienced R users. New users are advised to skip this “quickstart” and to go directly to section two, where I give a complete walkthrough and explain in detail, what steps are necessary for the analysis of label-free mass spectrometry data.</p>
 </div>
 <div id="quickstart" class="section level2">
 <h2 class="hasAnchor">
