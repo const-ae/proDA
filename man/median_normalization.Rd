@@ -4,10 +4,14 @@
 \alias{median_normalization}
 \title{Column wise median normalization of the data matrix}
 \usage{
-median_normalization(X)
+median_normalization(X, spike_in_rows = NULL)
 }
 \arguments{
 \item{X}{a matrix or SummarizedExperiment of proteins and samples}
+
+\item{spike_in_rows}{a numeric or boolean vector that is used to
+to normalize the intensities across samples. Default: \code{NULL}
+which means that all rows are used.}
 }
 \value{
 the normalized matrix
@@ -22,5 +26,8 @@ on the assumption that a majority of the rows did not change.
   syn_data <- generate_synthetic_data(n_proteins = 10)
   normalized_data <- median_normalization(syn_data$Y)
   normalized_data
+  
+  # If we assume that the first 5 proteins are spike-ins
+  normalized_data2 <- median_normalization(syn_data$Y, spike_in_rows = 1:5)
 
 }
