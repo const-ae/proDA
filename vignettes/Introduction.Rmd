@@ -60,26 +60,26 @@ Constantin Ahlmann-Eltze and Simon Anders: *proDA: Probabilistic Dropout Analysi
 
 proDA is implemented as an [R](https://cran.r-project.org/) package.
 
-You can install the current development version from
-[GitHub](https://github.com/const-ae/proDA) by typing the follwoing 
-two commands in R:
+You can install it from [Bioconductor](https://www.bioconductor.org/) by typing 
+the following commands into R:
 
-``` r
-install.packages("devtools")
+```{r eval=FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("proDA")
+```
+
+To get the latest development version from
+[GitHub](https://github.com/const-ae/proDA), you can use
+the [`devtools`](https://github.com/r-lib/devtools) package:
+
+```{r eval=FALSE}
+# install.packages("devtools")
 devtools::install_github("const-ae/proDA")
 ```
 
-Notes:
-
-- If you have already installed "devtools" previously, you can omit the first line.
-
-- We have tested proDA on all three major platforms (Windows, Linux, MacOS).
-
-- The submission of proDA to [Bioconductor](https://www.bioconductor.org/) is pending. Once it is accepted, 
-regular releases will be available from the Bioconductor package repository.
-
-- The pkgdown documentation for the package is available on
-<https://const-ae.github.io/proDA/reference>
+The pkgdown documentation for the package is available on
+<https://const-ae.github.io/proDA/reference>.
 
 ---
 
