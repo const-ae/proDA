@@ -29,41 +29,41 @@ For full details, please see our **preprint**:
 Constantin Ahlmann-Eltze and Simon Anders: *proDA: Probabilistic Dropout
 Analysis for Identifying Differentially Abundant Proteins in Label-Free
 Mass Spectrometry*.
-[biorXiv 661496](http://www.biorxiv.org/content/10.1101/661496v1) (Jun 
+[biorXiv 661496](http://www.biorxiv.org/content/10.1101/661496v1) (Jun
 2019)
 
 ## Installation
 
 proDA is implemented as an [R](https://cran.r-project.org/) package.
 
-You can install the current development version from
-[GitHub](https://github.com/const-ae/proDA) by typing the follwoing 
-two commands in R:
+You can install it from [Bioconductor](https://www.bioconductor.org/) by
+typing the following commands into R:
 
 ``` r
-install.packages("devtools")
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("proDA")
+```
+
+To get the latest development version from
+[GitHub](https://github.com/const-ae/proDA), you can use the
+[`devtools`](https://github.com/r-lib/devtools) package:
+
+``` r
+# install.packages("devtools")
 devtools::install_github("const-ae/proDA")
 ```
 
-Notes:
+The pkgdown documentation for the package is available on
+<https://const-ae.github.io/proDA/reference>.
 
-- If you have already installed "devtools" previously, you can omit the first line.
-
-- We have tested proDA on all three major platforms (Windows, Linux, MacOS).
-
-- The submission of proDA to [Bioconductor](https://www.bioconductor.org/) is pending. Once it is accepted, 
-regular releases will be available from the Bioconductor package repository.
-
-- The pkgdown documentation for the package is available on
-<https://const-ae.github.io/proDA/reference>
-
----
+-----
 
 In the following section, I will give a very brief overview on the main
-functionality of the `proDA` package, aimed at experienced R users. 
-New users are advised to skip this "quickstart" and to go directly
-to section two, where I give a complete walkthrough and explain in
-detail, what steps are necessary for the analysis of label-free mass
+functionality of the `proDA` package, aimed at experienced R users. New
+users are advised to skip this “quickstart” and to go directly to
+section 1.3, where I give a complete walkthrough and explain in detail,
+what steps are necessary for the analysis of label-free mass
 spectrometry data.
 
 ## Quickstart
@@ -155,7 +155,7 @@ melanogaster.
 
 ``` r
 system.file("extdata/proteinGroups.txt", package = "proDA", mustWork = TRUE)
-#> [1] "/home/constantin/R/x86_64-pc-linux-gnu-library/3.6/proDA/extdata/proteinGroups.txt"
+#> [1] "/Users/ahlmanne/Library/R/3.6/library/proDA/extdata/proteinGroups.txt"
 ```
 
 In this example, I will use the base R functions to load the data,
@@ -237,7 +237,7 @@ barplot(colSums(is.na(abundance_matrix)),
         xlab = "Sample 1 to 36")
 ```
 
-<img src="man/figures/README-qc-mis_barplot-1.png" width="60%" style="display: block; margin: auto;" />
+<img src="vignettes/figures/README-qc-mis_barplot-1.png" width="60%" style="display: block; margin: auto;" />
 
 We can see that the number of missing values differs substantially
 between samples (between 30% and 90%) in this dataset. If we take a look
@@ -250,7 +250,7 @@ boxplot(abundance_matrix,
         xlab = "Sample 1 to 36")
 ```
 
-<img src="man/figures/README-qc-raw_boxplot-1.png" width="60%" style="display: block; margin: auto;" />
+<img src="vignettes/figures/README-qc-raw_boxplot-1.png" width="60%" style="display: block; margin: auto;" />
 
 Note that, the intensity distribution is shifted upwards for samples
 which also have a large number of missing values (for example the last
@@ -310,10 +310,9 @@ pheatmap::pheatmap(plot_mat,
                    cluster_rows = FALSE, cluster_cols = FALSE,
                    display_numbers= uncertainty,
                    number_color = "black")
-#> Warning: partial match of 'just' to 'justification'
 ```
 
-<img src="man/figures/README-sample_dist-1.png" width="60%" style="display: block; margin: auto;" />
+<img src="vignettes/figures/README-sample_dist-1.png" width="60%" style="display: block; margin: auto;" />
 
 ### Fit the Probabilistic Dropout Model
 
@@ -386,7 +385,7 @@ To make it easy to find available methods on the `proDAFit` object, the
 `$`-operator is overloaded and shows a list of possible functions:
 
 ![Screenshot from Rstudio suggesting the available
-functions](man/figures/README-screenshot_fit_functions.png)
+functions](vignettes/figures/README-screenshot_fit_functions.png)
 
 ``` r
 # Equivalent to feature_parameters(fit)
@@ -416,10 +415,9 @@ samples.
 # This chunk only works if pheatmap is installed
 # install.packages("pheatmap")
 pheatmap::pheatmap(dist_approx(fit[1:20, 1:3], by_sample = FALSE)$mean)
-#> Warning: partial match of 'just' to 'justification'
 ```
 
-<img src="man/figures/README-protein_dist-1.png" width="60%" style="display: block; margin: auto;" />
+<img src="vignettes/figures/README-protein_dist-1.png" width="60%" style="display: block; margin: auto;" />
 
 ### Identify Differential Abundance
 
@@ -468,42 +466,40 @@ biological problem at hand.
 
 ``` r
 sessionInfo()
-#> R version 3.6.0 (2019-04-26)
-#> Platform: x86_64-pc-linux-gnu (64-bit)
-#> Running under: Ubuntu 18.04.2 LTS
+#> R version 3.6.1 (2019-07-05)
+#> Platform: x86_64-apple-darwin15.6.0 (64-bit)
+#> Running under: macOS Mojave 10.14.6
 #> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
-#> LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+#> BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+#> LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
 #> 
 #> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=de_DE.UTF-8       
-#>  [4] LC_COLLATE=en_US.UTF-8     LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=en_US.UTF-8   
-#>  [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                  LC_ADDRESS=C              
-#> [10] LC_TELEPHONE=C             LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+#> [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 #> 
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] proDA_0.99.0
+#> [1] proDA_0.99.7
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] Rcpp_1.0.1                  RColorBrewer_1.1-2          pillar_1.3.1               
-#>  [4] compiler_3.6.0              GenomeInfoDb_1.20.0         XVector_0.24.0             
-#>  [7] bitops_1.0-6                tools_3.6.0                 zlibbioc_1.30.0            
-#> [10] digest_0.6.18               gtable_0.3.0                evaluate_0.13              
-#> [13] tibble_2.1.1                lattice_0.20-38             pkgconfig_2.0.2            
-#> [16] rlang_0.3.4                 Matrix_1.2-17               cli_1.1.0                  
-#> [19] DelayedArray_0.10.0         rstudioapi_0.10             yaml_2.2.0                 
-#> [22] parallel_3.6.0              xfun_0.6                    GenomeInfoDbData_1.2.1     
-#> [25] stringr_1.4.0               extraDistr_1.8.10           knitr_1.22                 
-#> [28] S4Vectors_0.22.0            IRanges_2.18.0              stats4_3.6.0               
-#> [31] grid_3.6.0                  Biobase_2.44.0              fansi_0.4.0                
-#> [34] BiocParallel_1.18.0         rmarkdown_1.12              pheatmap_1.0.12            
-#> [37] magrittr_1.5                scales_1.0.0                htmltools_0.3.6            
-#> [40] matrixStats_0.54.0          BiocGenerics_0.30.0         GenomicRanges_1.36.0       
-#> [43] assertthat_0.2.1            SummarizedExperiment_1.14.0 colorspace_1.4-1           
-#> [46] utf8_1.1.4                  stringi_1.4.3               munsell_0.5.0              
-#> [49] RCurl_1.95-4.12             crayon_1.3.4
+#>  [1] Rcpp_1.0.1                  RColorBrewer_1.1-2          pillar_1.4.2               
+#>  [4] compiler_3.6.1              GenomeInfoDb_1.20.0         XVector_0.24.0             
+#>  [7] bitops_1.0-6                tools_3.6.1                 zlibbioc_1.30.0            
+#> [10] zeallot_0.1.0               digest_0.6.20               gtable_0.3.0               
+#> [13] evaluate_0.14               tibble_2.1.3                lattice_0.20-38            
+#> [16] pkgconfig_2.0.2             rlang_0.4.0                 Matrix_1.2-17              
+#> [19] cli_1.1.0                   DelayedArray_0.10.0         rstudioapi_0.10            
+#> [22] yaml_2.2.0                  parallel_3.6.1              xfun_0.8                   
+#> [25] GenomeInfoDbData_1.2.1      stringr_1.4.0               extraDistr_1.8.11          
+#> [28] knitr_1.23                  vctrs_0.2.0                 S4Vectors_0.22.0           
+#> [31] IRanges_2.18.1              stats4_3.6.1                grid_3.6.1                 
+#> [34] Biobase_2.44.0              fansi_0.4.0                 BiocParallel_1.18.0        
+#> [37] rmarkdown_1.13              pheatmap_1.0.12             magrittr_1.5               
+#> [40] scales_1.0.0                backports_1.1.4             htmltools_0.3.6            
+#> [43] matrixStats_0.54.0          BiocGenerics_0.30.0         GenomicRanges_1.36.0       
+#> [46] assertthat_0.2.1            SummarizedExperiment_1.14.0 colorspace_1.4-1           
+#> [49] utf8_1.1.4                  stringi_1.4.3               munsell_0.5.0              
+#> [52] RCurl_1.95-4.12             crayon_1.3.4
 ```

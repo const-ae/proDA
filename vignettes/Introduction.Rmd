@@ -86,7 +86,7 @@ The pkgdown documentation for the package is available on
 In the following section, I will give a very brief overview on the main
 functionality of the `proDA` package, aimed at experienced R users. 
 New users are advised to skip this "quickstart" and to go directly
-to section two, where I give a complete walkthrough and explain in
+to section 1.3, where I give a complete walkthrough and explain in
 detail, what steps are necessary for the analysis of label-free mass
 spectrometry data.
 
@@ -330,7 +330,7 @@ the size of the dataset, the number of missing values, and the inferred hyper pa
 To make it easy to find available methods on the `proDAFit` object, the `$`-operator is overloaded
 and shows a list of possible functions:
 
-![Screenshot from Rstudio suggesting the available functions](../man/figures/README-screenshot_fit_functions.png)
+![Screenshot from Rstudio suggesting the available functions](../vignettes/figures/README-screenshot_fit_functions.png)
 
 
 ```{r}
