@@ -66,7 +66,7 @@ on the assumption that a majority of the rows did not change." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.7</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.9</span>
       </span>
     </div>
 
@@ -131,7 +131,7 @@ on the assumption that a majority of the rows did not change.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>median_normalization</span>(<span class='no'>X</span>)</pre>
+    <pre class="usage"><span class='fu'>median_normalization</span>(<span class='no'>X</span>, <span class='kw'>spike_in_rows</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,6 +139,12 @@ on the assumption that a majority of the rows did not change.</p>
     <tr>
       <th>X</th>
       <td><p>a matrix or SummarizedExperiment of proteins and samples</p></td>
+    </tr>
+    <tr>
+      <th>spike_in_rows</th>
+      <td><p>a numeric or boolean vector that is used to
+to normalize the intensities across samples. Default: <code>NULL</code>
+which means that all rows are used.</p></td>
     </tr>
     </table>
     
@@ -172,7 +178,8 @@ on the assumption that a majority of the rows did not change.</p>
 #&gt; protein_8       19.21620      18.14628
 #&gt; protein_9       25.53341      25.93552
 #&gt; protein_10      21.31169      21.19959</div><div class='input'>
-</div></pre>
+  <span class='co'># If we assume that the first 5 proteins are spike-ins</span>
+  <span class='no'>normalized_data2</span> <span class='kw'>&lt;-</span> <span class='fu'>median_normalization</span>(<span class='no'>syn_data</span>$<span class='no'>Y</span>, <span class='kw'>spike_in_rows</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
