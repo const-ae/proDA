@@ -94,7 +94,7 @@ experiment in *Drosophila melanogaster*. 11 different Palmitoyltransferases
 proteins were enriched and identified using label-free mass spectrometry. The
 conditions are named after the tagged DHHC and the negative control condition 
 is called S2R for the cell line. Each condition was measured in triplicates,
-which means that there are a total of 36 conditions. To make the file smaller,
+which means that there are a total of 36 samples To make the file smaller,
 I provide a reduced data set which only contains the first 122 rows of the data.
 
 
