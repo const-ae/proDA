@@ -2,8 +2,10 @@ Package: proDA
 Type: Package
 Title: Differential Abundance Analysis of Label-Free Mass Spectrometry Data
 Version: 0.99.7
-Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre")),
-             person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", role="ths"))
+Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", 
+             role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3762-068X")),
+             person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", 
+             role="ths", comment = c(ORCID = "0000-0003-4868-1805")))
 Description: Account for missing values in label-free mass spectrometry data 
     without imputation. The package implements a probabilistic dropout model that
     ensures that the information from observed and missing values are properly 
