@@ -10,12 +10,12 @@
 #' @name proDA_package
 NULL
 
-#' @import utils stats methods
+#' @import stats methods
 #' @importFrom SummarizedExperiment SummarizedExperiment rowData rowData<-
 #'   colData colData<- mcols mcols<- assay assay<- assayNames assayNames<-
 #'   assays assays<- rbind cbind
 #' @importFrom BiocGenerics design
-#' @importFrom utils .DollarNames
+#' @importFrom utils .DollarNames read.delim
 NULL
 
 
