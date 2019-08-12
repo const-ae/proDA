@@ -171,6 +171,9 @@ test_that("subsampling works", {
   fit2 <- proDA(se, ~ group, verbose=TRUE)
 
   expect_gt(cor(c(predict(fit)), c(predict(fit2))), 0.95)
+
+  # Check that there is no problem if n_subsample > nrow(se)
+  fit3 <- proDA(se, ~ group, n_subsample = 200, verbose=TRUE)
 })
 
 
