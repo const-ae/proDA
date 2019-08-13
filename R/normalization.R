@@ -35,7 +35,15 @@ median_normalization <- function(X, spike_in_rows = NULL){
       spike_in_rows <- seq_len(nrow(X))
     }else if(! is.numeric(spike_in_rows) && ! is.logical(spike_in_rows)){
       stop("spike_in_rows must either be a numeric or a logical vector")
+    }else if(is.logical(spike_in_rows)){
+      if(length(spike_in_rows) != nrow(X)){
+        stop("The spike_in_rows logical vector must have one entry for each row.")
+      }else if(all(spike_in_rows == FALSE)){
+        stop("Not all elements of the spike_in_rows vector can be FALSE.")
+      }
     }
+
+
     Xnorm <- X
     for(idx in seq_len(ncol(X))){
       Xnorm[, idx] <- X[, idx, drop=FALSE] -
