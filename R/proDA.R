@@ -203,9 +203,14 @@ proDA <- function(data, design=~ 1,
   # Extract the raw data matrix
   if(is.matrix(data)){
     if(any(! is.na(data) & data == 0)){
-      warning(paste0("The data contains", sum(! is.na(data) & data == 0) ," exact zeros. ",
-                     "Replacing them with 'NA's."))
-      data[! is.na(data) & data == 0] <- NA
+      if(any(is.na(data))){
+        warning(paste0("The data contains a mix of ", sum(! is.na(data) & data == 0) ," exact zeros ",
+                       "and ", sum(is.na(data)), " NA's. Will treat the zeros as valid input and not replace them with NA's."))        
+      }else{
+        warning(paste0("The data contains ", sum(! is.na(data) & data == 0) ," exact zeros and no NA's.",
+                       "Replacing all exact zeros with NA's."))
+        data[! is.na(data) & data == 0] <- NA
+      }
     }
     if(! data_is_log_transformed){
       data <- log2(data)
@@ -213,9 +218,15 @@ proDA <- function(data, design=~ 1,
     data_mat <- data
   }else if(is(data, "SummarizedExperiment")){
     if(any(! is.na(assay(data)) & assay(data) == 0)){
-      warning(paste0("The data contains", sum(! is.na(assay(data)) & assay(data) == 0) ," exact zeros. ",
-                     "Replacing them with 'NA's."))
-      assay(data)[! is.na(assay(data)) & assay(data) == 0] <- NA
+      if(any(is.na(assay(data)))){
+        warning(paste0("The data contains a mix of ", sum(! is.na(assay(data)) & assay(data) == 0) ," exact zeros ",
+                       "and ", sum(is.na(assay(data))), " NA's. Will treat the zeros as valid input and not replace them with NA's."))        
+      }else{
+        warning(paste0("The data contains ", sum(! is.na(assay(data)) & assay(data) == 0) ," exact zeros and no NA's.",
+                       "Replacing all exact zeros with NA's."))
+        assay(data)[! is.na(assay(data)) & assay(data) == 0] <- NA
+      }
+      
     }
     if(! data_is_log_transformed){
       assay(data) <- log2(assay(data))

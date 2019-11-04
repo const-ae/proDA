@@ -177,5 +177,11 @@ test_that("subsampling works", {
 })
 
 
-
+test_that("can handle exact zeros", {
+  se <- generate_synthetic_data(n_proteins = 100, return_summarized_experiment = TRUE)
+  assay(se)[1,1] <- 0
+  expect_warning(proDA(se, ~ group, n_subsample = 50, verbose=FALSE))
+  assay(se)[is.na(assay(se))] <- 0
+  expect_warning(proDA(se, ~ group, n_subsample = 50, verbose=FALSE))
+})
 
