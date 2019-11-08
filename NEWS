@@ -1,2 +1,5 @@
 Changes in version 0.99.0 (2019-06-02)
 + Initial submission
+
+Changes in version 1.1
++ Only convert 0's to NA's if there are no NA's in the dataset (commit 06df44a, fix issue #3)
