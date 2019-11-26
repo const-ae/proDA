@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">proDA</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.99.9</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.1.1</span>
       </span>
     </div>
 
@@ -178,15 +178,13 @@
 <a class="sourceLine" id="cb4-6" data-line-number="6">    <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>, <span class="dt">row.names =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">colnames</a></span>(data)</a>
 <a class="sourceLine" id="cb4-7" data-line-number="7">)</a>
 <a class="sourceLine" id="cb4-8" data-line-number="8"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(annotation_df)</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; # A tibble: 6 x 2</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;   Condition Replicate</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; 1 CG1407            1</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; 2 CG1407            2</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; 3 CG1407            3</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; 4 CG4676            1</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; 5 CG4676            2</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; 6 CG4676            3</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt;           Condition Replicate</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; CG1407.01    CG1407         1</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; CG1407.02    CG1407         2</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; CG1407.03    CG1407         3</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; CG4676.01    CG4676         1</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; CG4676.02    CG4676         2</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; CG4676.03    CG4676         3</span></a></code></pre></div>
 <p>We can use this data to fit the probabilistic dropout model and test for differentially abundant proteins.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Not Run</span></a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(proDA)</a>
@@ -402,20 +400,43 @@
 <a class="sourceLine" id="cb12-25" data-line-number="25"><span class="st">    </span><span class="kw"><a href="https://tibble.tidyverse.org/reference/rownames.html">column_to_rownames</a></span>(<span class="st">"SampleName"</span>)</a>
 <a class="sourceLine" id="cb12-26" data-line-number="26"></a>
 <a class="sourceLine" id="cb12-27" data-line-number="27">annotation_df</a>
-<a class="sourceLine" id="cb12-28" data-line-number="28"><span class="co">#&gt; # A tibble: 36 x 2</span></a>
-<a class="sourceLine" id="cb12-29" data-line-number="29"><span class="co">#&gt;    Condition Replicate</span></a>
-<a class="sourceLine" id="cb12-30" data-line-number="30"><span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb12-31" data-line-number="31"><span class="co">#&gt;  1 CG1407            1</span></a>
-<a class="sourceLine" id="cb12-32" data-line-number="32"><span class="co">#&gt;  2 CG1407            2</span></a>
-<a class="sourceLine" id="cb12-33" data-line-number="33"><span class="co">#&gt;  3 CG1407            3</span></a>
-<a class="sourceLine" id="cb12-34" data-line-number="34"><span class="co">#&gt;  4 CG4676            1</span></a>
-<a class="sourceLine" id="cb12-35" data-line-number="35"><span class="co">#&gt;  5 CG4676            2</span></a>
-<a class="sourceLine" id="cb12-36" data-line-number="36"><span class="co">#&gt;  6 CG4676            3</span></a>
-<a class="sourceLine" id="cb12-37" data-line-number="37"><span class="co">#&gt;  7 CG51963           1</span></a>
-<a class="sourceLine" id="cb12-38" data-line-number="38"><span class="co">#&gt;  8 CG51963           2</span></a>
-<a class="sourceLine" id="cb12-39" data-line-number="39"><span class="co">#&gt;  9 CG51963           3</span></a>
-<a class="sourceLine" id="cb12-40" data-line-number="40"><span class="co">#&gt; 10 CG5620A           1</span></a>
-<a class="sourceLine" id="cb12-41" data-line-number="41"><span class="co">#&gt; # … with 26 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-28" data-line-number="28"><span class="co">#&gt;           Condition Replicate</span></a>
+<a class="sourceLine" id="cb12-29" data-line-number="29"><span class="co">#&gt; CG1407.1     CG1407         1</span></a>
+<a class="sourceLine" id="cb12-30" data-line-number="30"><span class="co">#&gt; CG1407.2     CG1407         2</span></a>
+<a class="sourceLine" id="cb12-31" data-line-number="31"><span class="co">#&gt; CG1407.3     CG1407         3</span></a>
+<a class="sourceLine" id="cb12-32" data-line-number="32"><span class="co">#&gt; CG4676.1     CG4676         1</span></a>
+<a class="sourceLine" id="cb12-33" data-line-number="33"><span class="co">#&gt; CG4676.2     CG4676         2</span></a>
+<a class="sourceLine" id="cb12-34" data-line-number="34"><span class="co">#&gt; CG4676.3     CG4676         3</span></a>
+<a class="sourceLine" id="cb12-35" data-line-number="35"><span class="co">#&gt; CG51963.1   CG51963         1</span></a>
+<a class="sourceLine" id="cb12-36" data-line-number="36"><span class="co">#&gt; CG51963.2   CG51963         2</span></a>
+<a class="sourceLine" id="cb12-37" data-line-number="37"><span class="co">#&gt; CG51963.3   CG51963         3</span></a>
+<a class="sourceLine" id="cb12-38" data-line-number="38"><span class="co">#&gt; CG5620A.1   CG5620A         1</span></a>
+<a class="sourceLine" id="cb12-39" data-line-number="39"><span class="co">#&gt; CG5620A.2   CG5620A         2</span></a>
+<a class="sourceLine" id="cb12-40" data-line-number="40"><span class="co">#&gt; CG5620A.3   CG5620A         3</span></a>
+<a class="sourceLine" id="cb12-41" data-line-number="41"><span class="co">#&gt; CG5620B.1   CG5620B         1</span></a>
+<a class="sourceLine" id="cb12-42" data-line-number="42"><span class="co">#&gt; CG5620B.2   CG5620B         2</span></a>
+<a class="sourceLine" id="cb12-43" data-line-number="43"><span class="co">#&gt; CG5620B.3   CG5620B         3</span></a>
+<a class="sourceLine" id="cb12-44" data-line-number="44"><span class="co">#&gt; CG5880.1     CG5880         1</span></a>
+<a class="sourceLine" id="cb12-45" data-line-number="45"><span class="co">#&gt; CG5880.2     CG5880         2</span></a>
+<a class="sourceLine" id="cb12-46" data-line-number="46"><span class="co">#&gt; CG5880.3     CG5880         3</span></a>
+<a class="sourceLine" id="cb12-47" data-line-number="47"><span class="co">#&gt; CG6017.1     CG6017         1</span></a>
+<a class="sourceLine" id="cb12-48" data-line-number="48"><span class="co">#&gt; CG6017.2     CG6017         2</span></a>
+<a class="sourceLine" id="cb12-49" data-line-number="49"><span class="co">#&gt; CG6017.3     CG6017         3</span></a>
+<a class="sourceLine" id="cb12-50" data-line-number="50"><span class="co">#&gt; CG6618.1     CG6618         1</span></a>
+<a class="sourceLine" id="cb12-51" data-line-number="51"><span class="co">#&gt; CG6618.2     CG6618         2</span></a>
+<a class="sourceLine" id="cb12-52" data-line-number="52"><span class="co">#&gt; CG6618.3     CG6618         3</span></a>
+<a class="sourceLine" id="cb12-53" data-line-number="53"><span class="co">#&gt; CG6627.1     CG6627         1</span></a>
+<a class="sourceLine" id="cb12-54" data-line-number="54"><span class="co">#&gt; CG6627.2     CG6627         2</span></a>
+<a class="sourceLine" id="cb12-55" data-line-number="55"><span class="co">#&gt; CG6627.3     CG6627         3</span></a>
+<a class="sourceLine" id="cb12-56" data-line-number="56"><span class="co">#&gt; CG8314.1     CG8314         1</span></a>
+<a class="sourceLine" id="cb12-57" data-line-number="57"><span class="co">#&gt; CG8314.2     CG8314         2</span></a>
+<a class="sourceLine" id="cb12-58" data-line-number="58"><span class="co">#&gt; CG8314.3     CG8314         3</span></a>
+<a class="sourceLine" id="cb12-59" data-line-number="59"><span class="co">#&gt; GsbPI.1       GsbPI         1</span></a>
+<a class="sourceLine" id="cb12-60" data-line-number="60"><span class="co">#&gt; GsbPI.2       GsbPI         2</span></a>
+<a class="sourceLine" id="cb12-61" data-line-number="61"><span class="co">#&gt; GsbPI.3       GsbPI         3</span></a>
+<a class="sourceLine" id="cb12-62" data-line-number="62"><span class="co">#&gt; S2R.1           S2R         1</span></a>
+<a class="sourceLine" id="cb12-63" data-line-number="63"><span class="co">#&gt; S2R.2           S2R         2</span></a>
+<a class="sourceLine" id="cb12-64" data-line-number="64"><span class="co">#&gt; S2R.3           S2R         3</span></a></code></pre></div>
 <p>Optionally, we can again turn this into a <code>SummarizedExperiment</code> or <code>MSnSet</code> object</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(SummarizedExperiment)</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">se &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/SummarizedExperiment/topics/RangedSummarizedExperiment-class">SummarizedExperiment</a></span>(<span class="kw">SimpleList</span>(<span class="dt">LFQ=</span>data), <span class="dt">colData=</span>annotation_df)</a>
@@ -542,7 +563,7 @@
 <a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt;  [3] tidyr_0.8.3                 readr_1.3.1                </span></a>
 <a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt;  [5] stringr_1.4.0               dplyr_0.8.3                </span></a>
 <a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt;  [7] MSnbase_2.10.1              ProtGenerics_1.16.0        </span></a>
-<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt;  [9] mzR_2.18.0                  Rcpp_1.0.1                 </span></a>
+<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt;  [9] mzR_2.18.0                  Rcpp_1.0.2                 </span></a>
 <a class="sourceLine" id="cb18-23" data-line-number="23"><span class="co">#&gt; [11] SummarizedExperiment_1.14.0 DelayedArray_0.10.0        </span></a>
 <a class="sourceLine" id="cb18-24" data-line-number="24"><span class="co">#&gt; [13] BiocParallel_1.18.0         matrixStats_0.54.0         </span></a>
 <a class="sourceLine" id="cb18-25" data-line-number="25"><span class="co">#&gt; [15] Biobase_2.44.0              GenomicRanges_1.36.0       </span></a>
@@ -572,7 +593,7 @@
 <a class="sourceLine" id="cb18-49" data-line-number="49"><span class="co">#&gt; [55] MASS_7.3-51.4          zlibbioc_1.30.0        plyr_1.8.4            </span></a>
 <a class="sourceLine" id="cb18-50" data-line-number="50"><span class="co">#&gt; [58] grid_3.6.1             promises_1.0.1         shinydashboard_0.7.1  </span></a>
 <a class="sourceLine" id="cb18-51" data-line-number="51"><span class="co">#&gt; [61] crayon_1.3.4           lattice_0.20-38        circlize_0.4.6        </span></a>
-<a class="sourceLine" id="cb18-52" data-line-number="52"><span class="co">#&gt; [64] hms_0.5.0              zeallot_0.1.0          knitr_1.23            </span></a>
+<a class="sourceLine" id="cb18-52" data-line-number="52"><span class="co">#&gt; [64] hms_0.5.0              zeallot_0.1.0          knitr_1.24            </span></a>
 <a class="sourceLine" id="cb18-53" data-line-number="53"><span class="co">#&gt; [67] ComplexHeatmap_2.0.0   pillar_1.4.2           rjson_0.2.20          </span></a>
 <a class="sourceLine" id="cb18-54" data-line-number="54"><span class="co">#&gt; [70] codetools_0.2-16       XML_3.98-1.20          glue_1.3.1            </span></a>
 <a class="sourceLine" id="cb18-55" data-line-number="55"><span class="co">#&gt; [73] evaluate_0.14          pcaMethods_1.76.0      BiocManager_1.30.4    </span></a>
