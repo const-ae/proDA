@@ -65,7 +65,7 @@ test_that("proDAFit object construction works", {
                   convergence = conv
   )
 
-  rowData(pf2) <- cbind(row_annot_data, rowData(pf2))
+  rowData(pf2) <- cbind(S4Vectors::DataFrame(row_annot_data), rowData(pf2))
   expect_equal(pf, pf2)
 
   expect_equal(hyper_parameters(pf), pf$hyper_parameters)
