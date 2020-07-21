@@ -3,3 +3,7 @@ Changes in version 0.99.0 (2019-06-02)
 
 Changes in version 1.1
 + Only convert 0's to NA's if there are no NA's in the dataset (commit 06df44a, fix issue #3)
+
+Changes in version 1.3
++ Escape result coefficient names if result_names() is called and they contain potentially 
+problematic characters (see issue #4)
