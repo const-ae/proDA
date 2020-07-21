@@ -4,12 +4,20 @@
 \alias{generate_synthetic_data}
 \title{Generate a dataset according to the probabilistic dropout model}
 \usage{
-generate_synthetic_data(n_proteins, n_conditions = 2, n_replicates = 3,
-  frac_changed = 0.1, dropout_curve_position = 18.5,
-  dropout_curve_scale = -1.2, location_prior_mean = 20,
-  location_prior_scale = 4, variance_prior_scale = 0.05,
-  variance_prior_df = 2, effect_size = 2,
-  return_summarized_experiment = FALSE)
+generate_synthetic_data(
+  n_proteins,
+  n_conditions = 2,
+  n_replicates = 3,
+  frac_changed = 0.1,
+  dropout_curve_position = 18.5,
+  dropout_curve_scale = -1.2,
+  location_prior_mean = 20,
+  location_prior_scale = 4,
+  variance_prior_scale = 0.05,
+  variance_prior_df = 2,
+  effect_size = 2,
+  return_summarized_experiment = FALSE
+)
 }
 \arguments{
 \item{n_proteins}{the number of rows in the dataset}

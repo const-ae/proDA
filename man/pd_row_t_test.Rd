@@ -5,15 +5,33 @@
 \alias{pd_row_f_test}
 \title{Row-wise tests of difference using the probabilistic dropout model}
 \usage{
-pd_row_t_test(X, Y, moderate_location = TRUE, moderate_variance = TRUE,
+pd_row_t_test(
+  X,
+  Y,
+  moderate_location = TRUE,
+  moderate_variance = TRUE,
   alternative = c("two.sided", "greater", "less"),
-  pval_adjust_method = "BH", location_prior_df = 3, max_iter = 20,
-  epsilon = 0.001, return_fit = FALSE, verbose = FALSE)
+  pval_adjust_method = "BH",
+  location_prior_df = 3,
+  max_iter = 20,
+  epsilon = 0.001,
+  return_fit = FALSE,
+  verbose = FALSE
+)
 
-pd_row_f_test(X, ..., groups = NULL, moderate_location = TRUE,
-  moderate_variance = TRUE, pval_adjust_method = "BH",
-  location_prior_df = 3, max_iter = 20, epsilon = 0.001,
-  return_fit = FALSE, verbose = FALSE)
+pd_row_f_test(
+  X,
+  ...,
+  groups = NULL,
+  moderate_location = TRUE,
+  moderate_variance = TRUE,
+  pval_adjust_method = "BH",
+  location_prior_df = 3,
+  max_iter = 20,
+  epsilon = 0.001,
+  return_fit = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{X, Y, ...}{the matrices for condition 1, 2 and so on. They must

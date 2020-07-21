@@ -4,11 +4,19 @@
 \alias{pd_lm.fit}
 \title{The work horse for fitting the probabilistic dropout model}
 \usage{
-pd_lm.fit(y, X, dropout_curve_position, dropout_curve_scale,
-  location_prior_mean = NULL, location_prior_scale = NULL,
-  variance_prior_scale = NULL, variance_prior_df = NULL,
-  location_prior_df = 3, method = c("analytic_hessian",
-  "analytic_grad", "numeric"), verbose = FALSE)
+pd_lm.fit(
+  y,
+  X,
+  dropout_curve_position,
+  dropout_curve_scale,
+  location_prior_mean = NULL,
+  location_prior_scale = NULL,
+  variance_prior_scale = NULL,
+  variance_prior_df = NULL,
+  location_prior_df = 3,
+  method = c("analytic_hessian", "analytic_grad", "numeric"),
+  verbose = FALSE
+)
 }
 \value{
 a list with the following entries

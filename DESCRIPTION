@@ -14,7 +14,7 @@ Description: Account for missing values in label-free mass spectrometry data
 License: GPL-3
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Suggests: 
     testthat (>= 2.1.0),
     MSnbase,

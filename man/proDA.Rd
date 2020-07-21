@@ -4,11 +4,21 @@
 \alias{proDA}
 \title{Main function to fit the probabilistic dropout model}
 \usage{
-proDA(data, design = ~1, col_data = NULL, reference_level = NULL,
-  data_is_log_transformed = TRUE, moderate_location = TRUE,
-  moderate_variance = TRUE, location_prior_df = 3,
-  n_subsample = nrow(data), max_iter = 20, epsilon = 0.001,
-  verbose = FALSE, ...)
+proDA(
+  data,
+  design = ~1,
+  col_data = NULL,
+  reference_level = NULL,
+  data_is_log_transformed = TRUE,
+  moderate_location = TRUE,
+  moderate_variance = TRUE,
+  location_prior_df = 3,
+  n_subsample = nrow(data),
+  max_iter = 20,
+  epsilon = 0.001,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{a matrix like object (\code{matrix()},

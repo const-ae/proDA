@@ -3,8 +3,4 @@
 \docType{package}
 \name{proDA_package}
 \alias{proDA_package}
-\alias{proDA_package-package}
 \title{proDA: Identify differentially abundant proteins in label-free mass spectrometry}
-\description{
-proDA: Identify differentially abundant proteins in label-free mass spectrometry
-}

@@ -4,12 +4,20 @@
 \alias{pd_lm}
 \title{Fit a single linear probabilistic dropout model}
 \usage{
-pd_lm(formula, data = NULL, subset = NULL, dropout_curve_position,
-  dropout_curve_scale, location_prior_mean = NULL,
-  location_prior_scale = NULL, variance_prior_scale = NULL,
-  variance_prior_df = NULL, location_prior_df = 3,
+pd_lm(
+  formula,
+  data = NULL,
+  subset = NULL,
+  dropout_curve_position,
+  dropout_curve_scale,
+  location_prior_mean = NULL,
+  location_prior_scale = NULL,
+  variance_prior_scale = NULL,
+  variance_prior_df = NULL,
+  location_prior_df = 3,
   method = c("analytic_hessian", "analytic_grad", "numeric"),
-  verbose = FALSE)
+  verbose = FALSE
+)
 }
 \arguments{
 \item{formula}{a formula that specifies a linear model}
