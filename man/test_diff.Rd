@@ -22,7 +22,10 @@ contrast is tested. It can be a single coefficient (to see
 the available options use \code{result_names(fit)}) or any
 linear combination of them. The contrast is always compared
 against zero. Thus, to find out if two coefficients differ
-use \code{coef1 - coef2}.}
+use \code{coef1 - coef2}. Remember if the coefficient is not
+a valid identifier in R, to escape it using back ticks. For 
+example if you test the interaction of A and B use 
+\code{`A:B`}.}
 
 \item{reduced_model}{If you don't want to test an individual
 coefficient, you can can specify a reduced model and compare

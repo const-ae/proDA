@@ -29,7 +29,10 @@
 #'   the available options use \code{result_names(fit)}) or any
 #'   linear combination of them. The contrast is always compared
 #'   against zero. Thus, to find out if two coefficients differ
-#'   use \code{coef1 - coef2}.
+#'   use \code{coef1 - coef2}. Remember if the coefficient is not
+#'   a valid identifier in R, to escape it using back ticks. For 
+#'   example if you test the interaction of A and B use 
+#'   \code{`A:B`}.
 #' @param reduced_model If you don't want to test an individual
 #'   coefficient, you can can specify a reduced model and compare
 #'   it with the original model using an F-test. This is useful
@@ -408,7 +411,11 @@ parse_contrast <- function(contrast, levels, reference_level = NULL, direct_call
 #' @rdname test_diff
 #' @export
 setMethod("result_names", signature = "proDAFit", function(fit){
-  colnames(coefficients(fit))
+  names <- colnames(coefficients(fit))
+  # Check if names contains any illegal characters
+  # this regex is approx. correct, but false positives are not so problematic
+  valid <- grepl("^[_.]?[[:alpha:]]+[[:alnum:]_.]*$", names)
+  ifelse(valid, names, paste0("`", names, "`"))
 })
 
 

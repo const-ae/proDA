@@ -24,6 +24,26 @@ test_that("parse_contrast works", {
 
 })
 
+
+test_that("parse_contrast can handle problematic input", {
+  
+  expect_equal(parse_contrast(A, levels = c(LETTERS[1:5], "A:B")),
+               c(A=1, B=0, C=0, D=0, E=0, `A:B`=0))
+  
+  expect_equal(parse_contrast(`A:B`, levels = c(LETTERS[1:5], "A:B")),
+               c(A=0, B=0, C=0, D=0, E=0, `A:B`=1))
+  
+  expect_equal(parse_contrast(`A:B` - C, levels = c(LETTERS[1:5], "A:B")),
+               c(A=0, B=0, C=-1, D=0, E=0, `A:B`=1))
+  
+  expect_equal(parse_contrast("`A:B`", levels = c(LETTERS[1:5], "A:B")),
+               c(A=0, B=0, C=0, D=0, E=0, `A:B`=1))
+  
+  expect_equal(parse_contrast("`A:B` - C", levels = c(LETTERS[1:5], "A:B")),
+               c(A=0, B=0, C=-1, D=0, E=0, `A:B`=1))
+  
+})
+
 test_that("Parser contrast can handle reference to object in environment", {
   c1 <- parse_contrast(A - B, levels = LETTERS[1:2])
   c2 <- parse_contrast("A - B", levels = LETTERS[1:2])
@@ -48,6 +68,24 @@ test_that("parse contrast can handle being inside a function", {
   expect_equal(c1, c2)
 })
 
+
+test_that("result names regex is approximately good", {
+  regex <- "^[_.]?[[:alpha:]]+[[:alnum:]_.]*$"
+  expect_true(grepl(regex, "tmp"))
+  expect_true(grepl(regex, "t.mp"))
+  expect_true(grepl(regex, "_tmp"))
+  expect_true(grepl(regex, "y"))
+  expect_true(grepl(regex, "s"))
+  expect_true(grepl(regex, "A034245"))
+  expect_true(grepl(regex, ".a00"))
+  expect_false(grepl(regex, "."))
+  expect_false(grepl(regex, "_"))
+  expect_false(grepl(regex, "."))
+  expect_false(grepl(regex, ""))
+  expect_false(grepl(regex, ".0234"))
+  expect_false(grepl(regex, "_42a"))
+  expect_false(grepl(regex, "afdsa:fdsa"))
+})
 
 test_that("F works", {
 

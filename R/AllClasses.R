@@ -75,7 +75,7 @@ proDAFit <- function(data, col_data,
      nrow(coefficients) != nrow(se)){
     stop("coefficients must be a martix with as many rows as data")
   }
-  coefficients_df <- S4Vectors::DataFrame(coefficients)
+  coefficients_df <- S4Vectors::DataFrame(coefficients, check.names = FALSE)
   mcols(coefficients_df) <- S4Vectors::DataFrame(type = "coefficient",
                                         description = "The MAP estimate")
   rowData(se) <- cbind(rowData(se), coefficients_df)
