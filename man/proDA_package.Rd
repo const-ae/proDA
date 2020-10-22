@@ -4,3 +4,10 @@
 \name{proDA_package}
 \alias{proDA_package}
 \title{proDA: Identify differentially abundant proteins in label-free mass spectrometry}
+\description{
+Account for missing values in label-free mass spectrometry data 
+without imputation. The package implements a probabilistic dropout model that
+ensures that the information from observed and missing values are properly 
+combined. It adds empirical Bayesian priors to increase power to detect
+differentially abundant proteins.
+}
