@@ -172,8 +172,8 @@ pd_lm.fit <- function(y, X,
   }
     
   y_na <- is.na(y)
-  Xo <- X[!y_na, , drop = FALSE]
-  Xm <- X[y_na, , drop = FALSE]
+  Xo <- X[!y_na, , drop=FALSE]
+  Xm <- X[y_na, , drop=FALSE]
   yo <- y[!y_na]
   p <- ncol(X)
   n <- nrow(X)
@@ -186,14 +186,14 @@ pd_lm.fit <- function(y, X,
     
   ## create initial value for beta
   if (moderate_location) {
-    beta_init <- c(location_prior_mean, rep(0, times = p - 1))
+    beta_init <- c(location_prior_mean, rep(0, times=p-1))
   } else if (length(yo) == 0) {
-    beta_init <- rep(0, times = p)
+    beta_init <- rep(0, times=p)
   } else {
     if (has_intercept(X)) {
-      beta_init <- c(mean(yo), rep(0, times = p - 1))
+      beta_init <- c(mean(yo), rep(0, times=p-1))
     } else {
-      beta_init <- rep(mean(yo), times = p)
+      beta_init <- rep(mean(yo), times=p)
     }
   }
     
@@ -209,10 +209,10 @@ pd_lm.fit <- function(y, X,
   fit_beta <- rep(NA, p)
   names(fit_beta) <- colnames(X)
     
-  failed_result <- list(coefficients = rep(NA, p),
-                        coef_variance_matrix = matrix(NA, nrow = p, ncol = p),
-                        correction_factor = matrix(NA, nrow = p, ncol = p),
-                        n_approx = NA, df = NA, s2 = NA, n_obs = length(yo))
+  failed_result <- list(coefficients=rep(NA, p),
+                        coef_variance_matrix=matrix(NA, nrow=p, ncol=p),
+                        correction_factor=matrix(NA, nrow=p, ncol=p),
+                        n_approx=NA, df=NA, s2=NA, n_obs=length(yo))
     
   if (all_observed && !moderate_variance && !moderate_location) {
     ## Run lm if there are no missing values
@@ -244,7 +244,7 @@ pd_lm.fit <- function(y, X,
     }
         
     fit_beta <- opt_res$par[beta_sel]
-    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop = FALSE]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop=FALSE]
     fit_sigma2 <- opt_res$par[p+1]
     fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
       
@@ -278,7 +278,7 @@ pd_lm.fit <- function(y, X,
     }
           
     fit_beta <- opt_res$par[beta_sel]
-    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop = FALSE]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop=FALSE]
     fit_sigma2 <- opt_res$par[p+1]
     fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
       
@@ -331,7 +331,7 @@ pd_lm.fit <- function(y, X,
                           location_prior_df, moderate_location, moderate_variance,
                           beta_sel, p)
     fit_sigma2_var <- 1/hessian[p+1, p+1]
-    coef_hessian <- hessian[beta_sel, beta_sel, drop = FALSE]
+    coef_hessian <- hessian[beta_sel, beta_sel, drop=FALSE]
   }
     
   if (fit_sigma2_var < 0){
