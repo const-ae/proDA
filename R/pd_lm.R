@@ -549,7 +549,7 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
                             moderate_location = moderate_location,
                             moderate_variance = moderate_variance)
 
-      (abs(diff - offset)/(out_factor / 2))^(-1)
+      (abs(diff - offset) / (out_factor / 2))^(-1)
     }
   }, FUN.VALUE = 0.0)
 
