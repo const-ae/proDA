@@ -443,37 +443,46 @@ grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0,
 }
 
 
-hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df,
-                     moderate_location, moderate_variance, beta_sel, p){
+hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0,
+    sigma20, df0, tau20, location_prior_df, moderate_location,
+    moderate_variance, beta_sel, p){
+    
     imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
-
-    if(moderate_location){
-      t_prior_fact <- c((location_prior_df * sigma20 - (X %*% beta - mu0)^2) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2)^2)
-      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X
-    }else{
-      dbb_p <- 0
+    
+    ## precalculate values
+    zetastar_2 <- zetastar ^ 2
+    zetastar_4 <- zetastar_2 ^ 2
+    Xmbr <- Xm %*% beta - rho
+    X0by0 <- Xo %*% beta - yo
+    q <- p + 1
+    
+    if (moderate_location) {
+        Xbm <- (X %*% beta - mu0) ^ 2
+        t_prior_fact <- (location_prior_df * sigma20 - Xbm) / (location_prior_df * sigma20 + Xbm) ^ 2
+        dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow = nrow(X)) %*% X
+    } else {
+        dbb_p <- 0
     }
     dbb_o <- -2 * t(Xo) %*% Xo / (2 * sigma2)
-    dbb_m <- - t(Xm) %*% diag(c((imr^2 + (Xm %*% beta - rho) / zetastar^2 * imr)), nrow(Xm)) %*% Xm
+    dbb_m <- - t(Xm) %*% diag(c((imr ^ 2 + Xmbr / zetastar_2 * imr)), nrow(Xm)) %*% Xm
 
-    if(moderate_variance){
-      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20 / (sigma2^3) - 1/sigma2^2
-    }else{
-      dss_p <- 0
+    if (moderate_variance) {
+        dss_p <- (1 + df0 / 2)/ (sigma2 ^ 2) - df0 * tau20 / (sigma2 ^ 3) - 1 / sigma2 ^ 2
+    } else {
+        dss_p <- 0
     }
-    dss_o <- sum((sigma2 - 2 * (Xo %*% beta - yo)^2) / (2 * sigma2^3))
-    dss_m <- sum((Xm %*% beta - rho) / (4 * zetastar^4) * imr *
-                   (3 - (Xm %*% beta - rho) * imr - (Xm %*% beta - rho)^2 / zetastar^2))
+    dss_o <- sum((sigma2 - 2 * Xoby0 ^ 2) / (2 * sigma2 ^ 3))
+    dss_m <- sum(Xmbr / (4 * zetastar_4) * imr *
+        (3 - Xmbr * imr - Xmbr ^ 2 / zetastar_2))
 
-    dbs_o <- t(Xo) %*% (Xo %*% beta - yo) / sigma2^2
-    dbs_m <- t(Xm) %*% ((Xm %*% beta - rho) / (2 * zetastar^2) * imr^2 -
-                          (zetastar^2 - (Xm %*% beta - rho)^2) / (2 * zetastar^4) * imr)
+    dbs_o <- t(Xo) %*% X0by0 / sigma2 ^ 2
+    dbs_m <- t(Xm) %*% (Xmbr / (2 * zetastar_2) * imr ^ 2 -
+        (zetastar_2 - Xmbr^2) / (2 * zetastar_4) * imr)
 
-    res <- matrix(NA, nrow=p+1, ncol=p + 1)
+    res <- matrix(NA, nrow = q, ncol = q)
     res[beta_sel, beta_sel] <- dbb_p + dbb_o + dbb_m
-    res[p+1, p+1] <- dss_p + dss_o + dss_m
-    res[p+1, beta_sel] <- c(dbs_o + dbs_m)
-    res[beta_sel, p+1] <- c(dbs_o + dbs_m)
+    res[q, q] <- dss_p + dss_o + dss_m
+    res[q, beta_sel] <- res[beta_sel, q] <- dbs_o + dbs_m
     res
 }
 
