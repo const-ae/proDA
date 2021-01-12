@@ -164,10 +164,8 @@ pd_lm.fit <- function(y, X,
   
   method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
     
-  moderate_location <- !missing(location_prior_mean) && 
-    !is.null(location_prior_mean) && !is.na(location_prior_mean)
-  moderate_variance <- !missing(variance_prior_scale) && 
-    !is.null(variance_prior_scale)  && !is.na(variance_prior_scale)
+  moderate_location <- !missing(location_prior_mean) && !is.null(location_prior_mean) && !is.na(location_prior_mean)
+  moderate_variance <- !missing(variance_prior_scale) && !is.null(variance_prior_scale)  && !is.na(variance_prior_scale)
     
   if (!moderate_location && !moderate_variance && nrow(X) < ncol(X) + 1) {
     stop("Underdetermined system. There are more parameters to estimate than available rows.")
@@ -183,67 +181,67 @@ pd_lm.fit <- function(y, X,
   all_observed <- all(!y_na)
   all_missing <- !all_observed ##all(y_na)
     
-    rho <- dropout_curve_position[y_na]
-    zeta <- dropout_curve_scale[y_na]
+  rho <- dropout_curve_position[y_na]
+  zeta <- dropout_curve_scale[y_na]
     
-    ## create initial value for beta
-    if (moderate_location) {
-        beta_init <- c(location_prior_mean, rep(0, times = p - 1))
-    } else if (length(yo) == 0) {
-        beta_init <- rep(0, times = p)
+  ## create initial value for beta
+  if (moderate_location) {
+    beta_init <- c(location_prior_mean, rep(0, times = p - 1))
+  } else if (length(yo) == 0) {
+    beta_init <- rep(0, times = p)
+  } else {
+    if (has_intercept(X)) {
+      beta_init <- c(mean(yo), rep(0, times = p - 1))
     } else {
-        if (has_intercept(X)) {
-            beta_init <- c(mean(yo), rep(0, times = p - 1))
-        } else {
-            beta_init <- rep(mean(yo), times = p)
-        }
+      beta_init <- rep(mean(yo), times = p)
     }
+  }
     
-    ## create initial value for sigma2
-    if (moderate_variance) {
-        sigma2_init <- variance_prior_df * variance_prior_scale / (variance_prior_df + 2)
-    } else {
-        sigma2_init <- 1
+  ## create initial value for sigma2
+  if (moderate_variance) {
+    sigma2_init <- variance_prior_df * variance_prior_scale / (variance_prior_df + 2)
+  } else {
+    sigma2_init <- 1
+  }
+    
+  beta_sel <- seq_len(p)
+    
+  fit_beta <- rep(NA, p)
+  names(fit_beta) <- colnames(X)
+    
+  failed_result <- list(coefficients = rep(NA, p),
+    coef_variance_matrix = matrix(NA, nrow = p, ncol = p),
+    correction_factor = matrix(NA, nrow = p, ncol = p),
+    n_approx = NA, df = NA, s2 = NA, n_obs = length(yo))
+    
+  if (all_observed && !moderate_variance && !moderate_location) {
+    ## Run lm if there are no missing values
+    lm_res <- lm(yo ~ Xo - 1)
+    fit_beta <- coefficients(lm_res)
+    fit_sigma2 <- summary(lm_res)$sigma ^ 2 * (n - p) / n
+    coef_hessian <-  1 / fit_sigma2 * (t(X) %*% X)
+    fit_sigma2_var <- 2 * fit_sigma2 ^ 2 / n
+      
+  } else if (all_missing && !moderate_variance) {
+    return(failed_result)
+      
+  } else if (method == "numeric") {
+    opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par) {
+      beta <- par[beta_sel]
+      sigma2 <- par[p + 1]
+      if (sigma2 <= 0) return (10000)
+        zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
+        -objective_fnc(y, yo, X, Xm, Xo,
+          beta, sigma2, rho, zetastar,
+          location_prior_mean, location_prior_scale,
+          variance_prior_df, variance_prior_scale,
+          location_prior_df, moderate_location, moderate_variance)
+    },
+    method = "Nelder-Mead", hessian = TRUE)
+      
+    if (opt_res$convergence != 0) {
+      return(failed_result)
     }
-    
-    beta_sel <- seq_len(p)
-    
-    fit_beta <- rep(NA, p)
-    names(fit_beta) <- colnames(X)
-    
-    failed_result <- list(coefficients = rep(NA, p),
-        coef_variance_matrix = matrix(NA, nrow = p, ncol = p),
-        correction_factor = matrix(NA, nrow = p, ncol = p),
-        n_approx = NA, df = NA, s2 = NA, n_obs = length(yo))
-    
-    if (all_observed && !moderate_variance && !moderate_location) {
-        ## Run lm if there are no missing values
-        lm_res <- lm(yo ~ Xo - 1)
-        fit_beta <- coefficients(lm_res)
-        fit_sigma2 <- summary(lm_res)$sigma ^ 2 * (n - p) / n
-        coef_hessian <-  1 / fit_sigma2 * (t(X) %*% X)
-        fit_sigma2_var <- 2 * fit_sigma2 ^ 2 / n
-      
-    } else if (all_missing && !moderate_variance) {
-        return(failed_result)
-      
-    } else if (method == "numeric") {
-        opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par) {
-            beta <- par[beta_sel]
-            sigma2 <- par[p + 1]
-            if (sigma2 <= 0) return (10000)
-            zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-            -objective_fnc(y, yo, X, Xm, Xo,
-                beta, sigma2, rho, zetastar,
-                location_prior_mean, location_prior_scale,
-                variance_prior_df, variance_prior_scale,
-                location_prior_df, moderate_location, moderate_variance)
-        },
-        method = "Nelder-Mead", hessian = TRUE)
-        
-        if (opt_res$convergence != 0) {
-            return(failed_result)
-        }
         
         fit_beta <- opt_res$par[beta_sel]
         coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop = FALSE]
