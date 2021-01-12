@@ -210,9 +210,9 @@ pd_lm.fit <- function(y, X,
   names(fit_beta) <- colnames(X)
     
   failed_result <- list(coefficients = rep(NA, p),
-    coef_variance_matrix = matrix(NA, nrow = p, ncol = p),
-    correction_factor = matrix(NA, nrow = p, ncol = p),
-    n_approx = NA, df = NA, s2 = NA, n_obs = length(yo))
+                        coef_variance_matrix = matrix(NA, nrow = p, ncol = p),
+                        correction_factor = matrix(NA, nrow = p, ncol = p),
+                        n_approx = NA, df = NA, s2 = NA, n_obs = length(yo))
     
   if (all_observed && !moderate_variance && !moderate_location) {
     ## Run lm if there are no missing values
@@ -231,11 +231,11 @@ pd_lm.fit <- function(y, X,
       sigma2 <- par[p + 1]
       if (sigma2 <= 0) return (10000)
         zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        -objective_fnc(y, yo, X, Xm, Xo,
-          beta, sigma2, rho, zetastar,
-          location_prior_mean, location_prior_scale,
-          variance_prior_df, variance_prior_scale,
-          location_prior_df, moderate_location, moderate_variance)
+        - objective_fnc(y, yo, X, Xm, Xo,
+                        beta, sigma2, rho, zetastar,
+                        location_prior_mean, location_prior_scale,
+                        variance_prior_df, variance_prior_scale,
+                        location_prior_df, moderate_location, moderate_variance)
     },
     method = "Nelder-Mead", hessian = TRUE)
       
@@ -255,22 +255,22 @@ pd_lm.fit <- function(y, X,
         sigma2 <- par[p + 1]
         if (sigma2 <= 0) return(10000)
         zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        -objective_fnc(y, yo, X, Xm, Xo,
-                       beta, sigma2, rho, zetastar,
-                       location_prior_mean, location_prior_scale,
-                       variance_prior_df, variance_prior_scale,
-                       location_prior_df, moderate_location, moderate_variance)
+        - objective_fnc(y, yo, X, Xm, Xo,
+                        beta, sigma2, rho, zetastar,
+                        location_prior_mean, location_prior_scale,
+                        variance_prior_df, variance_prior_scale,
+                        location_prior_df, moderate_location, moderate_variance)
     },
     gr = function(par) {
       beta <- par[beta_sel]
       sigma2 <- par[p + 1]
       if (sigma2 <= 0) return(10000)
       zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-      -grad_fnc(y, yo, X, Xm, Xo,
-                beta, sigma2, rho, zetastar,
-                location_prior_mean, location_prior_scale,
-                variance_prior_df, variance_prior_scale,
-                location_prior_df, moderate_location, moderate_variance)
+      - grad_fnc(y, yo, X, Xm, Xo,
+                 beta, sigma2, rho, zetastar,
+                 location_prior_mean, location_prior_scale,
+                 variance_prior_df, variance_prior_scale,
+                 location_prior_df, moderate_location, moderate_variance)
       }, method = "BFGS", hessian=TRUE)
             
       if (opt_res$convergence != 0) {
@@ -289,32 +289,32 @@ pd_lm.fit <- function(y, X,
         beta <- par[beta_sel]
         sigma2 <- par[p + 1]
         zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        -objective_fnc(y, yo, X, Xm, Xo,
-                       beta, sigma2, rho, zetastar,
-                       location_prior_mean, location_prior_scale,
-                       variance_prior_df, variance_prior_scale,
-                       location_prior_df, moderate_location, moderate_variance)
+        - objective_fnc(y, yo, X, Xm, Xo,
+                        beta, sigma2, rho, zetastar,
+                        location_prior_mean, location_prior_scale,
+                        variance_prior_df, variance_prior_scale,
+                        location_prior_df, moderate_location, moderate_variance)
       },
       gradient = function(par) {
         beta <- par[beta_sel]
         sigma2 <- par[p + 1]
         zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        -grad_fnc(y, yo, X, Xm, Xo,
-                  beta, sigma2, rho, zetastar,
-                  location_prior_mean, location_prior_scale,
-                  variance_prior_df, variance_prior_scale,
-                  location_prior_df, moderate_location, moderate_variance)
+        - grad_fnc(y, yo, X, Xm, Xo,
+                   beta, sigma2, rho, zetastar,
+                   location_prior_mean, location_prior_scale,
+                   variance_prior_df, variance_prior_scale,
+                   location_prior_df, moderate_location, moderate_variance)
       },
       hessian = function(par) {
         beta <- par[beta_sel]
         sigma2 <- par[p + 1]
         zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        -hess_fnc(y, yo, X, Xm, Xo,
-                  beta, sigma2, rho, zetastar,
-                  location_prior_mean, location_prior_scale,
-                  variance_prior_df, variance_prior_scale,
-                  location_prior_df, moderate_location, moderate_variance,
-                  beta_sel, p)
+        - hess_fnc(y, yo, X, Xm, Xo,
+                   beta, sigma2, rho, zetastar,
+                   location_prior_mean, location_prior_scale,
+                   variance_prior_df, variance_prior_scale,
+                   location_prior_df, moderate_location, moderate_variance,
+                   beta_sel, p)
     }, lower= c(rep(-Inf, length(beta_init)), 0))
         
     if (nl_res$convergence != 0) {
@@ -324,12 +324,12 @@ pd_lm.fit <- function(y, X,
     fit_beta <- nl_res$par[beta_sel]
     fit_sigma2 <- nl_res$par[p + 1]
     zetastar <- zeta * sqrt(1 + fit_sigma2 / zeta ^ 2)
-    hessian <- -hess_fnc(y, yo, X, Xm, Xo,
-                         fit_beta, fit_sigma2, rho, zetastar,
-                         location_prior_mean, location_prior_scale,
-                         variance_prior_df, variance_prior_scale,
-                         location_prior_df, moderate_location, moderate_variance,
-                         beta_sel, p)
+    hessian <- - hess_fnc(y, yo, X, Xm, Xo,
+                          fit_beta, fit_sigma2, rho, zetastar,
+                          location_prior_mean, location_prior_scale,
+                          variance_prior_df, variance_prior_scale,
+                          location_prior_df, moderate_location, moderate_variance,
+                          beta_sel, p)
     fit_sigma2_var <- 1 / hessian[p + 1, p + 1]
     coef_hessian <- hessian[beta_sel, beta_sel, drop = FALSE]
   }
@@ -358,10 +358,12 @@ pd_lm.fit <- function(y, X,
     
   # Correct Var_coef to make it unbiased
   # Plugging unbiased s2_approx into Hessian calculation
-  hessian <- - hess_fnc(y, yo, X, Xm, Xo, fit_beta, s2_approx, rho, zetastar,
-    location_prior_mean, location_prior_scale, variance_prior_df, 
-    variance_prior_scale, location_prior_df, moderate_location, 
-    moderate_variance, beta_sel, p)
+  hessian <- - hess_fnc(y, yo, X, Xm, Xo, 
+                        fit_beta, s2_approx, rho, zetastar,
+                        location_prior_mean, location_prior_scale, 
+                        variance_prior_df, variance_prior_scale, 
+                        location_prior_df, moderate_location, 
+                        moderate_variance, beta_sel, p)
   coef_hessian <- hessian[beta_sel, beta_sel, drop = FALSE]
     
   ## Set hessian to zero, so that the variances become infinite when one
@@ -390,11 +392,11 @@ pd_lm.fit <- function(y, X,
     rownames(Var_coef_unbiased) <- colnames(X)
     
   list(coefficients = fit_beta,
-    coef_variance_matrix = Var_coef_unbiased,
-    correction_factor = Correction_Factor,
-    n_approx = n_approx, df = df_approx,
-    s2 = s2_approx,
-    n_obs = length(yo))
+       coef_variance_matrix = Var_coef_unbiased,
+       correction_factor = Correction_Factor,
+       n_approx = n_approx, df = df_approx,
+       s2 = s2_approx,
+       n_obs = length(yo))
 }
 
 objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
