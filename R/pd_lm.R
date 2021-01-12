@@ -352,15 +352,15 @@ pd_lm.fit <- function(y, X,
   # right side, so we will calculate a factor that improves that one
   zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
   Correction_Factor <- calculate_skew_correction_factors(y, yo, X, Xm, Xo,
-                                      fit_beta, fit_sigma2, Var_coef, rho, zetastar, 
-                                      location_prior_mean, location_prior_scale, 
+                                      fit_beta, fit_sigma2, Var_coef, rho, zetastar,
+                                      location_prior_mean, location_prior_scale,
                                       variance_prior_df, variance_prior_scale,
-                                      location_prior_df, moderate_location, moderate_variance, 
+                                      location_prior_df, moderate_location, moderate_variance,
                                       out_factor = 8)
     
   # Correct Var_coef to make it unbiased
   # Plugging unbiased s2_approx into Hessian calculation
-  hessian <- - hess_fnc(y, yo, X, Xm, Xo, 
+  hessian <- - hess_fnc(y, yo, X, Xm, Xo,
                         fit_beta, s2_approx, rho, zetastar,
                         location_prior_mean, location_prior_scale, 
                         variance_prior_df, variance_prior_scale, 
@@ -416,7 +416,7 @@ objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, si
 
 grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
   
-  im r <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
+  imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
   if (moderate_location) {
     Xbmu <- X %*% beta - mu0
@@ -445,41 +445,41 @@ grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma2
 hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, 
                      moderate_location, moderate_variance, beta_sel, p){
     
-  imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
-    
-  ## precalculate values
-  zetastar_2 <- zetastar^2
-  zetastar_4 <- zetastar_2^2
-  Xmbr <- Xm %*% beta - rho
-  X0by0 <- Xo %*% beta - yo
-  q <- p+1
-    
-  if (moderate_location) {
-    Xbm <- (X %*% beta - mu0)^2
-    t_prior_fact <- (location_prior_df * sigma20 - Xbm)/(location_prior_df * sigma20 + Xbm)^2
-    dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow = nrow(X)) %*% X
-  } else {
-    dbb_p <- 0
-  }
-  dbb_o <- -2 * t(Xo) %*% Xo/(2 * sigma2)
-  dbb_m <- - t(Xm) %*% diag(c((imr^2 + Xmbr/zetastar_2 * imr)), nrow(Xm)) %*% Xm
-
-  if (moderate_variance) {
-    dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20/(sigma2^3) - 1/sigma2^2
-  } else {
-    dss_p <- 0
-  }
-  dss_o <- sum((sigma2 - 2 * Xoby0^2)/(2 * sigma2^3))
-  dss_m <- sum(Xmbr/(4 * zetastar_4) * imr * (3 - Xmbr * imr - Xmbr^2/zetastar_2))
-
-  dbs_o <- t(Xo) %*% X0by0/sigma2^2
-  dbs_m <- t(Xm) %*% (Xmbr/(2 * zetastar_2) * imr^2 - (zetastar_2 - Xmbr^2)/(2 * zetastar_4) * imr)
-
-  res <- matrix(NA, nrow = q, ncol = q)
-  res[beta_sel, beta_sel] <- dbb_p + dbb_o + dbb_m
-  res[q, q] <- dss_p + dss_o + dss_m
-  res[q, beta_sel] <- res[beta_sel, q] <- dbs_o + dbs_m
-  res
+    imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
+      
+    ## precalculate values
+    zetastar_2 <- zetastar^2
+    zetastar_4 <- zetastar_2^2
+    Xmbr <- Xm %*% beta - rho
+    X0by0 <- Xo %*% beta - yo
+    q <- p+1
+      
+    if (moderate_location) {
+      Xbm <- (X %*% beta - mu0)^2
+      t_prior_fact <- (location_prior_df * sigma20 - Xbm)/(location_prior_df * sigma20 + Xbm)^2
+      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow = nrow(X)) %*% X
+    } else {
+      dbb_p <- 0
+    }
+    dbb_o <- -2 * t(Xo) %*% Xo/(2 * sigma2)
+    dbb_m <- - t(Xm) %*% diag(c((imr^2 + Xmbr/zetastar_2 * imr)), nrow(Xm)) %*% Xm
+  
+    if (moderate_variance) {
+      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20/(sigma2^3) - 1/sigma2^2
+    } else {
+      dss_p <- 0
+    }
+    dss_o <- sum((sigma2 - 2 * Xoby0^2)/(2 * sigma2^3))
+    dss_m <- sum(Xmbr/(4 * zetastar_4) * imr * (3 - Xmbr * imr - Xmbr^2/zetastar_2))
+  
+    dbs_o <- t(Xo) %*% X0by0/sigma2^2
+    dbs_m <- t(Xm) %*% (Xmbr/(2 * zetastar_2) * imr^2 - (zetastar_2 - Xmbr^2)/(2 * zetastar_4) * imr)
+  
+    res <- matrix(NA, nrow = q, ncol = q)
+    res[beta_sel, beta_sel] <- dbb_p + dbb_o + dbb_m
+    res[q, q] <- dss_p + dss_o + dss_m
+    res[q, beta_sel] <- res[beta_sel, q] <- dbs_o + dbs_m
+    res
 }
 
 
