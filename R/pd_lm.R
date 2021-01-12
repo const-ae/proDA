@@ -411,27 +411,35 @@ objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, si
   val
 }
 
-
-grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance){
-  imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
-
-  if(moderate_location){
-    dbeta_p <-  -(location_prior_df + 1) * t(X) %*% ((X %*% beta - mu0) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2))
-  }else{
-    dbeta_p <-  0
-  }
-  dbeta_o <- - (t(Xo) %*% Xo %*% beta - t(Xo) %*% yo) / sigma2
-  dbeta_m <- t(Xm) %*% imr
-
-  if(moderate_variance){
-    dsig2_p <- -(1 + df0/2) / sigma2 + df0 * tau20 / (2 * sigma2^2) + 1/sigma2
-  }else{
-    dsig2_p <- 0
-  }
-  dsig2_o <- sum(((Xo %*% beta - yo)^2 - sigma2) / (2 * sigma2^2))
-  dsig2_m <- -sum((Xm %*% beta - rho) / (2 * zetastar^2) * imr)
-
-  c(dbeta_p + dbeta_o + dbeta_m, dsig2_p + dsig2_o + dsig2_m)
+grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
+    sigma20, df0, tau20, location_prior_df, moderate_location, 
+    moderate_variance) {
+  
+    imr <- proDA:::inv_mills_ratio(Xm %*% beta, rho, zetastar)
+  
+    if (moderate_location) {
+        Xbmu <- X %*% beta - mu0
+        dbeta_p <- -(location_prior_df + 1) * t(X) %*% 
+            (Xbmu / (location_prior_df * sigma20 + Xbmu^2))
+    } else {
+        dbeta_p <- 0
+    }
+  
+    Xo_t <- t(Xo)
+    dbeta_o <- -(Xo_t %*% Xo %*% beta - Xo_t %*% yo) / sigma2
+    dbeta_m <- t(Xm) %*% imr
+  
+  
+    if (moderate_variance) {
+        dsig2_p <- -(1 + df0 / 2) / sigma2 + df0 * tau20 / (2 * sigma2 ^ 2) + 
+            1 / sigma2
+    } else {
+        dsig2_p <- 0
+    }
+    
+    dsig2_o <- sum(((Xo %*% beta - yo) ^ 2 - sigma2) / (2 * sigma2 ^ 2))
+    dsig2_m <- -sum((Xm %*% beta - rho)/(2 * zetastar ^ 2) * imr)
+    c(dbeta_p + dbeta_o + dbeta_m, dsig2_p + dsig2_o + dsig2_m)
 }
 
 
