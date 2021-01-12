@@ -152,36 +152,36 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
 #'   }
 #' @keywords internal
 pd_lm.fit <- function(y, X,
-    dropout_curve_position,
-    dropout_curve_scale,
-    location_prior_mean = NULL,
-    location_prior_scale = NULL,
-    variance_prior_scale = NULL,
-    variance_prior_df = NULL,
-    location_prior_df = 3,
-    method = c("analytic_hessian", "analytic_grad", "numeric"),
-    verbose = FALSE){
+  dropout_curve_position,
+  dropout_curve_scale,
+  location_prior_mean = NULL,
+  location_prior_scale = NULL,
+  variance_prior_scale = NULL,
+  variance_prior_df = NULL,
+  location_prior_df = 3,
+  method = c("analytic_hessian", "analytic_grad", "numeric"),
+  verbose = FALSE){
   
-    method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
+  method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
     
-    moderate_location <- !missing(location_prior_mean) && 
-        !is.null(location_prior_mean) && !is.na(location_prior_mean)
-    moderate_variance <- !missing(variance_prior_scale) && 
-        !is.null(variance_prior_scale)  && !is.na(variance_prior_scale)
+  moderate_location <- !missing(location_prior_mean) && 
+    !is.null(location_prior_mean) && !is.na(location_prior_mean)
+  moderate_variance <- !missing(variance_prior_scale) && 
+    !is.null(variance_prior_scale)  && !is.na(variance_prior_scale)
     
-    if (!moderate_location && !moderate_variance && nrow(X) < ncol(X) + 1) {
-        stop("Underdetermined system. There are more parameters to estimate than available rows.")
-    }
+  if (!moderate_location && !moderate_variance && nrow(X) < ncol(X) + 1) {
+    stop("Underdetermined system. There are more parameters to estimate than available rows.")
+  }
     
-    y_na <- is.na(y)
-    Xo <- X[!y_na, , drop = FALSE]
-    Xm <- X[y_na, , drop = FALSE]
-    yo <- y[!y_na]
-    p <- ncol(X)
-    n <- nrow(X)
+  y_na <- is.na(y)
+  Xo <- X[!y_na, , drop = FALSE]
+  Xm <- X[y_na, , drop = FALSE]
+  yo <- y[!y_na]
+  p <- ncol(X)
+  n <- nrow(X)
     
-    all_observed <- all(!y_na)
-    all_missing <- !all_observed ##all(y_na)
+  all_observed <- all(!y_na)
+  all_missing <- !all_observed ##all(y_na)
     
     rho <- dropout_curve_position[y_na]
     zeta <- dropout_curve_scale[y_na]
