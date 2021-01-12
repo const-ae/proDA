@@ -395,20 +395,20 @@ pd_lm.fit <- function(y, X,
 }
 
 
-objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance){
-  val <- 0
-  if(moderate_location){
-    val <- val + sum(dt.scaled(X %*% beta, df=location_prior_df, mean= mu0, sd=sqrt(sigma20), log=TRUE))
-  }
-  if(moderate_variance){
-    val <- val +
-      extraDistr::dinvchisq(sigma2, df0, tau20, log=TRUE) +
-      log(sigma2)   # important to remove the implicit 1/sigma2 prior in the Inv-Chisq distr
-  }
-  val <- val +
-    sum(dnorm(Xo %*% beta, yo, sd=sqrt(sigma2), log=TRUE)) +
-    sum(invprobit(Xm %*% beta, rho, zetastar, log=TRUE))
-  val
+objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
+    sigma20, df0, tau20, location_prior_df, moderate_location, 
+    moderate_variance) {
+    val <- 0
+    if (moderate_location) {
+        val <- sum(dt.scaled(X %*% beta, df = location_prior_df, 
+            mean = mu0, sd = sqrt(sigma20), log = TRUE))
+    }
+    if (moderate_variance) {
+        val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log = TRUE) + 
+            log(sigma2)
+    }
+    val + sum(dnorm(Xo %*% beta, yo, sd = sqrt(sigma2), log = TRUE)) + 
+        sum(invprobit(Xm %*% beta, rho, zetastar, log = TRUE))
 }
 
 grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
