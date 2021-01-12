@@ -414,7 +414,7 @@ objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, si
     sum(invprobit(Xm %*% beta, rho, zetastar, log = TRUE))
 }
 
-grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
+grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
   
   imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
@@ -549,7 +549,7 @@ calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_si
                             moderate_location = moderate_location,
                             moderate_variance = moderate_variance)
 
-      (abs(diff - offset)/(out_factor/2))^(-1)
+      (abs(diff - offset)/(out_factor / 2))^(-1)
     }
   }, FUN.VALUE = 0.0)
 
@@ -586,9 +586,9 @@ calculate_sigma2_parameters <- function(fit_sigma2, fit_sigma2_var,
                                         variance_prior_scale, variance_prior_df,
                                         moderate_variance, n, p){
 
-  n_approx <- 2 * fit_sigma2^2/fit_sigma2_var
-  rss_approx <- 2 * fit_sigma2^3/fit_sigma2_var
-  s2_approx <- rss_approx/(n_approx - p)
+  n_approx <- 2 * fit_sigma2^2 / fit_sigma2_var
+  rss_approx <- 2 * fit_sigma2^3 / fit_sigma2_var
+  s2_approx <- rss_approx / (n_approx - p)
 
   if(s2_approx < 0 || n_approx <= p){
     df_approx <- 1e-3
