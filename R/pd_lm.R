@@ -393,25 +393,25 @@ pd_lm.fit <- function(y, X,
   names(fit_beta) <- colnames(Var_coef_unbiased) <- 
     rownames(Var_coef_unbiased) <- colnames(X)
     
-  list(coefficients = fit_beta,
-       coef_variance_matrix = Var_coef_unbiased,
-       correction_factor = Correction_Factor,
-       n_approx = n_approx, df = df_approx,
-       s2 = s2_approx,
-       n_obs = length(yo))
+  list(coefficients=fit_beta,
+       coef_variance_matrix=Var_coef_unbiased,
+       correction_factor=Correction_Factor,
+       n_approx=n_approx, df=df_approx,
+       s2=s2_approx,
+       n_obs=length(yo))
 }
 
 objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
   val <- 0
   if (moderate_location) {
-    val <- sum(dt.scaled(X %*% beta, df = location_prior_df, mean = mu0, sd = sqrt(sigma20), log = TRUE))
+    val <- sum(dt.scaled(X %*% beta, df=location_prior_df, mean=mu0, sd=sqrt(sigma20), log=TRUE))
   }
   if (moderate_variance) {
-    val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log = TRUE) + log(sigma2)
+    val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log=TRUE) + log(sigma2)
   }
   val + 
-    sum(dnorm(Xo %*% beta, yo, sd = sqrt(sigma2), log = TRUE)) + 
-    sum(invprobit(Xm %*% beta, rho, zetastar, log = TRUE))
+    sum(dnorm(Xo %*% beta, yo, sd=sqrt(sigma2), log=TRUE)) + 
+    sum(invprobit(Xm %*% beta, rho, zetastar, log=TRUE))
 }
 
 grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
@@ -457,7 +457,7 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     if (moderate_location) {
       Xbm <- (X %*% beta - mu0)^2
       t_prior_fact <- (location_prior_df * sigma20 - Xbm)/(location_prior_df * sigma20 + Xbm)^2
-      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow = nrow(X)) %*% X
+      dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X
     } else {
       dbb_p <- 0
     }
@@ -475,7 +475,7 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     dbs_o <- t(Xo) %*% X0by0/sigma2^2
     dbs_m <- t(Xm) %*% (Xmbr/(2 * zetastar_2) * imr^2 - (zetastar_2 - Xmbr^2)/(2 * zetastar_4) * imr)
   
-    res <- matrix(NA, nrow = q, ncol = q)
+    res <- matrix(NA, nrow=q, ncol=q)
     res[beta_sel, beta_sel] <- dbb_p + dbb_o + dbb_m
     res[q, q] <- dss_p + dss_o + dss_m
     res[q, beta_sel] <- res[beta_sel, q] <- dbs_o + dbs_m
@@ -487,7 +487,7 @@ has_intercept <- function(X){
 
   any(vapply(seq_len(ncol(X)), function(idx){
     all(X[, idx] == 1)
-  }, FUN.VALUE = FALSE))
+  }, FUN.VALUE=FALSE))
 
 }
 
@@ -495,7 +495,7 @@ has_intercept <- function(X){
 
 calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_sigma2, Var_coef, rho, zetastar,
                                              mu0, sigma20, df0, tau20, location_prior_df,
-                                             moderate_location, moderate_variance, out_factor = 2){
+                                             moderate_location, moderate_variance, out_factor=2){
   p <- length(fit_beta)
   res <- vapply(seq_len(p), function(idx){
     if(any(is.na(fit_beta))){
