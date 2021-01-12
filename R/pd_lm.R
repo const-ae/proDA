@@ -294,28 +294,28 @@ pd_lm.fit <- function(y, X,
                          location_prior_mean, location_prior_scale,
                          variance_prior_df, variance_prior_scale,
                          location_prior_df, moderate_location, moderate_variance)
-      },
-      gradient = function(par) {
-        beta <- par[beta_sel]
-        sigma2 <- par[p+1]
-        zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
-        - grad_fnc(y, yo, X, Xm, Xo,
-                   beta, sigma2, rho, zetastar,
-                   location_prior_mean, location_prior_scale,
-                   variance_prior_df, variance_prior_scale,
-                   location_prior_df, moderate_location, moderate_variance)
-      },
-      hessian = function(par) {
-        beta <- par[beta_sel]
-        sigma2 <- par[p+1]
-        zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
-        - hess_fnc(y, yo, X, Xm, Xo,
-                   beta, sigma2, rho, zetastar,
-                   location_prior_mean, location_prior_scale,
-                   variance_prior_df, variance_prior_scale,
-                   location_prior_df, moderate_location, moderate_variance,
-                   beta_sel, p)
-    }, lower= c(rep(-Inf, length(beta_init)), 0))
+       },
+       gradient = function(par) {
+         beta <- par[beta_sel]
+         sigma2 <- par[p+1]
+         zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+         - grad_fnc(y, yo, X, Xm, Xo,
+                    beta, sigma2, rho, zetastar,
+                    location_prior_mean, location_prior_scale,
+                    variance_prior_df, variance_prior_scale,
+                    location_prior_df, moderate_location, moderate_variance)
+       },
+       hessian = function(par) {
+         beta <- par[beta_sel]
+         sigma2 <- par[p+1]
+         zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+         - hess_fnc(y, yo, X, Xm, Xo,
+                    beta, sigma2, rho, zetastar,
+                    location_prior_mean, location_prior_scale,
+                    variance_prior_df, variance_prior_scale,
+                    location_prior_df, moderate_location, moderate_variance,
+                    beta_sel, p)
+     }, lower= c(rep(-Inf, length(beta_init)), 0))
         
     if (nl_res$convergence != 0) {
       return(failed_result)
