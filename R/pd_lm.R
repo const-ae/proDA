@@ -251,15 +251,15 @@ pd_lm.fit <- function(y, X,
   } else if (method == "analytic_grad") {
     # Run optim
     opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par) {
-        beta <- par[beta_sel]
-        sigma2 <- par[p + 1]
-        if (sigma2 <= 0) return(10000)
-        zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
-        - objective_fnc(y, yo, X, Xm, Xo,
-                        beta, sigma2, rho, zetastar,
-                        location_prior_mean, location_prior_scale,
-                        variance_prior_df, variance_prior_scale,
-                        location_prior_df, moderate_location, moderate_variance)
+      beta <- par[beta_sel]
+      sigma2 <- par[p + 1]
+      if (sigma2 <= 0) return(10000)
+      zetastar <- zeta * sqrt(1 + sigma2 / zeta ^ 2)
+      - objective_fnc(y, yo, X, Xm, Xo,
+                      beta, sigma2, rho, zetastar,
+                      location_prior_mean, location_prior_scale,
+                      variance_prior_df, variance_prior_scale,
+                      location_prior_df, moderate_location, moderate_variance)
     },
     gr = function(par) {
       beta <- par[beta_sel]
@@ -352,9 +352,11 @@ pd_lm.fit <- function(y, X,
   # right side, so we will calculate a factor that improves that one
   zetastar <- zeta * sqrt(1 + fit_sigma2 / zeta ^ 2)
   Correction_Factor <- calculate_skew_correction_factors(y, yo, X, Xm, Xo,
-      fit_beta, fit_sigma2, Var_coef, rho, zetastar, location_prior_mean, 
-      location_prior_scale, variance_prior_df, variance_prior_scale,
-      location_prior_df, moderate_location, moderate_variance, out_factor = 8)
+                                      fit_beta, fit_sigma2, Var_coef, rho, zetastar, 
+                                      location_prior_mean, location_prior_scale, 
+                                      variance_prior_df, variance_prior_scale,
+                                      location_prior_df, moderate_location, moderate_variance, 
+                                      out_factor = 8)
     
   # Correct Var_coef to make it unbiased
   # Plugging unbiased s2_approx into Hessian calculation
@@ -399,20 +401,17 @@ pd_lm.fit <- function(y, X,
        n_obs = length(yo))
 }
 
-objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
-    sigma20, df0, tau20, location_prior_df, moderate_location, 
-    moderate_variance) {
-    val <- 0
-    if (moderate_location) {
-        val <- sum(dt.scaled(X %*% beta, df = location_prior_df, 
-            mean = mu0, sd = sqrt(sigma20), log = TRUE))
-    }
-    if (moderate_variance) {
-        val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log = TRUE) + 
-            log(sigma2)
-    }
-    val + sum(dnorm(Xo %*% beta, yo, sd = sqrt(sigma2), log = TRUE)) + 
-        sum(invprobit(Xm %*% beta, rho, zetastar, log = TRUE))
+objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
+  val <- 0
+  if (moderate_location) {
+    val <- sum(dt.scaled(X %*% beta, df = location_prior_df, mean = mu0, sd = sqrt(sigma20), log = TRUE))
+  }
+  if (moderate_variance) {
+    val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log = TRUE) + log(sigma2)
+  }
+  val + 
+    sum(dnorm(Xo %*% beta, yo, sd = sqrt(sigma2), log = TRUE)) + 
+    sum(invprobit(Xm %*% beta, rho, zetastar, log = TRUE))
 }
 
 grad_fnc <- function (y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, 
