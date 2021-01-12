@@ -152,15 +152,15 @@ pd_lm <- function(formula, data = NULL, subset = NULL,
 #'   }
 #' @keywords internal
 pd_lm.fit <- function(y, X,
-  dropout_curve_position,
-  dropout_curve_scale,
-  location_prior_mean = NULL,
-  location_prior_scale = NULL,
-  variance_prior_scale = NULL,
-  variance_prior_df = NULL,
-  location_prior_df = 3,
-  method = c("analytic_hessian", "analytic_grad", "numeric"),
-  verbose = FALSE){
+                      dropout_curve_position,
+                      dropout_curve_scale,
+                      location_prior_mean = NULL,
+                      location_prior_scale = NULL,
+                      variance_prior_scale = NULL,
+                      variance_prior_df = NULL,
+                      location_prior_df = 3,
+                      method = c("analytic_hessian", "analytic_grad", "numeric"),
+                      verbose = FALSE){
   
   method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
     
