@@ -285,15 +285,15 @@ pd_lm.fit <- function(y, X,
   } else if (method == "analytic_hessian") {
     ## Run nlminb
     nl_res <- nlminb(start = c(beta_init, sigma2_init),
-      objective = function(par) {
-        beta <- par[beta_sel]
-        sigma2 <- par[p+1]
-        zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
-        - objective_fnc(y, yo, X, Xm, Xo,
-                        beta, sigma2, rho, zetastar,
-                        location_prior_mean, location_prior_scale,
-                        variance_prior_df, variance_prior_scale,
-                        location_prior_df, moderate_location, moderate_variance)
+       objective = function(par) {
+         beta <- par[beta_sel]
+         sigma2 <- par[p+1]
+         zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+         - objective_fnc(y, yo, X, Xm, Xo,
+                         beta, sigma2, rho, zetastar,
+                         location_prior_mean, location_prior_scale,
+                         variance_prior_df, variance_prior_scale,
+                         location_prior_df, moderate_location, moderate_variance)
       },
       gradient = function(par) {
         beta <- par[beta_sel]
@@ -357,7 +357,7 @@ pd_lm.fit <- function(y, X,
                                       variance_prior_df, variance_prior_scale,
                                       location_prior_df, moderate_location, moderate_variance,
                                       out_factor = 8)
-    
+
   # Correct Var_coef to make it unbiased
   # Plugging unbiased s2_approx into Hessian calculation
   hessian <- - hess_fnc(y, yo, X, Xm, Xo,
