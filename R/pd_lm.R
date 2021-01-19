@@ -210,9 +210,9 @@ pd_lm.fit <- function(y, X,
   names(fit_beta) <- colnames(X)
     
   failed_result <- list(coefficients=rep(NA, p),
-                        coef_variance_matrix=matrix(NA, nrow=p, ncol=p),
-                        correction_factor=matrix(NA, nrow=p, ncol=p),
-                        n_approx=NA, df=NA, s2=NA, n_obs=length(yo))
+                        coef_variance_matrix = matrix(NA, nrow=p, ncol=p),
+                        correction_factor = matrix(NA, nrow=p, ncol=p),
+                        n_approx=NA, df=NA, s2=NA, n_obs = length(yo))
     
   if (all_observed && !moderate_variance && !moderate_location) {
     ## Run lm if there are no missing values
