@@ -179,7 +179,7 @@ pd_lm.fit <- function(y, X,
   n <- nrow(X)
     
   all_observed <- all(!y_na)
-  all_missing <- !all_observed ##all(y_na)
+  all_missing <- all(y_na)
     
   rho <- dropout_curve_position[y_na]
   zeta <- dropout_curve_scale[y_na]
@@ -438,7 +438,7 @@ grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     
   dsig2_o <- sum(((Xo %*% beta - yo)^2 - sigma2)/(2 * sigma2^2))
   dsig2_m <- -sum((Xm %*% beta - rho)/(2 * zetastar^2) * imr)
-  dbeta_p + dbeta_o + dbeta_m, dsig2_p + dsig2_o + dsig2_m
+  c(dbeta_p + dbeta_o + dbeta_m, dsig2_p + dsig2_o + dsig2_m)
 }
 
 
@@ -451,12 +451,13 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     zetastar_2 <- zetastar^2
     zetastar_4 <- zetastar_2^2
     Xmbr <- Xm %*% beta - rho
-    X0by0 <- Xo %*% beta - yo
+    Xoby0 <- Xo %*% beta - yo
     q <- p+1
       
     if (moderate_location) {
       Xbm <- (X %*% beta - mu0)^2
-      t_prior_fact <- (location_prior_df * sigma20 - Xbm)/(location_prior_df * sigma20 + Xbm)^2
+      t_prior_fact <- c((location_prior_df * sigma20 - Xbm)/
+            (location_prior_df * sigma20 + Xbm)^2)
       dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X
     } else {
       dbb_p <- 0
@@ -472,7 +473,7 @@ hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
     dss_o <- sum((sigma2 - 2 * Xoby0^2)/(2 * sigma2^3))
     dss_m <- sum(Xmbr/(4 * zetastar_4) * imr * (3 - Xmbr * imr - Xmbr^2/zetastar_2))
   
-    dbs_o <- t(Xo) %*% X0by0/sigma2^2
+    dbs_o <- t(Xo) %*% Xoby0/sigma2^2
     dbs_m <- t(Xm) %*% (Xmbr/(2 * zetastar_2) * imr^2 - (zetastar_2 - Xmbr^2)/(2 * zetastar_4) * imr)
   
     res <- matrix(NA, nrow=q, ncol=q)
