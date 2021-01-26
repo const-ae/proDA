@@ -161,91 +161,75 @@ pd_lm.fit <- function(y, X,
                       location_prior_df = 3,
                       method = c("analytic_hessian", "analytic_grad", "numeric"),
                       verbose = FALSE){
-
+  
   method <- match.arg(method, c("analytic_hessian", "analytic_grad", "numeric"))
-
-  moderate_location <- !missing(location_prior_mean) && ! is.null(location_prior_mean) && ! is.na(location_prior_mean)
-  moderate_variance <- !missing(variance_prior_scale) && ! is.null(variance_prior_scale)  && ! is.na(variance_prior_scale)
-
-  if(! moderate_location && ! moderate_variance && nrow(X) < ncol(X) + 1){
+    
+  moderate_location <- !missing(location_prior_mean) && !is.null(location_prior_mean) && !is.na(location_prior_mean)
+  moderate_variance <- !missing(variance_prior_scale) && !is.null(variance_prior_scale)  && !is.na(variance_prior_scale)
+    
+  if (!moderate_location && !moderate_variance && nrow(X) < ncol(X) + 1) {
     stop("Underdetermined system. There are more parameters to estimate than available rows.")
   }
-
-  Xo <- X[!is.na(y), , drop=FALSE]
-  Xm <- X[is.na(y), , drop=FALSE]
-  yo <- y[!is.na(y)]
+    
+  y_na <- is.na(y)
+  Xo <- X[!y_na, , drop=FALSE]
+  Xm <- X[y_na, , drop=FALSE]
+  yo <- y[!y_na]
   p <- ncol(X)
   n <- nrow(X)
-
-  all_observed <- all(! is.na(y))
-  all_missing <- all(is.na(y))
-
-  rho <- dropout_curve_position[is.na(y)]
-  zeta <- dropout_curve_scale[is.na(y)]
-
-  if(moderate_location){
+    
+  all_observed <- all(!y_na)
+  all_missing <- all(y_na)
+    
+  rho <- dropout_curve_position[y_na]
+  zeta <- dropout_curve_scale[y_na]
+    
+  ## create initial value for beta
+  if (moderate_location) {
     beta_init <- c(location_prior_mean, rep(0, times=p-1))
-  }else if(length(yo) == 0){
+  } else if (length(yo) == 0) {
     beta_init <- rep(0, times=p)
-  }else{
-    if(has_intercept(X)){
+  } else {
+    if (has_intercept(X)) {
       beta_init <- c(mean(yo), rep(0, times=p-1))
-    }else{
+    } else {
       beta_init <- rep(mean(yo), times=p)
     }
-
   }
-  if(moderate_variance){
-    sigma2_init <- variance_prior_df * variance_prior_scale / (variance_prior_df + 2)
-  }else{
+    
+  ## create initial value for sigma2
+  if (moderate_variance) {
+    sigma2_init <- variance_prior_df * variance_prior_scale/(variance_prior_df + 2)
+  } else {
     sigma2_init <- 1
   }
+    
   beta_sel <- seq_len(p)
-
+    
   fit_beta <- rep(NA, p)
   names(fit_beta) <- colnames(X)
-
+    
   failed_result <- list(coefficients=rep(NA, p),
                         coef_variance_matrix = matrix(NA, nrow=p, ncol=p),
                         correction_factor = matrix(NA, nrow=p, ncol=p),
                         n_approx=NA, df=NA, s2=NA, n_obs = length(yo))
-
-  if(all_observed && ! moderate_variance && ! moderate_location){
-    # Run lm
+    
+  if (all_observed && !moderate_variance && !moderate_location) {
+    ## Run lm if there are no missing values
     lm_res <- lm(yo ~ Xo - 1)
     fit_beta <- coefficients(lm_res)
-    fit_sigma2 <- summary(lm_res)$sigma^2 * (n-p) / n
+    fit_sigma2 <- summary(lm_res)$sigma^2 * (n - p)/n
     coef_hessian <-  1/fit_sigma2 * (t(X) %*% X)
-    fit_sigma2_var <- 2 * fit_sigma2^2 / n
-  }else if(all_missing && ! moderate_variance){
+    fit_sigma2_var <- 2 * fit_sigma2^2/n
+      
+  } else if (all_missing && !moderate_variance) {
     return(failed_result)
-  }else if(method == "numeric"){
-    opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
+      
+  } else if (method == "numeric") {
+    opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par) {
       beta <- par[beta_sel]
       sigma2 <- par[p+1]
-      if(sigma2 <= 0) return(10000)
-      zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
-      - objective_fnc(y, yo, X, Xm, Xo,
-                    beta, sigma2, rho, zetastar,
-                    location_prior_mean, location_prior_scale,
-                    variance_prior_df, variance_prior_scale,
-                    location_prior_df, moderate_location, moderate_variance)
-    },
-       method = "Nelder-Mead", hessian = TRUE)
-    if(opt_res$convergence != 0){
-      return(failed_result)
-    }
-
-    fit_beta <- opt_res$par[beta_sel]
-    coef_hessian <- opt_res$hessian[beta_sel, beta_sel,drop=FALSE]
-    fit_sigma2 <- opt_res$par[p+1]
-    fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
-  }else if(method == "analytic_grad"){
-    # Run optim
-    opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par){
-      beta <- par[beta_sel]
-      sigma2 <- par[p+1]
-      if(sigma2 <= 0) return(10000)
+      if (sigma2 <= 0) return (10000)
       zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
       - objective_fnc(y, yo, X, Xm, Xo,
                       beta, sigma2, rho, zetastar,
@@ -253,10 +237,34 @@ pd_lm.fit <- function(y, X,
                       variance_prior_df, variance_prior_scale,
                       location_prior_df, moderate_location, moderate_variance)
     },
-    gr = function(par){
+    method = "Nelder-Mead", hessian = TRUE)
+      
+    if (opt_res$convergence != 0) {
+      return(failed_result)
+    }
+        
+    fit_beta <- opt_res$par[beta_sel]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop=FALSE]
+    fit_sigma2 <- opt_res$par[p+1]
+    fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
+      
+  } else if (method == "analytic_grad") {
+    # Run optim
+    opt_res <- stats::optim(par = c(beta_init, sigma2_init), function(par) {
       beta <- par[beta_sel]
       sigma2 <- par[p+1]
-      if(sigma2 <= 0) return(10000)
+      if (sigma2 <= 0) return(10000)
+      zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
+      - objective_fnc(y, yo, X, Xm, Xo,
+                      beta, sigma2, rho, zetastar,
+                      location_prior_mean, location_prior_scale,
+                      variance_prior_df, variance_prior_scale,
+                      location_prior_df, moderate_location, moderate_variance)
+    },
+    gr = function(par) {
+      beta <- par[beta_sel]
+      sigma2 <- par[p+1]
+      if (sigma2 <= 0) return(10000)
       zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
       - grad_fnc(y, yo, X, Xm, Xo,
                  beta, sigma2, rho, zetastar,
@@ -264,18 +272,20 @@ pd_lm.fit <- function(y, X,
                  variance_prior_df, variance_prior_scale,
                  location_prior_df, moderate_location, moderate_variance)
     }, method = "BFGS", hessian=TRUE)
-    if(opt_res$convergence != 0){
+            
+    if (opt_res$convergence != 0) {
       return(failed_result)
     }
-
+          
     fit_beta <- opt_res$par[beta_sel]
-    coef_hessian <- opt_res$hessian[beta_sel, beta_sel,drop=FALSE]
+    coef_hessian <- opt_res$hessian[beta_sel, beta_sel, drop=FALSE]
     fit_sigma2 <- opt_res$par[p+1]
     fit_sigma2_var <- 1/opt_res$hessian[p+1, p+1]
-  }else if(method == "analytic_hessian"){
-    # Run nlminb
+      
+  } else if (method == "analytic_hessian") {
+    ## Run nlminb
     nl_res <- nlminb(start = c(beta_init, sigma2_init),
-       objective = function(par){
+       objective = function(par) {
          beta <- par[beta_sel]
          sigma2 <- par[p+1]
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
@@ -285,7 +295,7 @@ pd_lm.fit <- function(y, X,
                          variance_prior_df, variance_prior_scale,
                          location_prior_df, moderate_location, moderate_variance)
        },
-       gradient = function(par){
+       gradient = function(par) {
          beta <- par[beta_sel]
          sigma2 <- par[p+1]
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
@@ -295,7 +305,7 @@ pd_lm.fit <- function(y, X,
                     variance_prior_df, variance_prior_scale,
                     location_prior_df, moderate_location, moderate_variance)
        },
-       hessian = function(par){
+       hessian = function(par) {
          beta <- par[beta_sel]
          sigma2 <- par[p+1]
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
@@ -305,11 +315,12 @@ pd_lm.fit <- function(y, X,
                     variance_prior_df, variance_prior_scale,
                     location_prior_df, moderate_location, moderate_variance,
                     beta_sel, p)
-       }, lower= c(rep(-Inf, length(beta_init)), 0))
-    if(nl_res$convergence != 0){
+     }, lower= c(rep(-Inf, length(beta_init)), 0))
+        
+    if (nl_res$convergence != 0) {
       return(failed_result)
     }
-
+      
     fit_beta <- nl_res$par[beta_sel]
     fit_sigma2 <- nl_res$par[p+1]
     zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
@@ -320,22 +331,22 @@ pd_lm.fit <- function(y, X,
                           location_prior_df, moderate_location, moderate_variance,
                           beta_sel, p)
     fit_sigma2_var <- 1/hessian[p+1, p+1]
-    coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
+    coef_hessian <- hessian[beta_sel, beta_sel, drop=FALSE]
   }
-  if(fit_sigma2_var < 0){
+    
+  if (fit_sigma2_var < 0){
     return(failed_result)
   }
-
+    
   Var_coef <- invert_hessian_matrix(coef_hessian, p, verbose)
-
+    
   # Use fitted sigma2 and associated uncertainty to estimate df and unbiased sigma2
   sigma2_params <- calculate_sigma2_parameters(fit_sigma2, fit_sigma2_var,
-                                               variance_prior_scale, variance_prior_df,
-                                               moderate_variance, n, p)
+      variance_prior_scale, variance_prior_df, moderate_variance, n, p)
   n_approx <- sigma2_params$n_approx
   df_approx <- sigma2_params$df_approx
   s2_approx <- sigma2_params$s2_approx
-
+    
   # Calculate correction factor for skew
   # the skew means that the fit is bad on both sides. We only care about the
   # right side, so we will calculate a factor that improves that one
@@ -347,125 +358,128 @@ pd_lm.fit <- function(y, X,
                                       location_prior_df, moderate_location, moderate_variance,
                                       out_factor = 8)
 
-
   # Correct Var_coef to make it unbiased
   # Plugging unbiased s2_approx into Hessian calculation
   hessian <- - hess_fnc(y, yo, X, Xm, Xo,
                         fit_beta, s2_approx, rho, zetastar,
-                        location_prior_mean, location_prior_scale,
-                        variance_prior_df, variance_prior_scale,
-                        location_prior_df, moderate_location, moderate_variance,
-                        beta_sel, p)
-  coef_hessian <- hessian[beta_sel, beta_sel,drop=FALSE]
-  if(any(diag(coef_hessian) < 0)){
-    # This is bad....
-    # Set hessian to zero, so that the variances become infinite
-    coef_hessian <- matrix(0, nrow=p, ncol=p)
+                        location_prior_mean, location_prior_scale, 
+                        variance_prior_df, variance_prior_scale, 
+                        location_prior_df, moderate_location, 
+                        moderate_variance, beta_sel, p)
+  coef_hessian <- hessian[beta_sel, beta_sel, drop = FALSE]
+    
+  ## Set hessian to zero, so that the variances become infinite when one
+  ## diagonal element is negative (this is bad)
+  if (any(diag(coef_hessian) < 0)) {
+      coef_hessian <- matrix(0, nrow = p, ncol = p)
   }
   Var_coef_unbiased <- invert_hessian_matrix(coef_hessian, p, verbose)
-
-  # Apply correction factor to the unbiased Var_coef
+    
+  ## Apply correction factor to the unbiased Var_coef
   Var_coef_unbiased <- Correction_Factor %*% Var_coef_unbiased %*% Correction_Factor
-
-
-  # Set estimates to NA if no reasonable inference
+    
+  ## Set estimates to NA if no reasonable inference
   coef_should_be_inf <- diag(Var_coef) > 1e6
-  for(idx in which(coef_should_be_inf)){
+  for (idx in which(coef_should_be_inf)) {
     Var_coef_unbiased[idx, idx] <- Inf
   }
+    
   fit_beta[coef_should_be_inf] <- NA
-  if(all(coef_should_be_inf)){
-    n_approx <- NA
-    df_approx <- NA
-    s2_approx <- NA
+  if (all(coef_should_be_inf)) {
+    n_approx <- df_approx <- s2_approx <- NA
   }
-
+    
   # Make everything pretty and return results
-  names(fit_beta) <- colnames(X)
-  colnames(Var_coef_unbiased) <- colnames(X)
-  rownames(Var_coef_unbiased) <- colnames(X)
-
+  names(fit_beta) <- colnames(Var_coef_unbiased) <- 
+    rownames(Var_coef_unbiased) <- colnames(X)
+    
   list(coefficients=fit_beta,
-       coef_variance_matrix = Var_coef_unbiased,
-       correction_factor = Correction_Factor,
+       coef_variance_matrix=Var_coef_unbiased,
+       correction_factor=Correction_Factor,
        n_approx=n_approx, df=df_approx,
        s2=s2_approx,
-       n_obs = length(yo))
-
+       n_obs=length(yo))
 }
 
-
-objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance){
+objective_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
   val <- 0
-  if(moderate_location){
-    val <- val + sum(dt.scaled(X %*% beta, df=location_prior_df, mean= mu0, sd=sqrt(sigma20), log=TRUE))
+  if (moderate_location) {
+    val <- sum(dt.scaled(X %*% beta, df=location_prior_df, mean=mu0, sd=sqrt(sigma20), log=TRUE))
   }
-  if(moderate_variance){
-    val <- val +
-      extraDistr::dinvchisq(sigma2, df0, tau20, log=TRUE) +
-      log(sigma2)   # important to remove the implicit 1/sigma2 prior in the Inv-Chisq distr
+  if (moderate_variance) {
+    val <- val + extraDistr::dinvchisq(sigma2, df0, tau20, log=TRUE) + log(sigma2)
   }
-  val <- val +
-    sum(dnorm(Xo %*% beta, yo, sd=sqrt(sigma2), log=TRUE)) +
+  val + 
+    sum(dnorm(Xo %*% beta, yo, sd=sqrt(sigma2), log=TRUE)) + 
     sum(invprobit(Xm %*% beta, rho, zetastar, log=TRUE))
-  val
 }
 
-
-grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance){
+grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, moderate_location, moderate_variance) {
+  
   imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
-  if(moderate_location){
-    dbeta_p <-  -(location_prior_df + 1) * t(X) %*% ((X %*% beta - mu0) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2))
-  }else{
-    dbeta_p <-  0
+  if (moderate_location) {
+    Xbmu <- X %*% beta - mu0
+    dbeta_p <- -(location_prior_df + 1) * t(X) %*%(Xbmu/(location_prior_df * sigma20 + Xbmu^2))
+  } else {
+    dbeta_p <- 0
   }
-  dbeta_o <- - (t(Xo) %*% Xo %*% beta - t(Xo) %*% yo) / sigma2
+  
+  Xo_t <- t(Xo)
+  dbeta_o <- -(Xo_t %*% Xo %*% beta - Xo_t %*% yo)/sigma2
   dbeta_m <- t(Xm) %*% imr
-
-  if(moderate_variance){
-    dsig2_p <- -(1 + df0/2) / sigma2 + df0 * tau20 / (2 * sigma2^2) + 1/sigma2
-  }else{
+  
+  
+  if (moderate_variance) {
+    dsig2_p <- -(1 + df0/2)/sigma2 + df0 * tau20/(2 * sigma2^2) + 1/sigma2
+  } else {
     dsig2_p <- 0
   }
-  dsig2_o <- sum(((Xo %*% beta - yo)^2 - sigma2) / (2 * sigma2^2))
-  dsig2_m <- -sum((Xm %*% beta - rho) / (2 * zetastar^2) * imr)
-
+    
+  dsig2_o <- sum(((Xo %*% beta - yo)^2 - sigma2)/(2 * sigma2^2))
+  dsig2_m <- -sum((Xm %*% beta - rho)/(2 * zetastar^2) * imr)
   c(dbeta_p + dbeta_o + dbeta_m, dsig2_p + dsig2_o + dsig2_m)
 }
 
 
-hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df,
+hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df, 
                      moderate_location, moderate_variance, beta_sel, p){
+    
     imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
-
-    if(moderate_location){
-      t_prior_fact <- c((location_prior_df * sigma20 - (X %*% beta - mu0)^2) / (location_prior_df * sigma20 + (X %*% beta - mu0)^2)^2)
+      
+    ## precalculate values
+    zetastar_2 <- zetastar^2
+    zetastar_4 <- zetastar_2^2
+    Xmbr <- Xm %*% beta - rho
+    Xoby0 <- Xo %*% beta - yo
+    q <- p+1
+      
+    if (moderate_location) {
+      Xbm <- (X %*% beta - mu0)^2
+      t_prior_fact <- c((location_prior_df * sigma20 - Xbm)/
+            (location_prior_df * sigma20 + Xbm)^2)
       dbb_p <- -(location_prior_df + 1) * t(X) %*% diag(t_prior_fact, nrow=nrow(X)) %*% X
-    }else{
+    } else {
       dbb_p <- 0
     }
-    dbb_o <- -2 * t(Xo) %*% Xo / (2 * sigma2)
-    dbb_m <- - t(Xm) %*% diag(c((imr^2 + (Xm %*% beta - rho) / zetastar^2 * imr)), nrow(Xm)) %*% Xm
-
-    if(moderate_variance){
-      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20 / (sigma2^3) - 1/sigma2^2
-    }else{
+    dbb_o <- -2 * t(Xo) %*% Xo/(2 * sigma2)
+    dbb_m <- - t(Xm) %*% diag(c((imr^2 + Xmbr/zetastar_2 * imr)), nrow(Xm)) %*% Xm
+  
+    if (moderate_variance) {
+      dss_p <- (1 + df0/2)/ (sigma2^2) - df0 * tau20/(sigma2^3) - 1/sigma2^2
+    } else {
       dss_p <- 0
     }
-    dss_o <- sum((sigma2 - 2 * (Xo %*% beta - yo)^2) / (2 * sigma2^3))
-    dss_m <- sum((Xm %*% beta - rho) / (4 * zetastar^4) * imr *
-                   (3 - (Xm %*% beta - rho) * imr - (Xm %*% beta - rho)^2 / zetastar^2))
-
-    dbs_o <- t(Xo) %*% (Xo %*% beta - yo) / sigma2^2
-    dbs_m <- t(Xm) %*% ((Xm %*% beta - rho) / (2 * zetastar^2) * imr^2 -
-                          (zetastar^2 - (Xm %*% beta - rho)^2) / (2 * zetastar^4) * imr)
-
-    res <- matrix(NA, nrow=p+1, ncol=p + 1)
+    dss_o <- sum((sigma2 - 2 * Xoby0^2)/(2 * sigma2^3))
+    dss_m <- sum(Xmbr/(4 * zetastar_4) * imr * (3 - Xmbr * imr - Xmbr^2/zetastar_2))
+  
+    dbs_o <- t(Xo) %*% Xoby0/sigma2^2
+    dbs_m <- t(Xm) %*% (Xmbr/(2 * zetastar_2) * imr^2 - (zetastar_2 - Xmbr^2)/(2 * zetastar_4) * imr)
+  
+    res <- matrix(NA, nrow=q, ncol=q)
     res[beta_sel, beta_sel] <- dbb_p + dbb_o + dbb_m
-    res[p+1, p+1] <- dss_p + dss_o + dss_m
-    res[p+1, beta_sel] <- c(dbs_o + dbs_m)
-    res[beta_sel, p+1] <- c(dbs_o + dbs_m)
+    res[q, q] <- dss_p + dss_o + dss_m
+    res[q, beta_sel] <- res[beta_sel, q] <- dbs_o + dbs_m
     res
 }
 
@@ -474,7 +488,7 @@ has_intercept <- function(X){
 
   any(vapply(seq_len(ncol(X)), function(idx){
     all(X[, idx] == 1)
-  }, FUN.VALUE = FALSE))
+  }, FUN.VALUE=FALSE))
 
 }
 
@@ -482,7 +496,7 @@ has_intercept <- function(X){
 
 calculate_skew_correction_factors <- function(y, yo, X, Xm, Xo, fit_beta, fit_sigma2, Var_coef, rho, zetastar,
                                              mu0, sigma20, df0, tau20, location_prior_df,
-                                             moderate_location, moderate_variance, out_factor = 2){
+                                             moderate_location, moderate_variance, out_factor=2){
   p <- length(fit_beta)
   res <- vapply(seq_len(p), function(idx){
     if(any(is.na(fit_beta))){
