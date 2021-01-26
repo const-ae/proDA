@@ -287,7 +287,7 @@ pd_lm.fit <- function(y, X,
     nl_res <- nlminb(start = c(beta_init, sigma2_init),
        objective = function(par) {
          beta <- par[beta_sel]
-         sigma2 <- par[p+1]
+         sigma2 <- max(par[p+1], 1e-100)
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
          - objective_fnc(y, yo, X, Xm, Xo,
                          beta, sigma2, rho, zetastar,
@@ -297,7 +297,7 @@ pd_lm.fit <- function(y, X,
        },
        gradient = function(par) {
          beta <- par[beta_sel]
-         sigma2 <- par[p+1]
+         sigma2 <- max(par[p+1], 1e-100)
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
          - grad_fnc(y, yo, X, Xm, Xo,
                     beta, sigma2, rho, zetastar,
@@ -307,7 +307,7 @@ pd_lm.fit <- function(y, X,
        },
        hessian = function(par) {
          beta <- par[beta_sel]
-         sigma2 <- par[p+1]
+         sigma2 <- max(par[p+1], 1e-100)
          zetastar <- zeta * sqrt(1 + sigma2/zeta^2)
          - hess_fnc(y, yo, X, Xm, Xo,
                     beta, sigma2, rho, zetastar,

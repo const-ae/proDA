@@ -107,6 +107,7 @@ test_that("F works", {
 
 
 test_that("F test works with missing data", {
+  set.seed(2)
   data <- matrix(rnorm(50 * 5, mean=20), ncol=5, nrow=50)
   data[invprobit(data, 19, -1) > runif(5 * 50)] <- NA
   colnames(data) <- paste0("sample_", LETTERS[seq_len(ncol(data))])
