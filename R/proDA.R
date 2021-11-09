@@ -561,6 +561,9 @@ dropout_curves <- function(Y, X, Pred, Pred_var){
 check_valid_model_matrix <- function(matrix, data){
   stopifnot(is.matrix(matrix))
   stopifnot(nrow(matrix) == ncol(data))
+  if(qr(matrix)$rank < ncol(matrix)){
+    stop("The model_matrix is not full rank. Some covariates are probably colinear or individual columns of the model_matrix are completely zero.")
+  }
 }
 
 
