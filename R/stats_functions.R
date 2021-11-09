@@ -2,12 +2,12 @@
 
 
 
-dt.scaled <- function (x, df, mean = 0, sd = 1, log = FALSE) {
-  res <- dt((x - mean) / sd, df = df, log = log)
-  if (log) {
+dt.scaled <- function(x, df, mean=0, sd=1, log=FALSE){
+  res <- dt((x-mean)/sd, df=df, log=log)
+  if(log){
     res - log(sd)
-  } else {
-    res / sd
+  }else{
+    res * 1/sd
   }
 }
 
