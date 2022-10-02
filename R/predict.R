@@ -104,11 +104,6 @@ setMethod("predict", signature = "proDAFit", function(object, newdata, newdesign
 
 fit_feature_parameters <- function(fit, newdata, design){
 
-  res_unreg <- lapply(seq_len(nrow(newdata)), function(i){
-    pd_lm.fit(newdata[i, ], design,
-              dropout_curve_position = fit$hyper_parameters$dropout_curve_position,
-              dropout_curve_scale = fit$hyper_parameters$dropout_curve_position)
-  })
   if(! is.null(fit$hyper_parameters$location_prior_mean) ||
      ! is.null(fit$hyper_parameters$variance_prior_scale)){
     res_reg <- lapply(seq_len(nrow(newdata)), function(i){
@@ -122,6 +117,11 @@ fit_feature_parameters <- function(fit, newdata, design){
                 location_prior_df = fit$hyper_parameters$location_prior_df)
     })
   }else{
+    res_unreg <- lapply(seq_len(nrow(newdata)), function(i){
+      pd_lm.fit(newdata[i, ], design,
+                dropout_curve_position = fit$hyper_parameters$dropout_curve_position,
+                dropout_curve_scale = fit$hyper_parameters$dropout_curve_scale)
+    })
     res_reg <- res_unreg
   }
   res_reg <- lapply(res_reg, function(x) x[c("coefficients", "coef_variance_matrix", "n_approx", "df", "s2", "n_obs")])
