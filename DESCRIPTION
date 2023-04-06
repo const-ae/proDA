@@ -28,7 +28,8 @@ Suggests:
     numDeriv,
     pheatmap,
     knitr,
-    rmarkdown
+    rmarkdown,
+    BiocStyle
 Imports: 
     stats,
     utils,
