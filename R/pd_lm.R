@@ -437,6 +437,11 @@ grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
 
 hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df,
                      moderate_location, moderate_variance, beta_sel, p){
+
+    if(sigma2 <= 0){
+      sigma2 <- 1e-100 
+    }
+  
     imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
     if(moderate_location){
