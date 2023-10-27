@@ -311,7 +311,7 @@ pd_lm.fit <- function(y, X,
     }
 
     fit_beta <- nl_res$par[beta_sel]
-    fit_sigma2 <- nl_res$par[p+1]
+    fit_sigma2 <- max(1e-100, nl_res$par[p+1])
     zetastar <- zeta * sqrt(1 + fit_sigma2/zeta^2)
     hessian <- - hess_fnc(y, yo, X, Xm, Xo,
                           fit_beta, fit_sigma2, rho, zetastar,
@@ -438,10 +438,6 @@ grad_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20
 hess_fnc <- function(y, yo, X, Xm, Xo, beta, sigma2, rho, zetastar, mu0, sigma20, df0, tau20, location_prior_df,
                      moderate_location, moderate_variance, beta_sel, p){
 
-    if(sigma2 <= 0){
-      sigma2 <- 1e-100 
-    }
-  
     imr <- inv_mills_ratio(Xm %*% beta, rho, zetastar)
 
     if(moderate_location){
