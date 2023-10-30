@@ -1,7 +1,7 @@
 Package: proDA
 Type: Package
 Title: Differential Abundance Analysis of Label-Free Mass Spectrometry Data
-Version: 1.17.0
+Version: 1.17.1
 Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", 
              role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3762-068X")),
              person("Simon", "Anders", email="s.anders@zmbh.uni-heidelberg.de", 

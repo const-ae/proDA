@@ -12,3 +12,5 @@ Changes in version 1.11
 + Fix copy and paste bug that meant that the wrong value was used in the unregularized 
 feature estimation procedure (see #18. Thanks to @amackey for spotting the bug).
 
+Changes in version 1.17
++ Check that sigma2 is larger than zero (see #21. Thanks to @elena-krismer)
