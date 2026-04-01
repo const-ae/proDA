@@ -24,7 +24,6 @@ Suggests:
     tidyr,
     tibble,
     limma,
-    DEP,
     numDeriv,
     pheatmap,
     knitr,
