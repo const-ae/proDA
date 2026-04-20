@@ -313,36 +313,46 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
   }
   # Initialization
   n_samples <- ncol(Y)
-
-
+  mM_t <- t(model_matrix)
+  seq_Y <- seq_len(nrow(Y))
+  seq_mM <- seq_len(nrow(model_matrix))
+  
   Y_compl <- Y
-  Y_compl[is.na(Y)] <- rnorm(sum(is.na(Y)), mean=quantile(Y, probs=0.1, na.rm=TRUE), sd=sd(Y,na.rm=TRUE)/5)
-  res_init <- lapply(seq_len(nrow(Y)), function(i){
-    pd_lm.fit(Y_compl[i, ], model_matrix,
+  y_na <- is.na(Y)
+  Y_compl[y_na] <- rnorm(sum(y_na), mean=quantile(Y, probs=0.1, na.rm=TRUE), sd=sd(Y,na.rm=TRUE)/5)
+  
+  split_Y_compl <- split(Y_compl, factor(rownames(Y_compl), rownames(Y_compl)))
+  names(split_Y_compl) <- NULL
+  res_init <- lapply(split_Y_compl, function(i){
+    pd_lm.fit(i, model_matrix,
               dropout_curve_position = rep(NA, n_samples),
               dropout_curve_scale =rep(NA, n_samples),
               verbose=verbose)
   })
-  Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% t(model_matrix)
-  Pred_init_var <- mply_dbl(seq_len(nrow(Y)), function(i){
-    vapply(seq_len(nrow(model_matrix)), function(j)
-      t(model_matrix[j,]) %*% res_init[[i]]$coef_variance_matrix %*% model_matrix[j,],
+  
+  Pred_init <- msply_dbl(res_init, function(x) x$coefficients) %*% mM_t
+  Pred_init_var <- mply_dbl(seq_Y, function(i){
+    coef_var_matrix_i <- res_init[[i]]$coef_variance_matrix
+    vapply(seq_mM, function(j)
+      mM_t[, j] %*% coef_var_matrix_i %*% model_matrix[j,],
       FUN.VALUE = 0.0)
   }, ncol=ncol(Y))
   s2_init <-  vapply(res_init, function(x) x[["s2"]], 0.0)
   df_init <- vapply(res_init, function(x) x[["df"]], 0.0)
+  
   if(moderate_location){
     lp <- location_prior(model_matrix,
-                   Pred_reg = Pred_init,
-                   Pred_unreg = Pred_init,
-                   Pred_var_reg = Pred_init_var,
-                   Pred_var_unreg = Pred_init_var)
+                         Pred_reg = Pred_init,
+                         Pred_unreg = Pred_init,
+                         Pred_var_reg = Pred_init_var,
+                         Pred_var_unreg = Pred_init_var)
     mu0 <- lp$mu0
     sigma20 <- lp$sigma20
   }else{
     mu0 <- NA_real_
     sigma20 <- NA_real_
   }
+  
   dc <- dropout_curves(Y, model_matrix, Pred_init, Pred_init_var)
   rho <- dc$rho
   zetainv <- dc$zetainv
@@ -354,26 +364,31 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
     tau20 <- NA_real_
     df0_inv <- NA_real_
   }
-
+  
   last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
   converged <- FALSE
   iter <- 1
   error <- NA
   res_reg <- res_init
   res_unreg <- res_init
+  
+  ## create split_Y
+  split_Y <- split(Y, factor(rownames(Y), rownames(Y)))
+  names(split_Y) <- NULL
+  
   while(! converged && iter <= max_iter){
     if(verbose){
       message(paste0("Starting iter: ", iter))
     }
-
-    res_unreg <- lapply(seq_len(nrow(Y)), function(i){
-      pd_lm.fit(Y[i, ], model_matrix,
+    
+    res_unreg <- lapply(split_Y, function(i){
+      pd_lm.fit(i, model_matrix,
                 dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
                 verbose=verbose)
     })
     if(moderate_location || moderate_variance){
-      res_reg <- lapply(seq_len(nrow(Y)), function(i){
-        pd_lm.fit(Y[i, ], model_matrix,
+      res_reg <- lapply(split_Y, function(i){
+        pd_lm.fit(i, model_matrix,
                   dropout_curve_position = rho, dropout_curve_scale = 1/zetainv,
                   location_prior_mean = mu0, location_prior_scale = sigma20,
                   variance_prior_scale = tau20, variance_prior_df = 1/df0_inv,
@@ -383,23 +398,28 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
     }else{
       res_reg <- res_unreg
     }
-
-    Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
-    Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %zero_dom_mat_mult% t(model_matrix)
-    Pred_var_unreg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      vapply(seq_len(nrow(model_matrix)), function(j)
-        t(model_matrix[j,]) %zero_dom_mat_mult% res_unreg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,],
+    
+    Pred_unreg <- msply_dbl(res_unreg, function(x) x$coefficients) %zero_dom_mat_mult% mM_t
+    Pred_reg <- msply_dbl(res_reg, function(x) x$coefficients) %zero_dom_mat_mult% mM_t
+    
+    Pred_var_unreg <- mply_dbl(seq_Y, function(i){
+      coef_var_matrix_i <- res_reg[[i]]$coef_variance_matrix
+      vapply(seq_mM, function(j)
+        mM_t[, j] %zero_dom_mat_mult% coef_var_matrix_i  %zero_dom_mat_mult% model_matrix[j,],
         FUN.VALUE = 0.0)
     }, ncol=ncol(Y))
-    Pred_var_reg <- mply_dbl(seq_len(nrow(Y)), function(i){
-      vapply(seq_len(nrow(model_matrix)), function(j)
-        t(model_matrix[j,]) %zero_dom_mat_mult% res_reg[[i]]$coef_variance_matrix  %zero_dom_mat_mult% model_matrix[j,],
+    
+    Pred_var_reg <- mply_dbl(seq_Y, function(i){
+      coef_var_matrix_i <- res_reg[[i]]$coef_variance_matrix
+      vapply(seq_mM, function(j)
+        mM_t[, j] %zero_dom_mat_mult% coef_var_matrix_i  %zero_dom_mat_mult% model_matrix[j,],
         FUN.VALUE = 0.0)
     }, ncol=ncol(Y))
+    
     s2_unreg <-  vapply(res_unreg, function(x) x[["s2"]], 0.0)
     df_unreg <-vapply(res_unreg, function(x) x[["df"]], 0.0)
-
-
+    
+    
     if(moderate_location){
       lp <- location_prior(model_matrix,
                            Pred_reg = Pred_reg,
@@ -417,9 +437,9 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
       tau20 <- vp$tau20
       df0_inv <- vp$df0_inv
     }
-
+    
     error <- sum(mapply(function(new, old) {
-      sum(new - old, na.rm=TRUE)/length(new)
+      sum(new - old, na.rm = TRUE)/length(new)
     }, list(mu0, sigma20, rho, zetainv, tau20, df0_inv), last_round_params)^2)
     if (error < epsilon) {
       if(verbose){
@@ -427,7 +447,7 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
       }
       converged <- TRUE
     }
-
+    
     last_round_params <- list(mu0, sigma20, rho, zetainv, tau20, df0_inv)
     if(verbose){
       log_parameters(last_round_params)
@@ -435,19 +455,18 @@ fit_parameters_loop <- function(Y, model_matrix, location_prior_df,
     }
     iter <- iter + 1
   }
-
-
+  
   convergence <- list(successful = converged, iterations = iter-1, error = error)
   names(last_round_params) <- c("location_prior_mean", "location_prior_scale",
                                 "dropout_curve_position", "dropout_curve_scale",
                                 "variance_prior_scale", "variance_prior_df")
   last_round_params[["dropout_curve_scale"]] <- 1/last_round_params[["dropout_curve_scale"]]
   last_round_params[["variance_prior_df"]] <- 1/last_round_params[["variance_prior_df"]]
-
+  
   list(hyper_parameters = last_round_params,
        convergence = convergence,
        feature_parameters = lapply(res_reg, function(x) x[c("coefficients", "coef_variance_matrix", "n_approx", "df", "s2", "n_obs")]))
-
+  
 }
 
 
